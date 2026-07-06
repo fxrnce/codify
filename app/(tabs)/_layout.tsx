@@ -1,19 +1,28 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
-function TabIcon({
-  focused,
-  icon,
-  color,
-}: {
+import HistoryIcon from "@/assets/icons/history.svg";
+import HomeIcon from "@/assets/icons/home.svg";
+import ProfileIcon from "@/assets/icons/profile.svg";
+import ScannerIcon from "@/assets/icons/scanner.svg";
+
+type TabIconProps = {
   focused: boolean;
-  icon: keyof typeof Ionicons.glyphMap;
-  color: string;
-}) {
+  Icon: React.FC<any>;
+};
+
+function TabIcon({ focused, Icon }: { focused: boolean; Icon: React.FC<any> }) {
+  const iconColor = focused ? "#FFFFFF" : "#90A1B9";
+
   return (
     <View style={[styles.iconBox, focused && styles.activeIconBox]}>
-      <Ionicons name={icon} size={22} color={focused ? "#FFFFFF" : color} />
+      <Icon
+        width={22}
+        height={22}
+        color={iconColor}
+        stroke={iconColor}
+        fill="none"
+      />
     </View>
   );
 }
@@ -62,8 +71,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} icon="home-outline" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} Icon={HomeIcon} />
           ),
         }}
       />
@@ -72,8 +81,8 @@ export default function TabLayout() {
         name="scanner"
         options={{
           title: "Scanner",
-          tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} icon="scan-outline" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} Icon={ScannerIcon} />
           ),
         }}
       />
@@ -82,8 +91,8 @@ export default function TabLayout() {
         name="history"
         options={{
           title: "History",
-          tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} icon="time-outline" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} Icon={HistoryIcon} />
           ),
         }}
       />
@@ -92,8 +101,8 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} icon="person-outline" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} Icon={ProfileIcon} />
           ),
         }}
       />
