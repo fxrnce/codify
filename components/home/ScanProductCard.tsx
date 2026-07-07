@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Text, View } from "react-native";
 
 import Card from "@/components/common/Card";
@@ -7,6 +8,12 @@ import ScanIllustration from "./scan-product/ScanIllustration";
 import { styles } from "./scan-product/styles";
 
 export default function ScanProductCard() {
+  const router = useRouter();
+
+  const goToScanner = () => {
+    router.push("/scanner");
+  };
+
   return (
     <Card
       style={{
@@ -24,7 +31,7 @@ export default function ScanProductCard() {
           </Text>
 
           <View style={styles.button}>
-            <PrimaryButton title="Scan Now" onPress={() => {}} />
+            <PrimaryButton title="Scan Now" onPress={goToScanner} />
           </View>
         </View>
 

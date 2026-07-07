@@ -1,8 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function HistoryScreen() {
+  const router = useRouter();
+
+  const goToScanner = () => {
+    router.push("/scanner");
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -21,7 +28,7 @@ export default function HistoryScreen() {
           Your scan history will appear here once you start verifying products
         </Text>
 
-        <Pressable onPress={() => {}} style={styles.buttonWrapper}>
+        <Pressable onPress={goToScanner} style={styles.buttonWrapper}>
           <LinearGradient
             colors={["#4F39F6", "#5B4CF6"]}
             start={{ x: 0, y: 0 }}

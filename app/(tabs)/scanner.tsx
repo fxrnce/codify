@@ -1,6 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
+  Alert,
   Dimensions,
   Pressable,
   ScrollView,
@@ -9,6 +12,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+
+import { findProductByBarcode } from "@/constants/MockData";
 
 const { width } = Dimensions.get("window");
 
@@ -23,19 +28,19 @@ const GRID_ITEMS = Array.from({ length: 36 });
 
 const sampleBarcodes = [
   {
-    code: "4800016644283",
+    code: "4800011234567",
     name: "Milk Chocolate Bar",
     bg: "#ECFDF5",
     color: "#009966",
   },
   {
-    code: "4800888123456",
+    code: "4800017654321",
     name: "PureGlow Facial Care",
     bg: "#FFFBEB",
     color: "#E17100",
   },
   {
-    code: "9556001234567",
+    code: "0000000000000",
     name: "Energy Drink X",
     bg: "#FEF2F2",
     color: "#E7000B",
@@ -43,6 +48,44 @@ const sampleBarcodes = [
 ];
 
 export default function ScannerScreen() {
+  const router = useRouter();
+  const [barcode, setBarcode] = useState("");
+
+  const handleDemoScan = () => {
+    setBarcode("4800011234567");
+
+    Alert.alert(
+      "Demo Scan",
+      "Demo barcode added. Tap Verify Product to check the result.",
+    );
+  };
+
+  const handleVerifyProduct = () => {
+    const cleanedBarcode = barcode.trim();
+
+    if (!cleanedBarcode) {
+      Alert.alert("No barcode entered", "Please enter or select a barcode.");
+      return;
+    }
+
+    const product = findProductByBarcode(cleanedBarcode);
+
+    if (!product) {
+      Alert.alert(
+        "Product Not Found",
+        "This barcode is not available in the demo database yet.",
+      );
+      return;
+    }
+
+    router.push({
+      pathname: "/product-result/[barcode]",
+      params: {
+        barcode: product.barcode,
+      },
+    });
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -80,7 +123,7 @@ export default function ScannerScreen() {
           </View>
         </View>
 
-        <Pressable onPress={() => {}} style={styles.scanButtonWrapper}>
+        <Pressable onPress={handleDemoScan} style={styles.scanButtonWrapper}>
           <LinearGradient
             colors={["#4F39F6", "#155DFC"]}
             start={{ x: 0, y: 0 }}
@@ -101,6 +144,8 @@ export default function ScannerScreen() {
           />
 
           <TextInput
+            value={barcode}
+            onChangeText={setBarcode}
             placeholder="Enter barcode number"
             placeholderTextColor="#90A1B9"
             keyboardType="numeric"
@@ -109,7 +154,7 @@ export default function ScannerScreen() {
         </View>
 
         <Pressable
-          onPress={() => {}}
+          onPress={handleVerifyProduct}
           style={({ pressed }) => [
             styles.verifyButton,
             pressed && { opacity: 0.9 },
@@ -125,7 +170,14 @@ export default function ScannerScreen() {
           </View>
 
           {sampleBarcodes.map((item) => (
-            <View key={item.code} style={styles.sampleRow}>
+            <Pressable
+              key={item.code}
+              style={({ pressed }) => [
+                styles.sampleRow,
+                pressed && { opacity: 0.85 },
+              ]}
+              onPress={() => setBarcode(item.code)}
+            >
               <Text style={styles.sampleCode}>{item.code}</Text>
 
               <View style={[styles.samplePill, { backgroundColor: item.bg }]}>
@@ -133,7 +185,7 @@ export default function ScannerScreen() {
                   {item.name}
                 </Text>
               </View>
-            </View>
+            </Pressable>
           ))}
         </View>
       </ScrollView>
