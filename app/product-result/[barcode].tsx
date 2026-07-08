@@ -1,21 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect } from "react";
 import {
-    Pressable,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    View,
-    type DimensionValue,
+  Alert,
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+  type DimensionValue,
 } from "react-native";
 
 import {
-    DemoProduct,
-    ProductStatus,
-    findProductByBarcode,
+  DemoProduct,
+  ProductStatus,
+  findProductByBarcode,
 } from "@/constants/MockData";
+import { useAllergenAlerts } from "@/contexts/AllergenContext";
+import { useScanHistory } from "@/contexts/ScanHistoryContext";
 
 function getStatusColors(status: ProductStatus) {
   if (status === "Approved") {
@@ -53,12 +57,54 @@ function getScoreWidth(score: number): DimensionValue {
   return `${score}%` as DimensionValue;
 }
 
+function normalizeAllergen(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 export default function ProductResultScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ barcode: string }>();
+  const params = useLocalSearchParams<{ barcode: string; from?: string }>();
+  const { selectedAllergens } = useAllergenAlerts();
+  const { addScanToHistory, addUnknownScanToHistory } = useScanHistory();
 
   const barcode = params.barcode ?? "";
+  const openedFromHistory = params.from === "history";
   const product = findProductByBarcode(barcode);
+
+  const goToHistory = () => {
+    router.replace("/history" as never);
+  };
+
+  const goToScanner = () => {
+    router.replace("/scanner" as never);
+  };
+
+  const handleReportProduct = () => {
+    Alert.alert(
+      "Report Product",
+      "This will be connected to a report form later. For now, the product is saved as unverified in your scan history.",
+    );
+  };
+  useEffect(() => {
+    if (openedFromHistory) {
+      return;
+    }
+
+    if (product) {
+      addScanToHistory(product);
+      return;
+    }
+
+    if (barcode) {
+      addUnknownScanToHistory(barcode);
+    }
+  }, [
+    barcode,
+    product,
+    openedFromHistory,
+    addScanToHistory,
+    addUnknownScanToHistory,
+  ]);
 
   const handleShare = async () => {
     if (!product) {
@@ -72,23 +118,127 @@ export default function ProductResultScreen() {
 
   if (!product) {
     return (
-      <View style={styles.notFoundScreen}>
-        <Ionicons name="alert-circle-outline" size={56} color="#E7000B" />
+      <View style={styles.screen}>
+        <LinearGradient
+          colors={["#FB2C36", "#E7000B"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.unknownHeader}
+        >
+          <View style={styles.largeCircle} />
+          <View style={styles.bottomCircle} />
 
-        <Text style={styles.notFoundTitle}>Product Not Found</Text>
+          <View style={styles.topRow}>
+            <Pressable style={styles.headerButton} onPress={goToHistory}>
+              <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
+            </Pressable>
+          </View>
 
-        <Text style={styles.notFoundText}>
-          This barcode is not available in the demo database yet.
-        </Text>
+          <View style={styles.unknownHeaderContent}>
+            <View style={styles.unknownIconBox}>
+              <Ionicons name="alert-circle-outline" size={32} color="#FFFFFF" />
+            </View>
 
-        <Pressable style={styles.notFoundButton} onPress={() => router.back()}>
-          <Text style={styles.notFoundButtonText}>Go Back</Text>
-        </Pressable>
+            <Text style={styles.unknownStatus}>Not Listed / Unverified</Text>
+            <Text style={styles.unknownTitle}>Unknown Product</Text>
+
+            <View style={styles.unknownBadge}>
+              <Text style={styles.unknownBadgeText}>No FDA record found</Text>
+            </View>
+          </View>
+        </LinearGradient>
+
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.warningCard}>
+            <View style={styles.warningIconBox}>
+              <Ionicons name="shield-outline" size={22} color="#E7000B" />
+            </View>
+
+            <View style={styles.warningTextBox}>
+              <Text style={styles.warningTitle}>Use caution</Text>
+              <Text style={styles.warningText}>
+                This barcode is not available in the Codify demo database. The
+                product may need manual FDA verification before purchase or use.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.ingredientsTitle}>Barcode Information</Text>
+
+            <View style={styles.unknownInfoRow}>
+              <Text style={styles.unknownInfoLabel}>Barcode</Text>
+              <Text style={styles.unknownInfoValue}>{barcode}</Text>
+            </View>
+
+            <View style={styles.unknownInfoRow}>
+              <Text style={styles.unknownInfoLabel}>FDA Status</Text>
+              <Text style={styles.unknownInfoDanger}>No record found</Text>
+            </View>
+
+            <View style={styles.unknownInfoRowLast}>
+              <Text style={styles.unknownInfoLabel}>History Status</Text>
+              <Text style={styles.unknownInfoDanger}>Saved as Unsafe</Text>
+            </View>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.ingredientsTitle}>Possible Reasons</Text>
+
+            <View style={styles.reasonList}>
+              <View style={styles.reasonRow}>
+                <Ionicons name="ellipse" size={7} color="#90A1B9" />
+                <Text style={styles.reasonText}>
+                  Product is not registered in the demo database.
+                </Text>
+              </View>
+
+              <View style={styles.reasonRow}>
+                <Ionicons name="ellipse" size={7} color="#90A1B9" />
+                <Text style={styles.reasonText}>
+                  Barcode may be from another country or product variant.
+                </Text>
+              </View>
+
+              <View style={styles.reasonRow}>
+                <Ionicons name="ellipse" size={7} color="#90A1B9" />
+                <Text style={styles.reasonText}>
+                  Product may require manual FDA verification.
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <Pressable style={styles.primaryActionButton} onPress={goToScanner}>
+            <Ionicons name="scan-outline" size={18} color="#FFFFFF" />
+            <Text style={styles.primaryActionText}>Scan Again</Text>
+          </Pressable>
+
+          <Pressable style={styles.secondaryActionButton} onPress={goToHistory}>
+            <Ionicons name="time-outline" size={18} color="#4F39F6" />
+            <Text style={styles.secondaryActionText}>View in History</Text>
+          </Pressable>
+
+          <Pressable style={styles.reportButton} onPress={handleReportProduct}>
+            <Ionicons name="flag-outline" size={18} color="#E7000B" />
+            <Text style={styles.reportButtonText}>Report Product</Text>
+          </Pressable>
+        </ScrollView>
       </View>
     );
   }
 
   const statusColors = getStatusColors(product.status);
+
+  const matchedAllergens = product.allergens.filter((allergen) =>
+    selectedAllergens.includes(normalizeAllergen(allergen)),
+  );
+
+  const hasPersonalAllergenAlert = matchedAllergens.length > 0;
 
   return (
     <View style={styles.screen}>
@@ -102,7 +252,7 @@ export default function ProductResultScreen() {
         <View style={styles.bottomCircle} />
 
         <View style={styles.topRow}>
-          <Pressable style={styles.headerButton} onPress={() => router.back()}>
+          <Pressable style={styles.headerButton} onPress={goToHistory}>
             <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
           </Pressable>
 
@@ -138,7 +288,7 @@ export default function ProductResultScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {product.allergens.length > 0 && (
+        {hasPersonalAllergenAlert && (
           <View style={styles.allergenAlert}>
             <View style={styles.allergenIconBox}>
               <Ionicons name="alert-circle-outline" size={22} color="#FFFFFF" />
@@ -146,7 +296,12 @@ export default function ProductResultScreen() {
 
             <View style={styles.allergenTextBox}>
               <Text style={styles.allergenTitle}>⚠ Allergen Alert!</Text>
-              <Text style={styles.allergenText}>{product.warningMessage}</Text>
+
+              <Text style={styles.allergenText}>
+                This product contains your selected allergen
+                {matchedAllergens.length > 1 ? "s" : ""}:{" "}
+                {matchedAllergens.join(", ")}
+              </Text>
             </View>
           </View>
         )}
@@ -749,5 +904,217 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+
+  unknownHeader: {
+    height: 306,
+    paddingTop: 48,
+    paddingHorizontal: 20,
+    overflow: "hidden",
+  },
+
+  unknownHeaderContent: {
+    marginTop: 24,
+    alignItems: "center",
+  },
+
+  unknownIconBox: {
+    width: 70,
+    height: 70,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  unknownStatus: {
+    marginTop: 16,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.85)",
+  },
+
+  unknownTitle: {
+    marginTop: 6,
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: "900",
+    color: "#FFFFFF",
+  },
+
+  unknownBadge: {
+    marginTop: 12,
+    height: 28,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  unknownBadgeText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  warningCard: {
+    minHeight: 96,
+    borderRadius: 16,
+    backgroundColor: "#FEF2F2",
+    borderWidth: 1.17,
+    borderColor: "#FFE2E2",
+    padding: 16,
+    flexDirection: "row",
+  },
+
+  warningIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    backgroundColor: "#FFE2E2",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  warningTextBox: {
+    marginLeft: 12,
+    flex: 1,
+  },
+
+  warningTitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "800",
+    color: "#C10007",
+  },
+
+  warningText: {
+    marginTop: 4,
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#E7000B",
+  },
+
+  unknownInfoRow: {
+    minHeight: 42,
+    borderBottomWidth: 1.17,
+    borderBottomColor: "#F8FAFC",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  unknownInfoRowLast: {
+    minHeight: 42,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  unknownInfoLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#62748E",
+  },
+
+  unknownInfoValue: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#1D293D",
+  },
+
+  unknownInfoDanger: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#E7000B",
+  },
+
+  reasonList: {
+    marginTop: 14,
+    gap: 12,
+  },
+
+  reasonRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+
+  reasonText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#45556C",
+  },
+
+  primaryActionButton: {
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: "#4F39F6",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+
+    shadowColor: "#C6D2FF",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+    elevation: 8,
+  },
+
+  primaryActionText: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  secondaryActionButton: {
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1.17,
+    borderColor: "#E0E7FF",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  secondaryActionText: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "700",
+    color: "#4F39F6",
+  },
+
+  reportButton: {
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: "#FEF2F2",
+    borderWidth: 1.17,
+    borderColor: "#FFE2E2",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  reportButtonText: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "700",
+    color: "#E7000B",
   },
 });

@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -12,8 +13,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-
-import { findProductByBarcode } from "@/constants/MockData";
 
 const { width } = Dimensions.get("window");
 
@@ -49,41 +48,68 @@ const sampleBarcodes = [
 
 export default function ScannerScreen() {
   const router = useRouter();
+  const [permission, requestPermission] = useCameraPermissions();
+
   const [barcode, setBarcode] = useState("");
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [hasScanned, setHasScanned] = useState(false);
 
-  const handleDemoScan = () => {
-    setBarcode("4800011234567");
-
-    Alert.alert(
-      "Demo Scan",
-      "Demo barcode added. Tap Verify Product to check the result.",
-    );
-  };
-
-  const handleVerifyProduct = () => {
-    const cleanedBarcode = barcode.trim();
+  const openBarcodeResult = (code: string) => {
+    const cleanedBarcode = code.trim();
 
     if (!cleanedBarcode) {
       Alert.alert("No barcode entered", "Please enter or select a barcode.");
       return;
     }
 
-    const product = findProductByBarcode(cleanedBarcode);
-
-    if (!product) {
-      Alert.alert(
-        "Product Not Found",
-        "This barcode is not available in the demo database yet.",
-      );
-      return;
-    }
-
     router.push({
       pathname: "/product-result/[barcode]",
       params: {
-        barcode: product.barcode,
+        barcode: cleanedBarcode,
       },
     });
+  };
+
+  const handleOpenCamera = async () => {
+    if (!permission) {
+      return;
+    }
+
+    if (!permission.granted) {
+      const newPermission = await requestPermission();
+
+      if (!newPermission.granted) {
+        Alert.alert(
+          "Camera Permission Needed",
+          "Please allow camera access to scan barcodes.",
+        );
+        return;
+      }
+    }
+
+    setHasScanned(false);
+    setIsCameraOpen(true);
+  };
+
+  const handleBarcodeScanned = ({ data }: { data: string }) => {
+    if (hasScanned) {
+      return;
+    }
+
+    setHasScanned(true);
+    setIsCameraOpen(false);
+    setBarcode(data);
+
+    openBarcodeResult(data);
+  };
+
+  const handleVerifyProduct = () => {
+    openBarcodeResult(barcode);
+  };
+
+  const closeCamera = () => {
+    setIsCameraOpen(false);
+    setHasScanned(false);
   };
 
   return (
@@ -98,40 +124,76 @@ export default function ScannerScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.scannerFrame}>
-          <View style={styles.grid}>
-            {GRID_ITEMS.map((_, index) => (
-              <View key={index} style={styles.gridBox} />
-            ))}
-          </View>
+          {isCameraOpen ? (
+            <CameraView
+              style={styles.camera}
+              facing="back"
+              onBarcodeScanned={handleBarcodeScanned}
+              barcodeScannerSettings={{
+                barcodeTypes: [
+                  "qr",
+                  "ean13",
+                  "ean8",
+                  "upc_a",
+                  "upc_e",
+                  "code128",
+                  "code39",
+                  "code93",
+                  "itf14",
+                ],
+              }}
+            />
+          ) : (
+            <>
+              <View style={styles.grid}>
+                {GRID_ITEMS.map((_, index) => (
+                  <View key={index} style={styles.gridBox} />
+                ))}
+              </View>
+
+              <View style={styles.centerScan}>
+                <Ionicons
+                  name="scan-outline"
+                  size={92}
+                  color="rgba(255,255,255,0.32)"
+                />
+                <View style={styles.horizontalLine} />
+              </View>
+            </>
+          )}
 
           <View style={[styles.corner, styles.topLeft]} />
           <View style={[styles.corner, styles.topRight]} />
           <View style={[styles.corner, styles.bottomLeft]} />
           <View style={[styles.corner, styles.bottomRight]} />
 
-          <View style={styles.centerScan}>
-            <Ionicons
-              name="scan-outline"
-              size={92}
-              color="rgba(255,255,255,0.32)"
-            />
-            <View style={styles.horizontalLine} />
+          <View style={styles.frameTextBox}>
+            <Text style={styles.frameText}>
+              {isCameraOpen
+                ? "Scanning barcode..."
+                : "Position barcode in frame"}
+            </Text>
           </View>
 
-          <View style={styles.frameTextBox}>
-            <Text style={styles.frameText}>Position barcode in frame</Text>
-          </View>
+          {isCameraOpen && (
+            <Pressable style={styles.closeCameraButton} onPress={closeCamera}>
+              <Ionicons name="close" size={20} color="#FFFFFF" />
+            </Pressable>
+          )}
         </View>
 
-        <Pressable onPress={handleDemoScan} style={styles.scanButtonWrapper}>
+        <Pressable onPress={handleOpenCamera} style={styles.scanButtonWrapper}>
           <LinearGradient
             colors={["#4F39F6", "#155DFC"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.scanButton}
           >
-            <Ionicons name="flash-outline" size={22} color="#FFFFFF" />
-            <Text style={styles.scanButtonText}>Tap to Scan</Text>
+            <Ionicons name="camera-outline" size={22} color="#FFFFFF" />
+
+            <Text style={styles.scanButtonText}>
+              {isCameraOpen ? "Camera Open" : "Tap to Scan"}
+            </Text>
           </LinearGradient>
         </Pressable>
 
@@ -245,6 +307,10 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
 
+  camera: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
   grid: {
     position: "absolute",
     top: GRID_PADDING,
@@ -327,7 +393,7 @@ const styles = StyleSheet.create({
     width: 202,
     height: 36,
     borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(15,23,43,0.7)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -335,7 +401,19 @@ const styles = StyleSheet.create({
   frameText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(255,255,255,0.9)",
+  },
+
+  closeCameraButton: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    width: 38,
+    height: 38,
+    borderRadius: 16,
+    backgroundColor: "rgba(15,23,43,0.75)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   scanButtonWrapper: {

@@ -4,6 +4,9 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { useAllergenAlerts } from "@/contexts/AllergenContext";
+import { useScanHistory } from "@/contexts/ScanHistoryContext";
+
 type AlertItem = {
   id: string;
   emoji: string;
@@ -99,18 +102,12 @@ const SETTINGS_ITEMS: SettingItem[] = [
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const [selectedAlerts, setSelectedAlerts] = useState<string[]>([]);
+  const { selectedAllergens, toggleAllergen, isAllergenSelected } =
+    useAllergenAlerts();
+
+  const { scanHistory } = useScanHistory();
+
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
-
-  const toggleAlert = (id: string) => {
-    setSelectedAlerts((currentAlerts) => {
-      if (currentAlerts.includes(id)) {
-        return currentAlerts.filter((alertId) => alertId !== id);
-      }
-
-      return [...currentAlerts, id];
-    });
-  };
 
   const toggleGroup = (title: string) => {
     setExpandedGroups((currentGroups) => {
@@ -184,7 +181,7 @@ export default function ProfileScreen() {
               size={14}
               color="rgba(255,255,255,0.5)"
             />
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{scanHistory.length}</Text>
             <Text style={styles.statLabel}>Total Scans</Text>
           </View>
 
@@ -195,7 +192,7 @@ export default function ProfileScreen() {
               color="rgba(255,255,255,0.5)"
             />
             <Text style={styles.statValue}>
-              {selectedAlerts.length === 0 ? "—" : selectedAlerts.length}
+              {selectedAllergens.length === 0 ? "—" : selectedAllergens.length}
             </Text>
             <Text style={styles.statLabel}>Allergen Alerts</Text>
           </View>
@@ -247,7 +244,7 @@ export default function ProfileScreen() {
               {isExpanded && (
                 <View style={styles.alertGrid}>
                   {group.data.map((item) => {
-                    const isSelected = selectedAlerts.includes(item.id);
+                    const isSelected = isAllergenSelected(item.id);
 
                     return (
                       <Pressable
@@ -256,7 +253,7 @@ export default function ProfileScreen() {
                           styles.alertCard,
                           isSelected && styles.alertCardSelected,
                         ]}
-                        onPress={() => toggleAlert(item.id)}
+                        onPress={() => toggleAllergen(item.id)}
                       >
                         <Text style={styles.alertEmoji}>{item.emoji}</Text>
 

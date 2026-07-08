@@ -2,10 +2,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useScanHistory } from "@/contexts/ScanHistoryContext";
+
 import StatCard from "./StatCard";
 
 export default function Header() {
   const insets = useSafeAreaInsets();
+  const { scanHistory } = useScanHistory();
+
+  const totalScans = scanHistory.length;
+
+  const approvedCount = scanHistory.filter(
+    (item) => item.status === "Approved",
+  ).length;
+
+  const alertCount = scanHistory.filter(
+    (item) => item.status === "Caution" || item.status === "Not Approved",
+  ).length;
 
   return (
     <LinearGradient
@@ -36,11 +49,23 @@ export default function Header() {
       </View>
 
       <View style={styles.statsRow}>
-        <StatCard value="0" label="Total Scans" valueColor="#FFEEEE" />
+        <StatCard
+          value={String(totalScans)}
+          label="Total Scans"
+          valueColor="#FFEEEE"
+        />
 
-        <StatCard value="0" label="Approved" valueColor="#5EE9B5" />
+        <StatCard
+          value={String(approvedCount)}
+          label="Approved"
+          valueColor="#5EE9B5"
+        />
 
-        <StatCard value="0" label="Alerts" valueColor="#FFA2A2" />
+        <StatCard
+          value={String(alertCount)}
+          label="Alerts"
+          valueColor="#FFA2A2"
+        />
       </View>
     </LinearGradient>
   );

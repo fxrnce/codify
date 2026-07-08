@@ -1,44 +1,259 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+import { ScanHistoryItem, useScanHistory } from "@/contexts/ScanHistoryContext";
+
+function getStatusStyle(status: ScanHistoryItem["status"]) {
+  if (status === "Approved") {
+    return {
+      bg: "#ECFDF5",
+      color: "#009966",
+      icon: "checkmark-circle" as const,
+      label: "Approved",
+    };
+  }
+
+  if (status === "Caution") {
+    return {
+      bg: "#FFFBEB",
+      color: "#E17100",
+      icon: "warning" as const,
+      label: "Caution",
+    };
+  }
+
+  return {
+    bg: "#FEF2F2",
+    color: "#E7000B",
+    icon: "close-circle" as const,
+    label: "Unsafe",
+  };
+}
+
+function formatScanTime(dateValue: string) {
+  const date = new Date(dateValue);
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
 export default function HistoryScreen() {
   const router = useRouter();
+  const { scanHistory, clearScanHistory } = useScanHistory();
+
+  const approvedCount = scanHistory.filter(
+    (item) => item.status === "Approved",
+  ).length;
+
+  const cautionCount = scanHistory.filter(
+    (item) => item.status === "Caution",
+  ).length;
+
+  const unsafeCount = scanHistory.filter(
+    (item) => item.status === "Not Approved",
+  ).length;
 
   const goToScanner = () => {
     router.push("/scanner");
   };
 
+  const openProductResult = (barcode: string) => {
+    router.push({
+      pathname: "/product-result/[barcode]",
+      params: {
+        barcode,
+        from: "history",
+      },
+    });
+  };
+
+  const handleClearHistory = () => {
+    Alert.alert(
+      "Clear Scan History",
+      "Are you sure you want to remove all scanned products?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Clear",
+          style: "destructive",
+          onPress: clearScanHistory,
+        },
+      ],
+    );
+  };
+
+  const productCountText =
+    scanHistory.length === 1
+      ? "1 product scanned"
+      : `${scanHistory.length} products scanned`;
+
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Scan History</Text>
-        <Text style={styles.subtitle}>0 products scanned</Text>
-      </View>
+      <View
+        style={[styles.header, scanHistory.length === 0 && styles.headerEmpty]}
+      >
+        <View style={styles.headerTopRow}>
+          <View>
+            <Text style={styles.title}>Scan History</Text>
+            <Text style={styles.subtitle}>{productCountText}</Text>
+          </View>
 
-      <View style={styles.emptyContainer}>
-        <View style={styles.iconBox}>
-          <Ionicons name="scan-outline" size={48} color="#CBD5E1" />
+          {scanHistory.length > 0 && (
+            <Pressable style={styles.clearButton} onPress={handleClearHistory}>
+              <Ionicons name="trash-outline" size={14} color="#FB2C36" />
+              <Text style={styles.clearText}>Clear</Text>
+            </Pressable>
+          )}
         </View>
 
-        <Text style={styles.emptyTitle}>No scans yet</Text>
+        {scanHistory.length > 0 && (
+          <View style={styles.summaryRow}>
+            <View style={[styles.summaryCard, styles.approvedCard]}>
+              <Text style={[styles.summaryNumber, styles.approvedText]}>
+                {approvedCount}
+              </Text>
+              <Text style={[styles.summaryLabel, styles.approvedText]}>
+                Approved
+              </Text>
+            </View>
 
-        <Text style={styles.emptyDescription}>
-          Your scan history will appear here once you start verifying products
-        </Text>
+            <View style={[styles.summaryCard, styles.cautionCard]}>
+              <Text style={[styles.summaryNumber, styles.cautionText]}>
+                {cautionCount}
+              </Text>
+              <Text style={[styles.summaryLabel, styles.cautionText]}>
+                Caution
+              </Text>
+            </View>
 
-        <Pressable onPress={goToScanner} style={styles.buttonWrapper}>
-          <LinearGradient
-            colors={["#4F39F6", "#5B4CF6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Scan a Product</Text>
-          </LinearGradient>
-        </Pressable>
+            <View style={[styles.summaryCard, styles.unsafeCard]}>
+              <Text style={[styles.summaryNumber, styles.unsafeText]}>
+                {unsafeCount}
+              </Text>
+              <Text style={[styles.summaryLabel, styles.unsafeText]}>
+                Unsafe
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
+
+      {scanHistory.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <View style={styles.iconBox}>
+            <Ionicons name="scan-outline" size={48} color="#CBD5E1" />
+          </View>
+
+          <Text style={styles.emptyTitle}>No scans yet</Text>
+
+          <Text style={styles.emptyDescription}>
+            Your scan history will appear here once you start verifying products
+          </Text>
+
+          <Pressable onPress={goToScanner} style={styles.buttonWrapper}>
+            <LinearGradient
+              colors={["#4F39F6", "#5B4CF6"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>Scan a Product</Text>
+            </LinearGradient>
+          </Pressable>
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.historyContent}
+        >
+          <Pressable onPress={goToScanner} style={styles.scanAgainWrapper}>
+            <LinearGradient
+              colors={["#4F39F6", "#155DFC"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.scanAgainButton}
+            >
+              <Ionicons name="scan-outline" size={18} color="#FFFFFF" />
+              <Text style={styles.scanAgainText}>Scan Another Product</Text>
+            </LinearGradient>
+          </Pressable>
+
+          {scanHistory.map((item) => {
+            const statusStyle = getStatusStyle(item.status);
+
+            return (
+              <Pressable
+                key={item.id}
+                style={({ pressed }) => [
+                  styles.historyCard,
+                  pressed && { opacity: 0.85 },
+                ]}
+                onPress={() => openProductResult(item.barcode)}
+              >
+                <View
+                  style={[
+                    styles.statusIconBox,
+                    { backgroundColor: statusStyle.bg },
+                  ]}
+                >
+                  <Ionicons
+                    name={statusStyle.icon}
+                    size={22}
+                    color={statusStyle.color}
+                  />
+                </View>
+
+                <View style={styles.historyInfo}>
+                  <Text numberOfLines={1} style={styles.productName}>
+                    {item.name}
+                  </Text>
+
+                  <Text numberOfLines={1} style={styles.productMeta}>
+                    {item.brand} • {item.category}
+                  </Text>
+
+                  <Text style={styles.barcodeText}>{item.barcode}</Text>
+                </View>
+
+                <View style={styles.rightSide}>
+                  <View
+                    style={[
+                      styles.statusPill,
+                      { backgroundColor: statusStyle.bg },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.statusText, { color: statusStyle.color }]}
+                    >
+                      {statusStyle.label}
+                    </Text>
+                  </View>
+
+                  <Text style={styles.timeText}>
+                    {formatScanTime(item.scannedAt)}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -50,12 +265,24 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    height: 115,
+    height: 191,
     backgroundColor: "#FFFFFF",
     paddingTop: 48,
     paddingHorizontal: 20,
-    borderBottomWidth: 1,
+    paddingBottom: 1,
+    borderBottomWidth: 1.17,
     borderBottomColor: "#F1F5F9",
+  },
+
+  headerEmpty: {
+    height: 115,
+  },
+
+  headerTopRow: {
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   title: {
@@ -70,6 +297,78 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: "#62748E",
+  },
+
+  clearButton: {
+    width: 79,
+    height: 32,
+    borderRadius: 14,
+    backgroundColor: "#FEF2F2",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 6,
+  },
+
+  clearText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "500",
+    color: "#FB2C36",
+  },
+
+  summaryRow: {
+    marginTop: 16,
+    height: 60,
+    flexDirection: "row",
+    gap: 8,
+  },
+
+  summaryCard: {
+    flex: 1,
+    height: 60,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  approvedCard: {
+    backgroundColor: "#ECFDF5",
+  },
+
+  cautionCard: {
+    backgroundColor: "#FFFBEB",
+  },
+
+  unsafeCard: {
+    backgroundColor: "#FEF2F2",
+  },
+
+  summaryNumber: {
+    fontSize: 18,
+    lineHeight: 28,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+
+  summaryLabel: {
+    marginTop: 0,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "400",
+    textAlign: "center",
+  },
+
+  approvedText: {
+    color: "#009966",
+  },
+
+  cautionText: {
+    color: "#E17100",
+  },
+
+  unsafeText: {
+    color: "#E7000B",
   },
 
   emptyContainer: {
@@ -130,5 +429,120 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+
+  historyContent: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+
+  scanAgainWrapper: {
+    height: 52,
+    marginBottom: 16,
+    shadowColor: "#C6D2FF",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+    elevation: 8,
+  },
+
+  scanAgainButton: {
+    flex: 1,
+    borderRadius: 16,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  scanAgainText: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  historyCard: {
+    minHeight: 96,
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "rgba(241,245,249,0.8)",
+    padding: 14,
+    marginBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
+
+    shadowColor: "#4F46E5",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.07,
+    shadowRadius: 16,
+    elevation: 3,
+  },
+
+  statusIconBox: {
+    width: 46,
+    height: 46,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  historyInfo: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 10,
+  },
+
+  productName: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "800",
+    color: "#1D293D",
+  },
+
+  productMeta: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#62748E",
+  },
+
+  barcodeText: {
+    marginTop: 6,
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#90A1B9",
+  },
+
+  rightSide: {
+    alignItems: "flex-end",
+  },
+
+  statusPill: {
+    minHeight: 26,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  statusText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "700",
+  },
+
+  timeText: {
+    marginTop: 10,
+    fontSize: 11,
+    lineHeight: 14,
+    color: "#90A1B9",
   },
 });
