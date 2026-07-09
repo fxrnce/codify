@@ -17,6 +17,11 @@ export default function RootLayout() {
         >
           <Stack.Screen name="index" />
           <Stack.Screen name="onboarding" />
+
+          <Stack.Screen name="auth/sign-in" />
+          <Stack.Screen name="auth/sign-up" />
+          <Stack.Screen name="auth/forgot-password" />
+
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="product-result/[barcode]" />
           <Stack.Screen name="report-product" />

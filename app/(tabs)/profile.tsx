@@ -1,11 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
+
+const AUTH_STORAGE_KEY = "codify_mock_is_signed_in";
 
 type AlertItem = {
   id: string;
@@ -81,6 +91,12 @@ const SETTINGS_ITEMS: SettingItem[] = [
     route: "/account-details",
   },
   {
+    id: "reported-products",
+    label: "Reported Products",
+    icon: "flag-outline",
+    route: "/reported-products",
+  },
+  {
     id: "privacy-policy",
     label: "Privacy Policy",
     icon: "shield-outline",
@@ -125,6 +141,28 @@ export default function ProfileScreen() {
     }
 
     router.push(route as never);
+  };
+
+  const handleSignOut = () => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
+            router.replace("/auth/sign-in" as never);
+          } catch (error) {
+            console.log("Failed to sign out:", error);
+            Alert.alert("Sign Out Failed", "Please try again.");
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -345,7 +383,7 @@ export default function ProfileScreen() {
         </View>
       </LinearGradient>
 
-      <Pressable style={styles.signOutButton}>
+      <Pressable style={styles.signOutButton} onPress={handleSignOut}>
         <Ionicons name="log-out-outline" size={16} color="#FB2C36" />
         <Text style={styles.signOutText}>Sign Out</Text>
       </Pressable>
