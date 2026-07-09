@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,8 +7,23 @@ import { useScanHistory } from "@/contexts/ScanHistoryContext";
 
 import StatCard from "./StatCard";
 
+function getInitials(name: string) {
+  const words = name.trim().split(" ").filter(Boolean);
+
+  if (words.length === 0) {
+    return "C";
+  }
+
+  if (words.length === 1) {
+    return words[0][0].toUpperCase();
+  }
+
+  return `${words[0][0]}${words[1][0]}`.toUpperCase();
+}
+
 export default function Header() {
   const insets = useSafeAreaInsets();
+  const { user } = useUser();
   const { scanHistory } = useScanHistory();
 
   const totalScans = scanHistory.length;
@@ -19,6 +35,14 @@ export default function Header() {
   const alertCount = scanHistory.filter(
     (item) => item.status === "Caution" || item.status === "Not Approved",
   ).length;
+
+  const displayName =
+    user?.firstName ||
+    user?.fullName ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    "Codify User";
+
+  const avatarInitials = getInitials(displayName);
 
   return (
     <LinearGradient
@@ -37,14 +61,16 @@ export default function Header() {
       <View style={styles.bottomCircle} />
 
       <View style={styles.topRow}>
-        <View>
+        <View style={styles.greetingBox}>
           <Text style={styles.welcome}>Welcome to Codify,</Text>
 
-          <Text style={styles.name}>Demo 👋</Text>
+          <Text style={styles.name} numberOfLines={1}>
+            {displayName} 👋
+          </Text>
         </View>
 
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>D</Text>
+          <Text style={styles.avatarText}>{avatarInitials}</Text>
         </View>
       </View>
 
@@ -83,6 +109,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
     paddingHorizontal: 34,
+  },
+
+  greetingBox: {
+    flex: 1,
+    paddingRight: 14,
   },
 
   welcome: {

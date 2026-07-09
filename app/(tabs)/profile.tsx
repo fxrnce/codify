@@ -1,5 +1,5 @@
+import { useClerk, useUser } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -14,8 +14,6 @@ import {
 
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
-
-const AUTH_STORAGE_KEY = "codify_mock_is_signed_in";
 
 type AlertItem = {
   id: string;
@@ -116,14 +114,41 @@ const SETTINGS_ITEMS: SettingItem[] = [
   },
 ];
 
+function getInitials(name: string) {
+  const words = name.trim().split(" ").filter(Boolean);
+
+  if (words.length === 0) {
+    return "CU";
+  }
+
+  if (words.length === 1) {
+    return words[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${words[0][0]}${words[1][0]}`.toUpperCase();
+}
+
 export default function ProfileScreen() {
   const router = useRouter();
+  const { signOut } = useClerk();
+  const { user } = useUser();
+
   const { selectedAllergens, toggleAllergen, isAllergenSelected } =
     useAllergenAlerts();
 
   const { scanHistory } = useScanHistory();
 
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+
+  const displayName =
+    user?.fullName ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    "Codify User";
+
+  const emailAddress =
+    user?.primaryEmailAddress?.emailAddress || "No email address";
+
+  const avatarInitials = getInitials(displayName);
 
   const toggleGroup = (title: string) => {
     setExpandedGroups((currentGroups) => {
@@ -154,7 +179,7 @@ export default function ProfileScreen() {
         style: "destructive",
         onPress: async () => {
           try {
-            await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
+            await signOut();
             router.replace("/auth/sign-in" as never);
           } catch (error) {
             console.log("Failed to sign out:", error);
@@ -195,15 +220,15 @@ export default function ProfileScreen() {
         <View style={styles.userRow}>
           <View>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>DU</Text>
+              <Text style={styles.avatarText}>{avatarInitials}</Text>
             </View>
 
             <View style={styles.onlineDot} />
           </View>
 
           <View style={styles.userInfo}>
-            <Text style={styles.name}>Demo User</Text>
-            <Text style={styles.email}>demo@codify.ph</Text>
+            <Text style={styles.name}>{displayName}</Text>
+            <Text style={styles.email}>{emailAddress}</Text>
 
             <View style={styles.memberBadge}>
               <Ionicons name="star" size={13} color="#FFD230" />

@@ -1,34 +1,44 @@
+import { ClerkProvider } from "@clerk/expo";
+import { tokenCache } from "@clerk/expo/token-cache";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import { AllergenProvider } from "@/contexts/AllergenContext";
 import { ScanHistoryProvider } from "@/contexts/ScanHistoryContext";
 
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+if (!publishableKey) {
+  throw new Error(
+    "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY. Add it inside your .env file.",
+  );
+}
+
 export default function RootLayout() {
   return (
-    <AllergenProvider>
-      <ScanHistoryProvider>
-        <StatusBar style="light" />
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <AllergenProvider>
+        <ScanHistoryProvider>
+          <StatusBar style="light" />
 
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="onboarding" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="onboarding" />
 
-          <Stack.Screen name="auth/sign-in" />
-          <Stack.Screen name="auth/sign-up" />
-          <Stack.Screen name="auth/forgot-password" />
+            <Stack.Screen name="auth" />
 
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="product-result/[barcode]" />
-          <Stack.Screen name="report-product" />
-          <Stack.Screen name="reported-products" />
-          <Stack.Screen name="search-product" />
-        </Stack>
-      </ScanHistoryProvider>
-    </AllergenProvider>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="product-result/[barcode]" />
+            <Stack.Screen name="report-product" />
+            <Stack.Screen name="reported-products" />
+            <Stack.Screen name="search-product" />
+          </Stack>
+        </ScanHistoryProvider>
+      </AllergenProvider>
+    </ClerkProvider>
   );
 }

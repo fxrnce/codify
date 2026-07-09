@@ -1,16 +1,21 @@
+import { useAuth } from "@clerk/expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 const ONBOARDING_STORAGE_KEY = "codify_has_seen_onboarding_v2";
-const AUTH_STORAGE_KEY = "codify_mock_is_signed_in";
 
 export default function IndexScreen() {
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
     const checkAppStart = async () => {
+      if (!isLoaded) {
+        return;
+      }
+
       try {
         const hasSeenOnboarding = await AsyncStorage.getItem(
           ONBOARDING_STORAGE_KEY,
@@ -21,9 +26,7 @@ export default function IndexScreen() {
           return;
         }
 
-        const isSignedIn = await AsyncStorage.getItem(AUTH_STORAGE_KEY);
-
-        if (isSignedIn === "true") {
+        if (isSignedIn) {
           router.replace("/(tabs)" as never);
         } else {
           router.replace("/auth/sign-in" as never);
@@ -35,7 +38,7 @@ export default function IndexScreen() {
     };
 
     checkAppStart();
-  }, [router]);
+  }, [isLoaded, isSignedIn, router]);
 
   return <View style={styles.screen} />;
 }

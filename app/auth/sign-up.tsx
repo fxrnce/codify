@@ -1,60 +1,253 @@
+import { useSignUp } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import CodifyLogoSvg from "@/assets/icons/images/codify-logo.svg";
 
-const AUTH_STORAGE_KEY = "codify_mock_is_signed_in";
+function getErrorMessage(error: any) {
+  return (
+    error?.errors?.[0]?.message ||
+    error?.message ||
+    "Something went wrong. Please try again."
+  );
+}
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { signUp, fetchStatus } = useSignUp();
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const signUp = async () => {
-    const cleanedName = fullName.trim();
-    const cleanedEmail = email.trim();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
 
-    if (!cleanedName || !cleanedEmail || !password || !confirmPassword) {
-      Alert.alert("Missing Details", "Please complete all fields.");
+  const isLoading = fetchStatus === "fetching";
+
+  const goHome = async () => {
+    await signUp.finalize({
+      navigate: () => {
+        router.replace("/(tabs)" as never);
+      },
+    });
+  };
+
+  const createAccount = async () => {
+    const cleanedEmail = emailAddress.trim();
+    const cleanedPassword = password.trim();
+    const cleanedConfirmPassword = confirmPassword.trim();
+
+    if (!cleanedEmail || !cleanedPassword || !cleanedConfirmPassword) {
+      Alert.alert(
+        "Missing Details",
+        "Please enter your email, password, and confirm password.",
+      );
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Weak Password", "Password should be at least 6 characters.");
+    if (cleanedPassword !== cleanedConfirmPassword) {
+      Alert.alert(
+        "Password Mismatch",
+        "Password and confirm password do not match.",
+      );
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert("Password Mismatch", "Passwords do not match.");
+    if (cleanedPassword.length < 8) {
+      Alert.alert("Weak Password", "Password should be at least 8 characters.");
+      return;
+    }
+
+    if (!/[A-Z]/.test(cleanedPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "Password should include at least one uppercase letter.",
+      );
+      return;
+    }
+
+    if (!/[a-z]/.test(cleanedPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "Password should include at least one lowercase letter.",
+      );
+      return;
+    }
+
+    if (!/[0-9]/.test(cleanedPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "Password should include at least one number.",
+      );
       return;
     }
 
     try {
-      await AsyncStorage.setItem(AUTH_STORAGE_KEY, "true");
-      router.replace("/(tabs)" as never);
+      const { error } = await signUp.password({
+        emailAddress: cleanedEmail,
+        password: cleanedPassword,
+      });
+
+      if (error) {
+        Alert.alert("Sign Up Failed", getErrorMessage(error));
+        return;
+      }
+
+      await signUp.verifications.sendEmailCode();
+
+      setIsVerifying(true);
+      Alert.alert("Verification Code Sent", "Please check your email.");
     } catch (error) {
       console.log("Failed to create account:", error);
-      Alert.alert("Sign Up Failed", "Please try again.");
+      Alert.alert("Sign Up Failed", getErrorMessage(error));
     }
   };
+
+  const verifyAccount = async () => {
+    const cleanedCode = code.trim();
+
+    if (!cleanedCode) {
+      Alert.alert("Code Required", "Please enter your verification code.");
+      return;
+    }
+
+    try {
+      await signUp.verifications.verifyEmailCode({
+        code: cleanedCode,
+      });
+
+      if (signUp.status === "complete") {
+        await goHome();
+        return;
+      }
+
+      Alert.alert(
+        "Verification Not Complete",
+        "Please check the code and try again.",
+      );
+    } catch (error) {
+      console.log("Failed to verify account:", error);
+      Alert.alert("Verification Failed", getErrorMessage(error));
+    }
+  };
+
+  const resendCode = async () => {
+    try {
+      await signUp.verifications.sendEmailCode();
+      Alert.alert("Code Sent", "A new verification code was sent.");
+    } catch (error) {
+      console.log("Failed to resend code:", error);
+      Alert.alert("Failed to Send Code", getErrorMessage(error));
+    }
+  };
+
+  const startOver = () => {
+    signUp.reset();
+    setIsVerifying(false);
+    setCode("");
+    setPassword("");
+    setConfirmPassword("");
+    setIsPasswordVisible(false);
+    setIsConfirmPasswordVisible(false);
+  };
+
+  if (isVerifying) {
+    return (
+      <KeyboardAvoidingView
+        style={styles.screen}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <StatusBar style="dark" />
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.content}
+        >
+          <Pressable style={styles.backButton} onPress={startOver}>
+            <Ionicons name="arrow-back" size={20} color="#1D293D" />
+          </Pressable>
+
+          <View style={styles.logoWrapper}>
+            <View style={styles.logoCard}>
+              <CodifyLogoSvg width={46} height={40} />
+            </View>
+          </View>
+
+          <Text style={styles.title}>Verify your account</Text>
+
+          <Text style={styles.subtitle}>
+            Enter the verification code sent to your email.
+          </Text>
+
+          <View style={styles.formCard}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Verification Code</Text>
+
+              <View style={styles.inputBox}>
+                <Ionicons name="keypad-outline" size={20} color="#90A1B9" />
+
+                <TextInput
+                  value={code}
+                  onChangeText={setCode}
+                  placeholder="Enter code"
+                  placeholderTextColor="#90A1B9"
+                  keyboardType="number-pad"
+                  style={styles.input}
+                />
+              </View>
+            </View>
+
+            <Pressable
+              style={[
+                styles.signUpButtonWrapper,
+                isLoading && styles.buttonDisabled,
+              ]}
+              onPress={verifyAccount}
+              disabled={isLoading}
+            >
+              <LinearGradient
+                colors={["#2563EB", "#4F46E5", "#7C3AED"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[styles.signUpButton, styles.verifyButton]}
+              >
+                <Text style={[styles.signUpText, styles.verifyButtonText]}>
+                  {isLoading ? "Verifying..." : "Verify"}
+                </Text>
+              </LinearGradient>
+            </Pressable>
+
+            <Pressable style={styles.secondaryButton} onPress={resendCode}>
+              <Text style={styles.secondaryText}>Send new code</Text>
+            </Pressable>
+
+            <Pressable style={styles.secondaryButton} onPress={startOver}>
+              <Text style={styles.secondaryText}>Start over</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -81,35 +274,20 @@ export default function SignUpScreen() {
         <Text style={styles.title}>Create Account</Text>
 
         <Text style={styles.subtitle}>
-          Set up your Codify account to save scans, reports, and safety
+          Create your Codify account to save scans, reports, and safety
           preferences.
         </Text>
 
         <View style={styles.formCard}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Full Name</Text>
-
-            <View style={styles.inputBox}>
-              <Ionicons name="person-outline" size={20} color="#90A1B9" />
-              <TextInput
-                value={fullName}
-                onChangeText={setFullName}
-                placeholder="Enter your full name"
-                placeholderTextColor="#90A1B9"
-                autoCapitalize="words"
-                style={styles.input}
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Email Address</Text>
 
             <View style={styles.inputBox}>
               <Ionicons name="mail-outline" size={20} color="#90A1B9" />
+
               <TextInput
-                value={email}
-                onChangeText={setEmail}
+                value={emailAddress}
+                onChangeText={setEmailAddress}
                 placeholder="Enter your email"
                 placeholderTextColor="#90A1B9"
                 autoCapitalize="none"
@@ -124,14 +302,26 @@ export default function SignUpScreen() {
 
             <View style={styles.inputBox}>
               <Ionicons name="lock-closed-outline" size={20} color="#90A1B9" />
+
               <TextInput
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Create password"
                 placeholderTextColor="#90A1B9"
-                secureTextEntry
+                secureTextEntry={!isPasswordVisible}
                 style={styles.input}
               />
+
+              <Pressable
+                style={styles.eyeButton}
+                onPress={() => setIsPasswordVisible((current) => !current)}
+              >
+                <Ionicons
+                  name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#90A1B9"
+                />
+              </Pressable>
             </View>
           </View>
 
@@ -139,30 +329,54 @@ export default function SignUpScreen() {
             <Text style={styles.inputLabel}>Confirm Password</Text>
 
             <View style={styles.inputBox}>
-              <Ionicons
-                name="shield-checkmark-outline"
-                size={20}
-                color="#90A1B9"
-              />
+              <Ionicons name="lock-closed-outline" size={20} color="#90A1B9" />
+
               <TextInput
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="Confirm password"
                 placeholderTextColor="#90A1B9"
-                secureTextEntry
+                secureTextEntry={!isConfirmPasswordVisible}
                 style={styles.input}
               />
+
+              <Pressable
+                style={styles.eyeButton}
+                onPress={() =>
+                  setIsConfirmPasswordVisible((current) => !current)
+                }
+              >
+                <Ionicons
+                  name={
+                    isConfirmPasswordVisible ? "eye-off-outline" : "eye-outline"
+                  }
+                  size={20}
+                  color="#90A1B9"
+                />
+              </Pressable>
             </View>
           </View>
 
-          <Pressable style={styles.signUpButtonWrapper} onPress={signUp}>
+          <View nativeID="clerk-captcha" />
+
+          <Pressable
+            style={[
+              styles.signUpButtonWrapper,
+              isLoading && styles.buttonDisabled,
+            ]}
+            onPress={createAccount}
+            disabled={isLoading}
+          >
             <LinearGradient
               colors={["#2563EB", "#4F46E5", "#7C3AED"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.signUpButton}
             >
-              <Text style={styles.signUpText}>Create Account</Text>
+              <Text style={styles.signUpText}>
+                {isLoading ? "Creating..." : "Create Account"}
+              </Text>
+
               <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
             </LinearGradient>
           </Pressable>
@@ -181,6 +395,17 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
+  verifyButton: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  verifyButtonText: {
+    flex: 0,
+    width: "100%",
+    textAlign: "center",
+  },
+
   screen: {
     flex: 1,
     backgroundColor: "#F8FAFC",
@@ -303,6 +528,14 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
 
+  eyeButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   signUpButtonWrapper: {
     height: 56,
     borderRadius: 18,
@@ -332,6 +565,26 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: "900",
     color: "#FFFFFF",
+  },
+
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+
+  secondaryButton: {
+    marginTop: 14,
+    height: 46,
+    borderRadius: 16,
+    backgroundColor: "#EEF2FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  secondaryText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "800",
+    color: "#4F39F6",
   },
 
   bottomRow: {

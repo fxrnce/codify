@@ -1,14 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Tabs, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/expo";
+import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import HistoryIcon from "@/assets/icons/history.svg";
 import HomeIcon from "@/assets/icons/home.svg";
 import ProfileIcon from "@/assets/icons/profile.svg";
 import ScannerIcon from "@/assets/icons/scanner.svg";
-
-const AUTH_STORAGE_KEY = "codify_mock_is_signed_in";
 
 type TabIconProps = {
   focused: boolean;
@@ -32,31 +29,14 @@ function TabIcon({ focused, Icon }: TabIconProps) {
 }
 
 export default function TabLayout() {
-  const router = useRouter();
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const { isSignedIn, isLoaded } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const isSignedIn = await AsyncStorage.getItem(AUTH_STORAGE_KEY);
-
-        if (isSignedIn !== "true") {
-          router.replace("/auth/sign-in" as never);
-          return;
-        }
-
-        setIsCheckingAuth(false);
-      } catch (error) {
-        console.log("Failed to check auth:", error);
-        router.replace("/auth/sign-in" as never);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-  if (isCheckingAuth) {
+  if (!isLoaded) {
     return <View style={styles.loadingScreen} />;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/auth/sign-in" />;
   }
 
   return (
