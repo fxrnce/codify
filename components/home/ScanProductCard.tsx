@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
-import { Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Card from "@/components/common/Card";
-import PrimaryButton from "@/components/common/PrimaryButton";
 
 import ScanIllustration from "./scan-product/ScanIllustration";
 import { styles } from "./scan-product/styles";
@@ -12,6 +11,10 @@ export default function ScanProductCard() {
 
   const goToScanner = () => {
     router.push("/scanner");
+  };
+
+  const goToSearch = () => {
+    router.push("/search-product" as never);
   };
 
   return (
@@ -30,8 +33,14 @@ export default function ScanProductCard() {
             code.
           </Text>
 
-          <View style={styles.button}>
-            <PrimaryButton title="Scan Now" onPress={goToScanner} />
+          <View style={localStyles.actionRow}>
+            <Pressable style={localStyles.scanButton} onPress={goToScanner}>
+              <Text style={localStyles.scanButtonText}>Scan Now</Text>
+            </Pressable>
+
+            <Pressable style={localStyles.searchButton} onPress={goToSearch}>
+              <Text style={localStyles.searchButtonText}>Search</Text>
+            </Pressable>
           </View>
         </View>
 
@@ -42,3 +51,46 @@ export default function ScanProductCard() {
     </Card>
   );
 }
+
+const localStyles = StyleSheet.create({
+  actionRow: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  scanButton: {
+    height: 42,
+    paddingHorizontal: 20,
+    borderRadius: 999,
+    backgroundColor: "#4F39F6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  scanButtonText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  searchButton: {
+    height: 42,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1,
+    borderColor: "#E0E7FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  searchButtonText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#4F39F6",
+  },
+});

@@ -1,16 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Alert,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
 import { ScanHistoryItem, useScanHistory } from "@/contexts/ScanHistoryContext";
+
+type HistoryFilter = "All" | "Approved" | "Caution" | "Unsafe";
+
+const FILTERS: HistoryFilter[] = ["All", "Approved", "Caution", "Unsafe"];
 
 function getStatusStyle(status: ScanHistoryItem["status"]) {
   if (status === "Approved") {
@@ -54,6 +60,9 @@ export default function HistoryScreen() {
   const router = useRouter();
   const { scanHistory, clearScanHistory } = useScanHistory();
 
+  const [searchText, setSearchText] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<HistoryFilter>("All");
+
   const approvedCount = scanHistory.filter(
     (item) => item.status === "Approved",
   ).length;
@@ -65,6 +74,25 @@ export default function HistoryScreen() {
   const unsafeCount = scanHistory.filter(
     (item) => item.status === "Not Approved",
   ).length;
+
+  const normalizedSearchText = searchText.trim().toLowerCase();
+
+  const filteredScans = scanHistory.filter((item) => {
+    const matchesSearch =
+      normalizedSearchText.length === 0 ||
+      item.name.toLowerCase().includes(normalizedSearchText) ||
+      item.brand.toLowerCase().includes(normalizedSearchText) ||
+      item.category.toLowerCase().includes(normalizedSearchText) ||
+      item.barcode.toLowerCase().includes(normalizedSearchText) ||
+      item.fdaStatusLabel.toLowerCase().includes(normalizedSearchText);
+
+    const matchesFilter =
+      selectedFilter === "All" ||
+      item.status === selectedFilter ||
+      (selectedFilter === "Unsafe" && item.status === "Not Approved");
+
+    return matchesSearch && matchesFilter;
+  });
 
   const goToScanner = () => {
     router.push("/scanner");
@@ -96,6 +124,11 @@ export default function HistoryScreen() {
         },
       ],
     );
+  };
+
+  const clearSearchAndFilter = () => {
+    setSearchText("");
+    setSelectedFilter("All");
   };
 
   const productCountText =
@@ -194,64 +227,132 @@ export default function HistoryScreen() {
             </LinearGradient>
           </Pressable>
 
-          {scanHistory.map((item) => {
-            const statusStyle = getStatusStyle(item.status);
+          <View style={styles.searchContainer}>
+            <Ionicons name="search-outline" size={18} color="#90A1B9" />
 
-            return (
-              <Pressable
-                key={item.id}
-                style={({ pressed }) => [
-                  styles.historyCard,
-                  pressed && { opacity: 0.85 },
-                ]}
-                onPress={() => openProductResult(item.barcode)}
-              >
-                <View
+            <TextInput
+              value={searchText}
+              onChangeText={setSearchText}
+              placeholder="Search product, brand, or barcode"
+              placeholderTextColor="#90A1B9"
+              style={styles.searchInput}
+            />
+
+            {searchText.length > 0 && (
+              <Pressable onPress={() => setSearchText("")}>
+                <Ionicons name="close-circle" size={18} color="#90A1B9" />
+              </Pressable>
+            )}
+          </View>
+
+          <View style={styles.filterRow}>
+            {FILTERS.map((filter) => {
+              const isSelected = selectedFilter === filter;
+
+              return (
+                <Pressable
+                  key={filter}
                   style={[
-                    styles.statusIconBox,
-                    { backgroundColor: statusStyle.bg },
+                    styles.filterChip,
+                    isSelected && styles.filterChipSelected,
                   ]}
+                  onPress={() => setSelectedFilter(filter)}
                 >
-                  <Ionicons
-                    name={statusStyle.icon}
-                    size={22}
-                    color={statusStyle.color}
-                  />
-                </View>
-
-                <View style={styles.historyInfo}>
-                  <Text numberOfLines={1} style={styles.productName}>
-                    {item.name}
+                  <Text
+                    style={[
+                      styles.filterText,
+                      isSelected && styles.filterTextSelected,
+                    ]}
+                  >
+                    {filter}
                   </Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
-                  <Text numberOfLines={1} style={styles.productMeta}>
-                    {item.brand} • {item.category}
-                  </Text>
+          {filteredScans.length === 0 ? (
+            <View style={styles.noMatchContainer}>
+              <View style={styles.noMatchIconBox}>
+                <Ionicons name="search-outline" size={34} color="#CBD5E1" />
+              </View>
 
-                  <Text style={styles.barcodeText}>{item.barcode}</Text>
-                </View>
+              <Text style={styles.noMatchTitle}>No matching scans found</Text>
 
-                <View style={styles.rightSide}>
+              <Text style={styles.noMatchText}>
+                Try another keyword or change the selected filter.
+              </Text>
+
+              <Pressable
+                style={styles.resetFilterButton}
+                onPress={clearSearchAndFilter}
+              >
+                <Text style={styles.resetFilterText}>Reset Search</Text>
+              </Pressable>
+            </View>
+          ) : (
+            filteredScans.map((item) => {
+              const statusStyle = getStatusStyle(item.status);
+
+              return (
+                <Pressable
+                  key={item.id}
+                  style={({ pressed }) => [
+                    styles.historyCard,
+                    pressed && { opacity: 0.85 },
+                  ]}
+                  onPress={() => openProductResult(item.barcode)}
+                >
                   <View
                     style={[
-                      styles.statusPill,
+                      styles.statusIconBox,
                       { backgroundColor: statusStyle.bg },
                     ]}
                   >
-                    <Text
-                      style={[styles.statusText, { color: statusStyle.color }]}
-                    >
-                      {statusStyle.label}
-                    </Text>
+                    <Ionicons
+                      name={statusStyle.icon}
+                      size={22}
+                      color={statusStyle.color}
+                    />
                   </View>
 
-                  <Text style={styles.timeText}>
-                    {formatScanTime(item.scannedAt)}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
+                  <View style={styles.historyInfo}>
+                    <Text numberOfLines={1} style={styles.productName}>
+                      {item.name}
+                    </Text>
+
+                    <Text numberOfLines={1} style={styles.productMeta}>
+                      {item.brand} • {item.category}
+                    </Text>
+
+                    <Text style={styles.barcodeText}>{item.barcode}</Text>
+                  </View>
+
+                  <View style={styles.rightSide}>
+                    <View
+                      style={[
+                        styles.statusPill,
+                        { backgroundColor: statusStyle.bg },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: statusStyle.color },
+                        ]}
+                      >
+                        {statusStyle.label}
+                      </Text>
+                    </View>
+
+                    <Text style={styles.timeText}>
+                      {formatScanTime(item.scannedAt)}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })
+          )}
         </ScrollView>
       )}
     </View>
@@ -438,7 +539,7 @@ const styles = StyleSheet.create({
 
   scanAgainWrapper: {
     height: 52,
-    marginBottom: 16,
+    marginBottom: 14,
     shadowColor: "#C6D2FF",
     shadowOffset: {
       width: 0,
@@ -463,6 +564,117 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+
+  searchContainer: {
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+
+    shadowColor: "#4F46E5",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
+  },
+
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#1D293D",
+    paddingVertical: 0,
+  },
+
+  filterRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 14,
+  },
+
+  filterChip: {
+    height: 36,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 14,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  filterChipSelected: {
+    backgroundColor: "#EEF2FF",
+    borderColor: "#C7D2FE",
+  },
+
+  filterText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#62748E",
+  },
+
+  filterTextSelected: {
+    color: "#4F39F6",
+  },
+
+  noMatchContainer: {
+    marginTop: 28,
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+
+  noMatchIconBox: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  noMatchTitle: {
+    marginTop: 18,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: "800",
+    color: "#1D293D",
+  },
+
+  noMatchText: {
+    marginTop: 6,
+    fontSize: 14,
+    lineHeight: 22,
+    color: "#90A1B9",
+    textAlign: "center",
+  },
+
+  resetFilterButton: {
+    marginTop: 18,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: "#EEF2FF",
+    paddingHorizontal: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  resetFilterText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#4F39F6",
   },
 
   historyCard: {

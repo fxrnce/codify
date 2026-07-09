@@ -70,6 +70,10 @@ export default function ScannerScreen() {
     });
   };
 
+  const goToSearch = () => {
+    router.push("/search-product" as never);
+  };
+
   const handleOpenCamera = async () => {
     if (!permission) {
       return;
@@ -223,6 +227,11 @@ export default function ScannerScreen() {
           ]}
         >
           <Text style={styles.verifyButtonText}>Verify Product</Text>
+        </Pressable>
+
+        <Pressable onPress={goToSearch} style={styles.searchProductButton}>
+          <Ionicons name="search-outline" size={18} color="#4F39F6" />
+          <Text style={styles.searchProductText}>Search Product Instead</Text>
         </Pressable>
 
         <View style={styles.sampleCard}>
@@ -493,6 +502,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "500",
+  },
+
+  searchProductButton: {
+    width: FRAME_SIZE,
+    height: 50,
+    marginTop: 12,
+    borderRadius: 14,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1,
+    borderColor: "#E0E7FF",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  searchProductText: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "700",
+    color: "#4F39F6",
   },
 
   sampleCard: {

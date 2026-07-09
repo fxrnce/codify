@@ -3,7 +3,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
-  Alert,
   Pressable,
   ScrollView,
   Share,
@@ -80,11 +79,14 @@ export default function ProductResultScreen() {
   };
 
   const handleReportProduct = () => {
-    Alert.alert(
-      "Report Product",
-      "This will be connected to a report form later. For now, the product is saved as unverified in your scan history.",
-    );
+    router.push({
+      pathname: "/report-product",
+      params: {
+        barcode,
+      },
+    });
   };
+
   useEffect(() => {
     if (openedFromHistory) {
       return;
@@ -220,7 +222,9 @@ export default function ProductResultScreen() {
 
           <Pressable style={styles.secondaryActionButton} onPress={goToHistory}>
             <Ionicons name="time-outline" size={18} color="#4F39F6" />
-            <Text style={styles.secondaryActionText}>View in History</Text>
+            <Text numberOfLines={1} style={styles.secondaryActionText}>
+              View{"\u00A0"}in{"\u00A0"}History
+            </Text>
           </Pressable>
 
           <Pressable style={styles.reportButton} onPress={handleReportProduct}>

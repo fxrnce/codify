@@ -14,7 +14,15 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
           }}
-        />
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="onboarding" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="product-result/[barcode]" />
+          <Stack.Screen name="report-product" />
+          <Stack.Screen name="reported-products" />
+          <Stack.Screen name="search-product" />
+        </Stack>
       </ScanHistoryProvider>
     </AllergenProvider>
   );
