@@ -4,17 +4,17 @@ import Card from "@/components/common/Card";
 
 const barcodes = [
   {
-    code: "4800016644283",
+    code: "4800011234567",
     name: "Milk Chocolate Bar",
     color: "#10D39A",
   },
   {
-    code: "4800888123456",
+    code: "4800017654321",
     name: "PureGlow Facial Cleaner",
     color: "#FDB515",
   },
   {
-    code: "9556001234567",
+    code: "0000000000000",
     name: "Energy Drink X",
     color: "#FF6363",
   },

@@ -3,12 +3,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import { ProductStatus, demoProducts } from "@/constants/MockData";
@@ -84,6 +84,7 @@ export default function SearchProductScreen() {
       pathname: "/product-result/[barcode]",
       params: {
         barcode,
+        from: "search",
       },
     });
   };

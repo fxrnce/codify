@@ -66,6 +66,7 @@ export default function ScannerScreen() {
       pathname: "/product-result/[barcode]",
       params: {
         barcode: cleanedBarcode,
+        from: "scanner",
       },
     });
   };

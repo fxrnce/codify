@@ -116,15 +116,42 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    if (cleanedNewPassword.length < 6) {
-      Alert.alert("Weak Password", "Password should be at least 6 characters.");
-      return;
-    }
-
     if (cleanedNewPassword !== cleanedConfirmPassword) {
       Alert.alert(
         "Password Mismatch",
         "New password and confirm password do not match.",
+      );
+      return;
+    }
+
+    if (cleanedNewPassword.length < 8) {
+      Alert.alert(
+        "Weak Password",
+        "New password should be at least 8 characters.",
+      );
+      return;
+    }
+
+    if (!/[A-Z]/.test(cleanedNewPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "New password should include at least one uppercase letter.",
+      );
+      return;
+    }
+
+    if (!/[a-z]/.test(cleanedNewPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "New password should include at least one lowercase letter.",
+      );
+      return;
+    }
+
+    if (!/[0-9]/.test(cleanedNewPassword)) {
+      Alert.alert(
+        "Weak Password",
+        "New password should include at least one number.",
       );
       return;
     }
