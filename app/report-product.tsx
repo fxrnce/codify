@@ -1,18 +1,19 @@
+import { findProductByBarcode } from "@/constants/MockData";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 const REPORTS_STORAGE_KEY = "codify_product_reports";
@@ -41,6 +42,7 @@ export default function ReportProductScreen() {
   const params = useLocalSearchParams<{ barcode?: string }>();
 
   const barcode = params.barcode ?? "";
+  const product = findProductByBarcode(barcode);
 
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
@@ -48,6 +50,28 @@ export default function ReportProductScreen() {
   const [selectedReason, setSelectedReason] = useState(REPORT_REASONS[0]);
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!product) {
+      return;
+    }
+
+    setProductName(product.name);
+    setBrand(product.brand);
+    setCategory(product.category);
+
+    if (product.status === "Approved") {
+      setSelectedReason("Wrong product information");
+      return;
+    }
+
+    if (product.status === "Caution") {
+      setSelectedReason("Suspicious product");
+      return;
+    }
+
+    setSelectedReason("No FDA record found");
+  }, [product]);
 
   const goBack = () => {
     router.back();
@@ -104,7 +128,13 @@ export default function ReportProductScreen() {
         [
           {
             text: "View Reports",
-            onPress: () => router.replace("/reported-products" as never),
+            onPress: () =>
+              router.replace({
+                pathname: "/reported-products",
+                params: {
+                  from: "report-submitted",
+                },
+              }),
           },
           {
             text: "OK",

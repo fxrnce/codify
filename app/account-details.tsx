@@ -1,11 +1,13 @@
 import { useClerk, useUser } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -85,6 +87,7 @@ export default function AccountDetailsScreen() {
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isSavingProfileImage, setIsSavingProfileImage] = useState(false);
 
   const displayName =
     user?.fullName ||
@@ -96,6 +99,115 @@ export default function AccountDetailsScreen() {
 
   const avatarInitials = getInitials(displayName);
   const memberSince = formatMemberSince(user?.createdAt);
+  const profileImageUrl = user?.hasImage ? user.imageUrl : "";
+
+  const uploadProfileImage = async () => {
+    if (!user) {
+      Alert.alert("Account Error", "User account is not loaded yet.");
+      return;
+    }
+
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permissionResult.granted) {
+        Alert.alert(
+          "Permission Needed",
+          "Please allow photo access to update your profile picture.",
+        );
+        return;
+      }
+
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+        base64: true,
+      });
+
+      if (pickerResult.canceled) {
+        return;
+      }
+
+      const selectedImage = pickerResult.assets[0];
+
+      if (!selectedImage?.base64) {
+        Alert.alert(
+          "Image Error",
+          "The selected image could not be converted. Please try another photo.",
+        );
+        return;
+      }
+
+      const mimeType = selectedImage.mimeType || "image/jpeg";
+      const base64Image = `data:${mimeType};base64,${selectedImage.base64}`;
+
+      setIsSavingProfileImage(true);
+
+      await user.setProfileImage({
+        file: base64Image,
+      });
+
+      await user.reload();
+
+      Alert.alert(
+        "Profile Photo Updated",
+        "Your profile picture has been saved.",
+      );
+    } catch (error) {
+      console.log("Failed to update profile image:", error);
+      Alert.alert("Upload Failed", getErrorMessage(error));
+    } finally {
+      setIsSavingProfileImage(false);
+    }
+  };
+
+  const removeProfileImage = async () => {
+    if (!user) {
+      Alert.alert("Account Error", "User account is not loaded yet.");
+      return;
+    }
+
+    try {
+      setIsSavingProfileImage(true);
+
+      await user.setProfileImage({
+        file: null,
+      });
+
+      await user.reload();
+
+      Alert.alert(
+        "Profile Photo Removed",
+        "Your initials will be shown again.",
+      );
+    } catch (error) {
+      console.log("Failed to remove profile image:", error);
+      Alert.alert("Remove Failed", getErrorMessage(error));
+    } finally {
+      setIsSavingProfileImage(false);
+    }
+  };
+
+  const openProfileImageOptions = () => {
+    Alert.alert("Profile Photo", "Choose what you want to do.", [
+      {
+        text: "Choose Photo",
+        onPress: uploadProfileImage,
+      },
+      {
+        text: "Remove Photo",
+        style: "destructive",
+        onPress: removeProfileImage,
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
+  };
 
   const openEditNameModal = () => {
     setFirstName(user?.firstName || "");
@@ -505,14 +617,26 @@ export default function AccountDetailsScreen() {
           <View style={styles.avatarSection}>
             <View style={styles.avatarWrapper}>
               <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{avatarInitials}</Text>
+                {profileImageUrl ? (
+                  <Image
+                    source={{ uri: profileImageUrl }}
+                    style={styles.avatarImage}
+                  />
+                ) : (
+                  <Text style={styles.avatarText}>{avatarInitials}</Text>
+                )}
               </View>
 
               <Pressable
                 style={styles.cameraButton}
-                onPress={() => showComingSoon("Profile Photo")}
+                onPress={openProfileImageOptions}
+                disabled={isSavingProfileImage}
               >
-                <Ionicons name="camera-outline" size={14} color="#4F46E5" />
+                {isSavingProfileImage ? (
+                  <ActivityIndicator size="small" color="#4F46E5" />
+                ) : (
+                  <Ionicons name="camera-outline" size={14} color="#4F46E5" />
+                )}
               </Pressable>
             </View>
 
@@ -1166,6 +1290,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.4)",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
 
     shadowColor: "#000",
     shadowOffset: {
@@ -1175,6 +1300,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 24,
     elevation: 8,
+  },
+
+  avatarImage: {
+    width: "100%",
+    height: "100%",
   },
 
   avatarText: {

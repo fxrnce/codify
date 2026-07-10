@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -149,6 +150,7 @@ export default function ProfileScreen() {
     user?.primaryEmailAddress?.emailAddress || "No email address";
 
   const avatarInitials = getInitials(displayName);
+  const profileImageUrl = user?.hasImage ? user.imageUrl : "";
 
   const toggleGroup = (title: string) => {
     setExpandedGroups((currentGroups) => {
@@ -220,9 +222,15 @@ export default function ProfileScreen() {
         <View style={styles.userRow}>
           <View>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{avatarInitials}</Text>
+              {profileImageUrl ? (
+                <Image
+                  source={{ uri: profileImageUrl }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Text style={styles.avatarText}>{avatarInitials}</Text>
+              )}
             </View>
-
             <View style={styles.onlineDot} />
           </View>
 
@@ -503,6 +511,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.4)",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
 
     shadowColor: "#000",
     shadowOffset: {
@@ -512,6 +521,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 24,
     elevation: 8,
+  },
+
+  avatarImage: {
+    width: "100%",
+    height: "100%",
   },
 
   avatarText: {

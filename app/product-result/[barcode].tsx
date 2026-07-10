@@ -68,8 +68,33 @@ export default function ProductResultScreen() {
 
   const barcode = params.barcode ?? "";
   const openedFromHistory = params.from === "history";
+  const openedFromSearch = params.from === "search";
+  const openedFromReports = params.from === "reports";
   const product = findProductByBarcode(barcode);
 
+  const goBackFromResult = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    if (openedFromHistory) {
+      router.replace("/history" as never);
+      return;
+    }
+
+    if (openedFromSearch) {
+      router.replace("/search-product" as never);
+      return;
+    }
+
+    if (openedFromReports) {
+      router.replace("/reported-products" as never);
+      return;
+    }
+
+    router.replace("/scanner" as never);
+  };
   const goToHistory = () => {
     router.replace("/history" as never);
   };
@@ -131,7 +156,7 @@ export default function ProductResultScreen() {
           <View style={styles.bottomCircle} />
 
           <View style={styles.topRow}>
-            <Pressable style={styles.headerButton} onPress={goToHistory}>
+            <Pressable style={styles.headerButton} onPress={goBackFromResult}>
               <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
             </Pressable>
           </View>
@@ -256,7 +281,7 @@ export default function ProductResultScreen() {
         <View style={styles.bottomCircle} />
 
         <View style={styles.topRow}>
-          <Pressable style={styles.headerButton} onPress={goToHistory}>
+          <Pressable style={styles.headerButton} onPress={goBackFromResult}>
             <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
           </Pressable>
 
@@ -315,11 +340,20 @@ export default function ProductResultScreen() {
           scoreColor={statusColors.scoreColor}
         />
 
+        <ProductSafetyCard product={product} />
+
+        <ProductInfoCard product={product} />
+
         <NutritionCard product={product} />
 
         <IngredientsCard product={product} />
 
         <AlternativesCard product={product} />
+
+        <Pressable style={styles.reportButton} onPress={handleReportProduct}>
+          <Ionicons name="flag-outline" size={18} color="#E7000B" />
+          <Text style={styles.reportButtonText}>Report Product</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -410,6 +444,53 @@ function NutritionCard({ product }: { product: DemoProduct }) {
   );
 }
 
+function ProductSafetyCard({ product }: { product: DemoProduct }) {
+  return (
+    <View style={styles.safetyCard}>
+      <View style={styles.safetyIconBox}>
+        <Ionicons name="information-circle-outline" size={22} color="#4F39F6" />
+      </View>
+
+      <View style={styles.safetyTextBox}>
+        <Text style={styles.safetyTitle}>Safety Notes</Text>
+        <Text style={styles.safetyText}>{product.warningMessage}</Text>
+      </View>
+    </View>
+  );
+}
+
+function ProductInfoCard({ product }: { product: DemoProduct }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.ingredientsTitle}>Product Information</Text>
+
+      <View style={styles.infoRows}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Barcode</Text>
+          <Text style={styles.infoValue}>{product.barcode}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>FDA Status</Text>
+          <Text style={styles.infoValue}>{product.fdaStatusLabel}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Registration No.</Text>
+          <Text numberOfLines={1} style={styles.infoValue}>
+            {product.registrationNumber}
+          </Text>
+        </View>
+
+        <View style={styles.infoRowLast}>
+          <Text style={styles.infoLabel}>Category</Text>
+          <Text style={styles.infoValue}>{product.category}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function IngredientsCard({ product }: { product: DemoProduct }) {
   return (
     <View style={styles.card}>
@@ -476,6 +557,81 @@ function AlternativesCard({ product }: { product: DemoProduct }) {
 }
 
 const styles = StyleSheet.create({
+  safetyCard: {
+    minHeight: 92,
+    borderRadius: 16,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1.17,
+    borderColor: "#E0E7FF",
+    padding: 16,
+    flexDirection: "row",
+  },
+
+  safetyIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    backgroundColor: "#E0E7FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  safetyTextBox: {
+    marginLeft: 12,
+    flex: 1,
+  },
+
+  safetyTitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "800",
+    color: "#312E81",
+  },
+
+  safetyText: {
+    marginTop: 4,
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#4F39F6",
+  },
+
+  infoRows: {
+    marginTop: 14,
+  },
+
+  infoRow: {
+    minHeight: 42,
+    borderBottomWidth: 1.17,
+    borderBottomColor: "#F8FAFC",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 14,
+  },
+
+  infoRowLast: {
+    minHeight: 42,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 14,
+  },
+
+  infoLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#62748E",
+  },
+
+  infoValue: {
+    flexShrink: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#1D293D",
+    textAlign: "right",
+  },
+
   screen: {
     flex: 1,
     backgroundColor: "#F8FAFC",

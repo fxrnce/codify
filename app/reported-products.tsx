@@ -1,15 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const REPORTS_STORAGE_KEY = "codify_product_reports";
@@ -38,6 +38,8 @@ function formatReportTime(dateValue: string) {
 
 export default function ReportedProductsScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ from?: string }>();
+  const openedAfterReport = params.from === "report-submitted";
   const [reports, setReports] = useState<ProductReport[]>([]);
 
   const loadReports = async () => {
@@ -60,7 +62,36 @@ export default function ReportedProductsScreen() {
   );
 
   const goBack = () => {
-    router.back();
+    if (openedAfterReport) {
+      router.replace("/scanner" as never);
+      return;
+    }
+
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace("/scanner" as never);
+  };
+  const openProductResult = (report: ProductReport) => {
+    const cleanedBarcode = report.barcode.trim();
+
+    if (!cleanedBarcode || cleanedBarcode === "No barcode") {
+      Alert.alert(
+        "No Barcode",
+        "This report does not have a barcode to verify.",
+      );
+      return;
+    }
+
+    router.push({
+      pathname: "/product-result/[barcode]",
+      params: {
+        barcode: cleanedBarcode,
+        from: "reports",
+      },
+    });
   };
 
   const clearReports = () => {
@@ -131,8 +162,8 @@ export default function ReportedProductsScreen() {
           <Text style={styles.emptyTitle}>No reports yet</Text>
 
           <Text style={styles.emptyText}>
-            Product reports will appear here after you submit a report from an
-            unverified product.
+            Product reports will appear here after you submit a report from a
+            product result page.
           </Text>
 
           <Pressable
@@ -150,7 +181,14 @@ export default function ReportedProductsScreen() {
           showsVerticalScrollIndicator={false}
         >
           {reports.map((report) => (
-            <View key={report.id} style={styles.reportCard}>
+            <Pressable
+              key={report.id}
+              style={({ pressed }) => [
+                styles.reportCard,
+                pressed && { opacity: 0.85 },
+              ]}
+              onPress={() => openProductResult(report)}
+            >
               <View style={styles.reportTopRow}>
                 <View style={styles.reportIconBox}>
                   <Ionicons name="flag-outline" size={20} color="#E7000B" />
@@ -165,6 +203,8 @@ export default function ReportedProductsScreen() {
                     {report.brand} • {report.category}
                   </Text>
                 </View>
+
+                <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
               </View>
 
               <View style={styles.infoBox}>
@@ -196,7 +236,7 @@ export default function ReportedProductsScreen() {
                   <Text style={styles.notesText}>{report.notes}</Text>
                 </View>
               )}
-            </View>
+            </Pressable>
           ))}
         </ScrollView>
       )}
@@ -383,6 +423,7 @@ const styles = StyleSheet.create({
   reportInfo: {
     flex: 1,
     marginLeft: 12,
+    marginRight: 8,
   },
 
   productName: {

@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/expo";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
@@ -43,6 +43,7 @@ export default function Header() {
     "Codify User";
 
   const avatarInitials = getInitials(displayName);
+  const profileImageUrl = user?.hasImage ? user.imageUrl : "";
 
   return (
     <LinearGradient
@@ -70,7 +71,14 @@ export default function Header() {
         </View>
 
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{avatarInitials}</Text>
+          {profileImageUrl ? (
+            <Image
+              source={{ uri: profileImageUrl }}
+              style={styles.avatarImage}
+            />
+          ) : (
+            <Text style={styles.avatarText}>{avatarInitials}</Text>
+          )}
         </View>
       </View>
 
@@ -142,10 +150,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#1D5BFB",
 
-    opacity: 0.7,
+    overflow: "hidden",
 
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  avatarImage: {
+    width: "100%",
+    height: "100%",
   },
 
   avatarText: {
