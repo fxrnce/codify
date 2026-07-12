@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -34,8 +34,16 @@ export default function SignInScreen() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isClientTrustVerificationOpen, setIsClientTrustVerificationOpen] =
+    useState(false);
 
   const isLoading = fetchStatus === "fetching";
+
+  useEffect(() => {
+    if (signIn.status === "needs_client_trust") {
+      signIn.reset();
+    }
+  }, []);
 
   const goHome = async () => {
     await signIn.finalize({
@@ -77,6 +85,8 @@ export default function SignInScreen() {
 
         if (emailCodeFactor) {
           await signIn.mfa.sendEmailCode();
+          setIsClientTrustVerificationOpen(true);
+          Alert.alert("Verification Code Sent", "Please check your email.");
           return;
         }
       }
@@ -134,9 +144,10 @@ export default function SignInScreen() {
     setCode("");
     setPassword("");
     setIsPasswordVisible(false);
+    setIsClientTrustVerificationOpen(false);
   };
 
-  if (signIn.status === "needs_client_trust") {
+  if (isClientTrustVerificationOpen) {
     return (
       <KeyboardAvoidingView
         style={styles.screen}
