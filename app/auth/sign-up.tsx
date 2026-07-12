@@ -30,6 +30,8 @@ export default function SignUpScreen() {
   const router = useRouter();
   const { signUp, fetchStatus } = useSignUp();
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -51,14 +53,22 @@ export default function SignUpScreen() {
   };
 
   const createAccount = async () => {
+    const cleanedFirstName = firstName.trim();
+    const cleanedLastName = lastName.trim();
     const cleanedEmail = emailAddress.trim();
     const cleanedPassword = password.trim();
     const cleanedConfirmPassword = confirmPassword.trim();
 
-    if (!cleanedEmail || !cleanedPassword || !cleanedConfirmPassword) {
+    if (
+      !cleanedFirstName ||
+      !cleanedLastName ||
+      !cleanedEmail ||
+      !cleanedPassword ||
+      !cleanedConfirmPassword
+    ) {
       Alert.alert(
         "Missing Details",
-        "Please enter your email, password, and confirm password.",
+        "Please enter your first name, last name, email, password, and confirm password.",
       );
       return;
     }
@@ -102,6 +112,8 @@ export default function SignUpScreen() {
 
     try {
       const { error } = await signUp.password({
+        firstName: cleanedFirstName,
+        lastName: cleanedLastName,
         emailAddress: cleanedEmail,
         password: cleanedPassword,
       });
@@ -163,6 +175,8 @@ export default function SignUpScreen() {
     signUp.reset();
     setIsVerifying(false);
     setCode("");
+    setFirstName("");
+    setLastName("");
     setPassword("");
     setConfirmPassword("");
     setIsPasswordVisible(false);
@@ -279,6 +293,40 @@ export default function SignUpScreen() {
         </Text>
 
         <View style={styles.formCard}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>First Name</Text>
+
+            <View style={styles.inputBox}>
+              <Ionicons name="person-outline" size={20} color="#90A1B9" />
+
+              <TextInput
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="Enter first name"
+                placeholderTextColor="#90A1B9"
+                autoCapitalize="words"
+                style={styles.input}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Last Name</Text>
+
+            <View style={styles.inputBox}>
+              <Ionicons name="person-outline" size={20} color="#90A1B9" />
+
+              <TextInput
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Enter last name"
+                placeholderTextColor="#90A1B9"
+                autoCapitalize="words"
+                style={styles.input}
+              />
+            </View>
+          </View>
+
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Email Address</Text>
 

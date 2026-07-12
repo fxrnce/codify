@@ -1,8 +1,10 @@
 import { useClerk, useUser } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
+import * as AuthSession from "expo-auth-session";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -16,6 +18,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+
+WebBrowser.maybeCompleteAuthSession();
 
 function getInitials(name: string) {
   const words = name.trim().split(" ").filter(Boolean);
@@ -56,6 +60,69 @@ function getErrorMessage(error: any) {
   );
 }
 
+function isExternalAccountProvider(account: any, provider: string) {
+  return (
+    account?.provider === provider || account?.provider === `oauth_${provider}`
+  );
+}
+
+function isExternalAccountVerified(account: any) {
+  return (
+    account?.verification?.status === "verified" ||
+    account?.status === "verified" ||
+    account?.verified === true
+  );
+}
+
+function getConnectedExternalAccount(user: any, provider: string) {
+  return user?.externalAccounts?.find((account: any) => {
+    return (
+      isExternalAccountProvider(account, provider) &&
+      isExternalAccountVerified(account)
+    );
+  });
+}
+
+function getPendingExternalAccount(user: any, provider: string) {
+  return user?.externalAccounts?.find((account: any) => {
+    return (
+      isExternalAccountProvider(account, provider) &&
+      !isExternalAccountVerified(account)
+    );
+  });
+}
+
+function getExternalAccountLabel(account: any) {
+  if (!account) {
+    return "Not connected";
+  }
+
+  try {
+    if (typeof account.accountIdentifier === "function") {
+      const identifier = account.accountIdentifier();
+
+      if (identifier) {
+        return identifier;
+      }
+    }
+  } catch (error) {
+    console.log("Failed to read external account identifier:", error);
+  }
+
+  const fullName = [account.firstName, account.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    account.emailAddress ||
+    account.email ||
+    account.username ||
+    account.label ||
+    fullName ||
+    "Connected"
+  );
+}
+
 export default function AccountDetailsScreen() {
   const router = useRouter();
   const { signOut } = useClerk();
@@ -88,6 +155,7 @@ export default function AccountDetailsScreen() {
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [isSavingProfileImage, setIsSavingProfileImage] = useState(false);
+  const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
 
   const displayName =
     user?.fullName ||
@@ -100,6 +168,22 @@ export default function AccountDetailsScreen() {
   const avatarInitials = getInitials(displayName);
   const memberSince = formatMemberSince(user?.createdAt);
   const profileImageUrl = user?.hasImage ? user.imageUrl : "";
+
+  const accountUser = user as any;
+
+  const googleAccount = getConnectedExternalAccount(accountUser, "google");
+  const facebookAccount = getConnectedExternalAccount(accountUser, "facebook");
+
+  const googleAccountLabel = getExternalAccountLabel(googleAccount);
+  const facebookAccountLabel = getExternalAccountLabel(facebookAccount);
+
+  const passwordStatus = accountUser?.passwordEnabled
+    ? "Protected by Clerk"
+    : "No password set";
+
+  const twoFactorStatus = accountUser?.twoFactorEnabled
+    ? "Enabled"
+    : "Not enabled";
 
   const uploadProfileImage = async () => {
     if (!user) {
@@ -581,6 +665,113 @@ export default function AccountDetailsScreen() {
     Alert.alert(title, "This feature will be added next.");
   };
 
+  const connectGoogleAccount = async () => {
+    if (!user) {
+      Alert.alert("Account Error", "User account is not loaded yet.");
+      return;
+    }
+
+    if (googleAccount) {
+      Alert.alert(
+        "Google Connected",
+        `This account is connected as ${googleAccountLabel}.`,
+      );
+      return;
+    }
+
+    try {
+      setIsConnectingGoogle(true);
+
+      const oldPendingGoogleAccount = getPendingExternalAccount(user, "google");
+
+      if (oldPendingGoogleAccount?.destroy) {
+        await oldPendingGoogleAccount.destroy();
+        await user.reload();
+      }
+
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: "codify",
+        path: "/account-details",
+      });
+
+      const externalAccount = await user.createExternalAccount({
+        strategy: "oauth_google",
+        redirectUrl,
+      });
+
+      const verificationUrl =
+        externalAccount?.verification?.externalVerificationRedirectURL?.href;
+
+      if (!verificationUrl) {
+        Alert.alert(
+          "Google Connect Failed",
+          "Google verification did not start. Please try again.",
+        );
+        return;
+      }
+
+      const authResult = await WebBrowser.openAuthSessionAsync(
+        verificationUrl,
+        redirectUrl,
+      );
+
+      if (authResult.type !== "success") {
+        if (externalAccount?.destroy) {
+          await externalAccount.destroy();
+        }
+
+        await user.reload();
+
+        Alert.alert(
+          "Google Connect Cancelled",
+          "Google was not connected because the sign-in was not completed.",
+        );
+        return;
+      }
+
+      await user.reload();
+
+      const connectedGoogleAccount = getConnectedExternalAccount(
+        user,
+        "google",
+      );
+
+      if (!connectedGoogleAccount) {
+        Alert.alert(
+          "Google Connect Pending",
+          "Google verification did not finish. Please try again.",
+        );
+        return;
+      }
+
+      Alert.alert("Google Connected", "Your Google account has been linked.");
+    } catch (error) {
+      console.log("Failed to connect Google account:", error);
+      Alert.alert("Google Connect Failed", getErrorMessage(error));
+    } finally {
+      setIsConnectingGoogle(false);
+    }
+  };
+
+  const handleLinkedAccountPress = (
+    providerName: "Google" | "Facebook",
+    isConnected: boolean,
+    accountLabel: string,
+  ) => {
+    if (isConnected) {
+      Alert.alert(
+        `${providerName} Connected`,
+        `This account is connected as ${accountLabel}. Unlink account can be added later.`,
+      );
+      return;
+    }
+
+    Alert.alert(
+      `${providerName} Not Connected`,
+      `${providerName} linking needs OAuth setup in Clerk Dashboard first. We will add the real connect flow next.`,
+    );
+  };
+
   if (!isLoaded) {
     return (
       <View style={styles.loadingScreen}>
@@ -690,14 +881,26 @@ export default function AccountDetailsScreen() {
           <View style={styles.detailRow}>
             <View style={styles.detailTextBox}>
               <Text style={styles.rowTitle}>Password</Text>
-              <Text style={styles.mutedValue}>Protected by Clerk</Text>
+              <Text style={styles.mutedValue}>{passwordStatus}</Text>
             </View>
 
             <Pressable
               style={styles.pillButton}
-              onPress={openChangePasswordModal}
+              onPress={() => {
+                if (!accountUser?.passwordEnabled) {
+                  Alert.alert(
+                    "No Password Set",
+                    "This account does not have a password yet. For this prototype, please create an account using email and password.",
+                  );
+                  return;
+                }
+
+                openChangePasswordModal();
+              }}
             >
-              <Text style={styles.pillButtonText}>Change</Text>
+              <Text style={styles.pillButtonText}>
+                {accountUser?.passwordEnabled ? "Change" : "Info"}
+              </Text>
             </Pressable>
           </View>
 
@@ -706,14 +909,16 @@ export default function AccountDetailsScreen() {
           <View style={styles.detailRow}>
             <View style={styles.detailTextBox}>
               <Text style={styles.rowTitle}>Two-Factor Authenticator</Text>
-              <Text style={styles.mutedValue}>Not enabled</Text>
+              <Text style={styles.mutedValue}>{twoFactorStatus}</Text>
             </View>
 
             <Pressable
               style={styles.pillButton}
               onPress={() => showComingSoon("Two-Factor Authenticator")}
             >
-              <Text style={styles.pillButtonText}>Enable</Text>
+              <Text style={styles.pillButtonText}>
+                {accountUser?.twoFactorEnabled ? "Manage" : "Enable"}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -727,14 +932,21 @@ export default function AccountDetailsScreen() {
           <View style={styles.detailRow}>
             <View style={styles.detailTextBox}>
               <Text style={styles.rowTitle}>Google</Text>
-              <Text style={styles.mutedValue}>Not connected</Text>
+              <Text style={styles.mutedValue}>{googleAccountLabel}</Text>
             </View>
 
             <Pressable
-              style={styles.pillButton}
-              onPress={() => showComingSoon("Google Account")}
+              style={[styles.pillButton, isConnectingGoogle && styles.disabled]}
+              onPress={connectGoogleAccount}
+              disabled={isConnectingGoogle}
             >
-              <Text style={styles.pillButtonText}>Change</Text>
+              <Text style={styles.pillButtonText}>
+                {isConnectingGoogle
+                  ? "Opening..."
+                  : googleAccount
+                    ? "View"
+                    : "Connect"}
+              </Text>
             </Pressable>
           </View>
 
@@ -743,14 +955,22 @@ export default function AccountDetailsScreen() {
           <View style={styles.detailRow}>
             <View style={styles.detailTextBox}>
               <Text style={styles.rowTitle}>Facebook</Text>
-              <Text style={styles.mutedValue}>Not connected</Text>
+              <Text style={styles.mutedValue}>{facebookAccountLabel}</Text>
             </View>
 
             <Pressable
               style={styles.pillButton}
-              onPress={() => showComingSoon("Facebook Account")}
+              onPress={() =>
+                handleLinkedAccountPress(
+                  "Facebook",
+                  Boolean(facebookAccount),
+                  facebookAccountLabel,
+                )
+              }
             >
-              <Text style={styles.pillButtonText}>Enable</Text>
+              <Text style={styles.pillButtonText}>
+                {facebookAccount ? "View" : "Connect"}
+              </Text>
             </Pressable>
           </View>
         </View>
