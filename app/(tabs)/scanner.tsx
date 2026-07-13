@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -54,6 +54,24 @@ export default function ScannerScreen() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [hasScanned, setHasScanned] = useState(false);
 
+  const isNavigatingRef = useRef(false);
+
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
+      return;
+    }
+
+    isNavigatingRef.current = true;
+
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
+  };
+
   const openBarcodeResult = (code: string) => {
     const cleanedBarcode = code.trim();
 
@@ -62,17 +80,21 @@ export default function ScannerScreen() {
       return;
     }
 
-    router.push({
-      pathname: "/product-result/[barcode]",
-      params: {
-        barcode: cleanedBarcode,
-        from: "scanner",
-      },
+    navigateWithLock(() => {
+      router.push({
+        pathname: "/product-result/[barcode]",
+        params: {
+          barcode: cleanedBarcode,
+          from: "scanner",
+        },
+      });
     });
   };
 
   const goToSearch = () => {
-    router.push("/search-product" as never);
+    navigateWithLock(() => {
+      router.push("/search-product" as never);
+    });
   };
 
   const handleOpenCamera = async () => {

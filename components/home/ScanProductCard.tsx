@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { useRef } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Card from "@/components/common/Card";
@@ -9,12 +10,34 @@ import { styles } from "./scan-product/styles";
 export default function ScanProductCard() {
   const router = useRouter();
 
+  const isNavigatingRef = useRef(false);
+
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
+      return;
+    }
+
+    isNavigatingRef.current = true;
+
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
+  };
+
   const goToScanner = () => {
-    router.push("/scanner");
+    navigateWithLock(() => {
+      router.push("/scanner" as never);
+    });
   };
 
   const goToSearch = () => {
-    router.push("/search-product" as never);
+    navigateWithLock(() => {
+      router.push("/search-product" as never);
+    });
   };
 
   return (

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -39,12 +39,17 @@ function formatReportTime(dateValue: string) {
 export default function ReportedProductsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ from?: string }>();
+
   const openedAfterReport = params.from === "report-submitted";
+
   const [reports, setReports] = useState<ProductReport[]>([]);
+
+  const isNavigatingRef = useRef(false);
 
   const loadReports = async () => {
     try {
       const savedReports = await AsyncStorage.getItem(REPORTS_STORAGE_KEY);
+
       const parsedReports: ProductReport[] = savedReports
         ? JSON.parse(savedReports)
         : [];
@@ -61,19 +66,44 @@ export default function ReportedProductsScreen() {
     }, []),
   );
 
-  const goBack = () => {
-    if (openedAfterReport) {
-      router.replace("/scanner" as never);
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
       return;
     }
 
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
+    isNavigatingRef.current = true;
 
-    router.replace("/scanner" as never);
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
   };
+
+  const goBack = () => {
+    navigateWithLock(() => {
+      if (openedAfterReport) {
+        router.replace("/scanner" as never);
+        return;
+      }
+
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+
+      router.replace("/scanner" as never);
+    });
+  };
+
+  const goToScanner = () => {
+    navigateWithLock(() => {
+      router.replace("/scanner" as never);
+    });
+  };
+
   const openProductResult = (report: ProductReport) => {
     const cleanedBarcode = report.barcode.trim();
 
@@ -85,12 +115,14 @@ export default function ReportedProductsScreen() {
       return;
     }
 
-    router.push({
-      pathname: "/product-result/[barcode]",
-      params: {
-        barcode: cleanedBarcode,
-        from: "reports",
-      },
+    navigateWithLock(() => {
+      router.push({
+        pathname: "/product-result/[barcode]",
+        params: {
+          barcode: cleanedBarcode,
+          from: "reports",
+        },
+      });
     });
   };
 
@@ -145,6 +177,7 @@ export default function ReportedProductsScreen() {
         <View style={styles.headerContent}>
           <Text style={styles.headerLabel}>PRODUCT REPORTS</Text>
           <Text style={styles.headerTitle}>Reported Products</Text>
+
           <Text style={styles.headerSubtitle}>
             {reports.length === 1
               ? "1 saved report"
@@ -166,10 +199,7 @@ export default function ReportedProductsScreen() {
             product result page.
           </Text>
 
-          <Pressable
-            style={styles.scanButton}
-            onPress={() => router.replace("/scanner" as never)}
-          >
+          <Pressable style={styles.scanButton} onPress={goToScanner}>
             <Ionicons name="scan-outline" size={18} color="#FFFFFF" />
             <Text style={styles.scanButtonText}>Scan a Product</Text>
           </Pressable>
@@ -210,6 +240,7 @@ export default function ReportedProductsScreen() {
               <View style={styles.infoBox}>
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Barcode</Text>
+
                   <Text numberOfLines={1} style={styles.infoValue}>
                     {report.barcode}
                   </Text>
@@ -217,6 +248,7 @@ export default function ReportedProductsScreen() {
 
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Reason</Text>
+
                   <Text numberOfLines={1} style={styles.infoDanger}>
                     {report.reason}
                   </Text>
@@ -224,6 +256,7 @@ export default function ReportedProductsScreen() {
 
                 <View style={styles.infoRowLast}>
                   <Text style={styles.infoLabel}>Submitted</Text>
+
                   <Text style={styles.infoValue}>
                     {formatReportTime(report.submittedAt)}
                   </Text>

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -42,7 +42,10 @@ function getStatusStyle(status: ProductStatus) {
 
 export default function SearchProductScreen() {
   const router = useRouter();
+
   const [searchText, setSearchText] = useState("");
+
+  const isNavigatingRef = useRef(false);
 
   const normalizedSearchText = searchText.trim().toLowerCase();
 
@@ -80,13 +83,25 @@ export default function SearchProductScreen() {
   };
 
   const openProductResult = (barcode: string) => {
-    router.push({
-      pathname: "/product-result/[barcode]",
-      params: {
-        barcode,
-        from: "search",
-      },
-    });
+    if (isNavigatingRef.current) {
+      return;
+    }
+
+    isNavigatingRef.current = true;
+
+    try {
+      router.push({
+        pathname: "/product-result/[barcode]",
+        params: {
+          barcode,
+          from: "search",
+        },
+      });
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
   };
 
   const verifyUnknownBarcode = () => {
@@ -153,6 +168,7 @@ export default function SearchProductScreen() {
             size={20}
             color="#4F46E5"
           />
+
           <Text style={styles.infoText}>
             This searches the current demo database. Later, this can connect to
             Firebase or your real product database.
@@ -161,6 +177,7 @@ export default function SearchProductScreen() {
 
         <View style={styles.resultHeader}>
           <Text style={styles.resultTitle}>Search Results</Text>
+
           <Text style={styles.resultCount}>
             {filteredProducts.length} found
           </Text>
@@ -189,6 +206,7 @@ export default function SearchProductScreen() {
                   size={18}
                   color="#FFFFFF"
                 />
+
                 <Text style={styles.verifyUnknownText}>
                   Verify as Unknown Product
                 </Text>

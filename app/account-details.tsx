@@ -5,7 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -128,6 +128,8 @@ export default function AccountDetailsScreen() {
   const { signOut } = useClerk();
   const { user, isLoaded } = useUser();
 
+  const isNavigatingRef = useRef(false);
+
   const [isEditNameOpen, setIsEditNameOpen] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -184,6 +186,33 @@ export default function AccountDetailsScreen() {
   const twoFactorStatus = accountUser?.twoFactorEnabled
     ? "Enabled"
     : "Not enabled";
+
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
+      return;
+    }
+
+    isNavigatingRef.current = true;
+
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
+  };
+
+  const goBack = () => {
+    navigateWithLock(() => {
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+
+      router.replace("/profile" as never);
+    });
+  };
 
   const uploadProfileImage = async () => {
     if (!user) {
@@ -798,7 +827,7 @@ export default function AccountDetailsScreen() {
           <View style={styles.bottomCircle} />
 
           <View style={styles.topRow}>
-            <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <Pressable style={styles.backButton} onPress={goBack}>
               <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
             </Pressable>
 

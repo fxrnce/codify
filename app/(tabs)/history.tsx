@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -63,6 +63,8 @@ export default function HistoryScreen() {
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<HistoryFilter>("All");
 
+  const isNavigatingRef = useRef(false);
+
   const approvedCount = scanHistory.filter(
     (item) => item.status === "Approved",
   ).length;
@@ -94,17 +96,37 @@ export default function HistoryScreen() {
     return matchesSearch && matchesFilter;
   });
 
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
+      return;
+    }
+
+    isNavigatingRef.current = true;
+
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
+  };
+
   const goToScanner = () => {
-    router.push("/scanner");
+    navigateWithLock(() => {
+      router.push("/scanner");
+    });
   };
 
   const openProductResult = (barcode: string) => {
-    router.push({
-      pathname: "/product-result/[barcode]",
-      params: {
-        barcode,
-        from: "history",
-      },
+    navigateWithLock(() => {
+      router.push({
+        pathname: "/product-result/[barcode]",
+        params: {
+          barcode,
+          from: "history",
+        },
+      });
     });
   };
 

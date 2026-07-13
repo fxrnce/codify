@@ -2,7 +2,7 @@ import { useClerk, useUser } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Image,
@@ -141,6 +141,8 @@ export default function ProfileScreen() {
 
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
+  const isNavigatingRef = useRef(false);
+
   const displayName =
     user?.fullName ||
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
@@ -163,11 +165,19 @@ export default function ProfileScreen() {
   };
 
   const openSettingsPage = (route?: string) => {
-    if (!route) {
+    if (!route || isNavigatingRef.current) {
       return;
     }
 
-    router.push(route as never);
+    isNavigatingRef.current = true;
+
+    try {
+      router.push(route as never);
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
+    }
   };
 
   const handleSignOut = () => {
@@ -231,6 +241,7 @@ export default function ProfileScreen() {
                 <Text style={styles.avatarText}>{avatarInitials}</Text>
               )}
             </View>
+
             <View style={styles.onlineDot} />
           </View>
 
@@ -290,8 +301,8 @@ export default function ProfileScreen() {
         </View>
 
         <Text style={styles.allergenDescription}>
-          Tap a category to open. You'll be warned when scanned products contain
-          selected allergens.
+          Tap a category to open. You&apos;ll be warned when scanned products
+          contain selected allergens.
         </Text>
 
         {ALERT_GROUPS.map((group) => {
@@ -305,6 +316,7 @@ export default function ProfileScreen() {
               >
                 <Text style={styles.groupLabel}>{group.title}</Text>
                 <View style={styles.groupLine} />
+
                 <Ionicons
                   name={isExpanded ? "chevron-up" : "chevron-down"}
                   size={16}

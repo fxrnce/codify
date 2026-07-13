@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   Pressable,
   ScrollView,
@@ -63,8 +63,11 @@ function normalizeAllergen(value: string) {
 export default function ProductResultScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ barcode: string; from?: string }>();
+
   const { selectedAllergens } = useAllergenAlerts();
   const { addScanToHistory, addUnknownScanToHistory } = useScanHistory();
+
+  const isNavigatingRef = useRef(false);
 
   const barcode = params.barcode ?? "";
   const openedFromHistory = params.from === "history";
@@ -72,43 +75,68 @@ export default function ProductResultScreen() {
   const openedFromReports = params.from === "reports";
   const product = findProductByBarcode(barcode);
 
-  const goBackFromResult = () => {
-    if (router.canGoBack()) {
-      router.back();
+  const navigateWithLock = (navigationAction: () => void) => {
+    if (isNavigatingRef.current) {
       return;
     }
 
-    if (openedFromHistory) {
-      router.replace("/history" as never);
-      return;
-    }
+    isNavigatingRef.current = true;
 
-    if (openedFromSearch) {
-      router.replace("/search-product" as never);
-      return;
+    try {
+      navigationAction();
+    } finally {
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 800);
     }
-
-    if (openedFromReports) {
-      router.replace("/reported-products" as never);
-      return;
-    }
-
-    router.replace("/scanner" as never);
   };
+
+  const goBackFromResult = () => {
+    navigateWithLock(() => {
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+
+      if (openedFromHistory) {
+        router.replace("/history" as never);
+        return;
+      }
+
+      if (openedFromSearch) {
+        router.replace("/search-product" as never);
+        return;
+      }
+
+      if (openedFromReports) {
+        router.replace("/reported-products" as never);
+        return;
+      }
+
+      router.replace("/scanner" as never);
+    });
+  };
+
   const goToHistory = () => {
-    router.replace("/history" as never);
+    navigateWithLock(() => {
+      router.replace("/history" as never);
+    });
   };
 
   const goToScanner = () => {
-    router.replace("/scanner" as never);
+    navigateWithLock(() => {
+      router.replace("/scanner" as never);
+    });
   };
 
   const handleReportProduct = () => {
-    router.push({
-      pathname: "/report-product",
-      params: {
-        barcode,
-      },
+    navigateWithLock(() => {
+      router.push({
+        pathname: "/report-product",
+        params: {
+          barcode,
+        },
+      });
     });
   };
 
@@ -187,6 +215,7 @@ export default function ProductResultScreen() {
 
             <View style={styles.warningTextBox}>
               <Text style={styles.warningTitle}>Use caution</Text>
+
               <Text style={styles.warningText}>
                 This barcode is not available in the Codify demo database. The
                 product may need manual FDA verification before purchase or use.
@@ -219,6 +248,7 @@ export default function ProductResultScreen() {
             <View style={styles.reasonList}>
               <View style={styles.reasonRow}>
                 <Ionicons name="ellipse" size={7} color="#90A1B9" />
+
                 <Text style={styles.reasonText}>
                   Product is not registered in the demo database.
                 </Text>
@@ -226,6 +256,7 @@ export default function ProductResultScreen() {
 
               <View style={styles.reasonRow}>
                 <Ionicons name="ellipse" size={7} color="#90A1B9" />
+
                 <Text style={styles.reasonText}>
                   Barcode may be from another country or product variant.
                 </Text>
@@ -233,6 +264,7 @@ export default function ProductResultScreen() {
 
               <View style={styles.reasonRow}>
                 <Ionicons name="ellipse" size={7} color="#90A1B9" />
+
                 <Text style={styles.reasonText}>
                   Product may require manual FDA verification.
                 </Text>
@@ -247,6 +279,7 @@ export default function ProductResultScreen() {
 
           <Pressable style={styles.secondaryActionButton} onPress={goToHistory}>
             <Ionicons name="time-outline" size={18} color="#4F39F6" />
+
             <Text numberOfLines={1} style={styles.secondaryActionText}>
               View{"\u00A0"}in{"\u00A0"}History
             </Text>
@@ -477,6 +510,7 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Registration No.</Text>
+
           <Text numberOfLines={1} style={styles.infoValue}>
             {product.registrationNumber}
           </Text>
