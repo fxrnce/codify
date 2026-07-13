@@ -8,6 +8,7 @@ import express, {
 
 import { env } from "./config/env.js";
 import { productRouter } from "./routes/product.routes.js";
+import { scanRouter } from "./routes/scan.routes.js";
 import { userRouter } from "./routes/user.routes.js";
 
 export const app = express();
@@ -44,6 +45,7 @@ app.get("/health", (_request: Request, response: Response) => {
 
 app.use("/api", userRouter);
 app.use("/api", productRouter);
+app.use("/api", scanRouter);
 
 app.use((_request: Request, response: Response) => {
   response.status(404).json({
