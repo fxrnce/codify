@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   Share,
@@ -12,13 +13,17 @@ import {
   type DimensionValue,
 } from "react-native";
 
-import {
-  DemoProduct,
-  ProductStatus,
-  findProductByBarcode,
-} from "@/constants/MockData";
+import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
+
+type ProductLoadState = "loading" | "success" | "not-found" | "error";
+
+type ProductApiResponse = {
+  success?: boolean;
+  message?: string;
+  product?: DemoProduct;
+};
 
 function getStatusColors(status: ProductStatus) {
   if (status === "Approved") {
@@ -68,12 +73,18 @@ export default function ProductResultScreen() {
   const { addScanToHistory, addUnknownScanToHistory } = useScanHistory();
 
   const isNavigatingRef = useRef(false);
+  const recordedBarcodeRef = useRef<string | null>(null);
+
+  const [product, setProduct] = useState<DemoProduct | null>(null);
+  const [productLoadState, setProductLoadState] =
+    useState<ProductLoadState>("loading");
+  const [productLoadError, setProductLoadError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
 
   const barcode = params.barcode ?? "";
   const openedFromHistory = params.from === "history";
   const openedFromSearch = params.from === "search";
   const openedFromReports = params.from === "reports";
-  const product = findProductByBarcode(barcode);
 
   const navigateWithLock = (navigationAction: () => void) => {
     if (isNavigatingRef.current) {
@@ -141,21 +152,109 @@ export default function ProductResultScreen() {
   };
 
   useEffect(() => {
-    if (openedFromHistory) {
+    const controller = new AbortController();
+
+    const loadProduct = async () => {
+      setProduct(null);
+      setProductLoadState("loading");
+      setProductLoadError("");
+
+      if (!barcode) {
+        setProductLoadState("not-found");
+        return;
+      }
+
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
+
+      if (!apiUrl) {
+        setProductLoadError(
+          "EXPO_PUBLIC_API_URL is missing from the Expo .env file.",
+        );
+        setProductLoadState("error");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${apiUrl}/api/products/${encodeURIComponent(barcode)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+            signal: controller.signal,
+          },
+        );
+
+        const responseBody = (await response
+          .json()
+          .catch(() => ({}))) as ProductApiResponse;
+
+        if (response.status === 404) {
+          setProductLoadState("not-found");
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            responseBody.message ||
+              `Product request failed with status ${response.status}.`,
+          );
+        }
+
+        if (!responseBody.product) {
+          throw new Error("The backend returned an invalid product response.");
+        }
+
+        setProduct(responseBody.product);
+        setProductLoadState("success");
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Unable to connect to the Codify backend.";
+
+        console.log("Failed to load product from backend:", error);
+
+        setProductLoadError(message);
+        setProductLoadState("error");
+      }
+    };
+
+    void loadProduct();
+
+    return () => {
+      controller.abort();
+    };
+  }, [barcode, reloadKey]);
+
+  useEffect(() => {
+    if (
+      openedFromHistory ||
+      !barcode ||
+      recordedBarcodeRef.current === barcode
+    ) {
       return;
     }
 
-    if (product) {
+    if (productLoadState === "success" && product) {
       addScanToHistory(product);
+      recordedBarcodeRef.current = barcode;
       return;
     }
 
-    if (barcode) {
+    if (productLoadState === "not-found") {
       addUnknownScanToHistory(barcode);
+      recordedBarcodeRef.current = barcode;
     }
   }, [
     barcode,
     product,
+    productLoadState,
     openedFromHistory,
     addScanToHistory,
     addUnknownScanToHistory,
@@ -170,6 +269,44 @@ export default function ProductResultScreen() {
       message: `${product.name}\nStatus: ${product.fdaStatusLabel}\nBarcode: ${product.barcode}`,
     });
   };
+
+  if (productLoadState === "loading") {
+    return (
+      <View style={styles.notFoundScreen}>
+        <ActivityIndicator size="large" color="#4F39F6" />
+        <Text style={styles.notFoundTitle}>Loading Product</Text>
+        <Text style={styles.notFoundText}>
+          Checking the Codify product database...
+        </Text>
+      </View>
+    );
+  }
+
+  if (productLoadState === "error") {
+    return (
+      <View style={styles.notFoundScreen}>
+        <Ionicons name="cloud-offline-outline" size={54} color="#E7000B" />
+
+        <Text style={styles.notFoundTitle}>Unable to Load Product</Text>
+
+        <Text style={styles.notFoundText}>
+          {productLoadError ||
+            "Check that the backend is running and your device is connected to the same network."}
+        </Text>
+
+        <Pressable
+          style={styles.notFoundButton}
+          onPress={() => setReloadKey((currentKey) => currentKey + 1)}
+        >
+          <Text style={styles.notFoundButtonText}>Try Again</Text>
+        </Pressable>
+
+        <Pressable style={styles.errorBackButton} onPress={goBackFromResult}>
+          <Text style={styles.errorBackButtonText}>Go Back</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (!product) {
     return (
@@ -1098,6 +1235,21 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+
+  errorBackButton: {
+    marginTop: 12,
+    height: 44,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  errorBackButtonText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#62748E",
   },
 
   unknownHeader: {
