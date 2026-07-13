@@ -8,11 +8,120 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ProductStatus {
+  APPROVED
+  CAUTION
+  NOT_APPROVED
+
+  @@map("product_status")
+}
+
 model User {
   id          String   @id @default(uuid()) @db.Uuid
   clerkUserId String   @unique @map("clerk_user_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  scans Scan[]
+
   @@map("users")
+}
+
+model Product {
+  id                 String        @id @default(uuid()) @db.Uuid
+  slug               String        @unique
+  barcode            String        @unique
+  name               String
+  brand              String
+  category           String
+  status             ProductStatus
+  fdaStatusLabel     String        @map("fda_status_label")
+  registrationNumber String        @map("registration_number")
+  healthScore        Int           @map("health_score")
+  servingSize        String        @map("serving_size")
+  warningMessage     String        @map("warning_message")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  nutrition    NutritionFact?
+  ingredients  ProductIngredient[]
+  allergens    ProductAllergen[]
+  alternatives ProductAlternative[]
+  scans        Scan[]
+
+  @@index([status])
+  @@index([category])
+  @@map("products")
+}
+
+model NutritionFact {
+  id            String @id @default(uuid()) @db.Uuid
+  productId     String @unique @map("product_id") @db.Uuid
+  calories      String
+  protein       String
+  carbohydrates String
+  totalFat      String @map("total_fat")
+  sodium        String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("nutrition_facts")
+}
+
+model ProductIngredient {
+  id         String  @id @default(uuid()) @db.Uuid
+  productId  String  @map("product_id") @db.Uuid
+  name       String
+  isAllergen Boolean @default(false) @map("is_allergen")
+  position   Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, position])
+  @@index([productId])
+  @@map("product_ingredients")
+}
+
+model ProductAllergen {
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  name      String
+  position  Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name])
+  @@unique([productId, position])
+  @@index([productId])
+  @@map("product_allergens")
+}
+
+model ProductAlternative {
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  name      String
+  position  Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name])
+  @@unique([productId, position])
+  @@index([productId])
+  @@map("product_alternatives")
+}
+
+model Scan {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  productId String?  @map("product_id") @db.Uuid
+  barcode   String
+  scannedAt DateTime @default(now()) @map("scanned_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scannedAt])
+  @@index([productId])
+  @@index([barcode])
+  @@map("scans")
 }
