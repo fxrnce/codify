@@ -16,13 +16,6 @@ export const app = express();
 app.disable("x-powered-by");
 
 app.use(
-  clerkMiddleware({
-    publishableKey: env.CLERK_PUBLISHABLE_KEY,
-    secretKey: env.CLERK_SECRET_KEY,
-  }),
-);
-
-app.use(
   cors({
     origin: env.CORS_ORIGIN,
   }),
@@ -43,8 +36,26 @@ app.get("/health", (_request: Request, response: Response) => {
   });
 });
 
-app.use("/api", userRouter);
+/*
+ * Public product routes.
+ * Product lookup must not wait for Clerk authentication.
+ */
 app.use("/api", productRouter);
+
+/*
+ * Clerk middleware only applies to protected routes below.
+ */
+app.use(
+  clerkMiddleware({
+    publishableKey: env.CLERK_PUBLISHABLE_KEY,
+    secretKey: env.CLERK_SECRET_KEY,
+  }),
+);
+
+/*
+ * Protected Clerk-authenticated routes.
+ */
+app.use("/api", userRouter);
 app.use("/api", scanRouter);
 
 app.use((_request: Request, response: Response) => {

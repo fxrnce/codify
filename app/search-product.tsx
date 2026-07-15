@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -11,7 +11,98 @@ import {
   View,
 } from "react-native";
 
-import { ProductStatus, demoProducts } from "@/constants/MockData";
+import {
+  type DemoProduct,
+  type ProductStatus,
+  demoProducts,
+} from "@/constants/MockData";
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
+
+type SearchProduct = {
+  id: string;
+  barcode: string;
+  name: string;
+  brand: string;
+  category: string;
+  status: ProductStatus;
+  fdaStatusLabel: string;
+  registrationNumber: string;
+  ingredients: string[];
+  allergens: string[];
+};
+
+type ProductCatalogResponse = {
+  success?: boolean;
+  message?: string;
+  products?: SearchProduct[];
+};
+
+let productCatalogCache: SearchProduct[] | null = null;
+let productCatalogRequest: Promise<SearchProduct[]> | null = null;
+
+function mapDemoProduct(product: DemoProduct): SearchProduct {
+  return {
+    id: product.id,
+    barcode: product.barcode,
+    name: product.name,
+    brand: product.brand,
+    category: product.category,
+    status: product.status,
+    fdaStatusLabel: product.fdaStatusLabel,
+    registrationNumber: product.registrationNumber,
+    ingredients: product.ingredients.map((ingredient) => ingredient.name),
+    allergens: product.allergens,
+  };
+}
+
+const localFallbackProducts = demoProducts.map(mapDemoProduct);
+
+async function loadProductCatalog() {
+  if (productCatalogCache) {
+    return productCatalogCache;
+  }
+
+  if (productCatalogRequest) {
+    return productCatalogRequest;
+  }
+
+  if (!API_URL) {
+    throw new Error("EXPO_PUBLIC_API_URL is missing.");
+  }
+
+  productCatalogRequest = fetch(`${API_URL}/api/products`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then(async (response) => {
+      const responseBody = (await response
+        .json()
+        .catch(() => ({}))) as ProductCatalogResponse;
+
+      if (!response.ok) {
+        throw new Error(
+          responseBody.message ||
+            `Unable to load products (${response.status}).`,
+        );
+      }
+
+      const products = Array.isArray(responseBody.products)
+        ? responseBody.products
+        : [];
+
+      productCatalogCache = products;
+
+      return products;
+    })
+    .finally(() => {
+      productCatalogRequest = null;
+    });
+
+  return productCatalogRequest;
+}
 
 function getStatusStyle(status: ProductStatus) {
   if (status === "Approved") {
@@ -44,39 +135,66 @@ export default function SearchProductScreen() {
   const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
+  const [products, setProducts] = useState<SearchProduct[]>(
+    productCatalogCache ?? localFallbackProducts,
+  );
 
   const isNavigatingRef = useRef(false);
 
-  const normalizedSearchText = searchText.trim().toLowerCase();
+  useEffect(() => {
+    let isMounted = true;
 
-  const filteredProducts = demoProducts.filter((product) => {
-    if (normalizedSearchText.length === 0) {
-      return true;
+    const refreshProductCatalog = async () => {
+      try {
+        const backendProducts = await loadProductCatalog();
+
+        if (isMounted && backendProducts.length > 0) {
+          setProducts(backendProducts);
+        }
+      } catch (error) {
+        /*
+         * Search remains available through the local demo catalog when the
+         * development backend is slow or temporarily unavailable.
+         */
+        console.log("Failed to refresh product catalog:", error);
+      }
+    };
+
+    void refreshProductCatalog();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    const normalizedSearchText = searchText.trim().toLowerCase();
+
+    if (!normalizedSearchText) {
+      return products;
     }
 
-    const ingredientsText = product.ingredients
-      .map((ingredient) => ingredient.name)
-      .join(" ")
-      .toLowerCase();
+    return products.filter((product) => {
+      const ingredientsText = product.ingredients.join(" ").toLowerCase();
+      const allergensText = product.allergens.join(" ").toLowerCase();
 
-    const allergensText = product.allergens.join(" ").toLowerCase();
-
-    return (
-      product.name.toLowerCase().includes(normalizedSearchText) ||
-      product.brand.toLowerCase().includes(normalizedSearchText) ||
-      product.category.toLowerCase().includes(normalizedSearchText) ||
-      product.barcode.toLowerCase().includes(normalizedSearchText) ||
-      product.fdaStatusLabel.toLowerCase().includes(normalizedSearchText) ||
-      product.registrationNumber.toLowerCase().includes(normalizedSearchText) ||
-      ingredientsText.includes(normalizedSearchText) ||
-      allergensText.includes(normalizedSearchText)
-    );
-  });
+      return (
+        product.name.toLowerCase().includes(normalizedSearchText) ||
+        product.brand.toLowerCase().includes(normalizedSearchText) ||
+        product.category.toLowerCase().includes(normalizedSearchText) ||
+        product.barcode.includes(normalizedSearchText) ||
+        product.fdaStatusLabel.toLowerCase().includes(normalizedSearchText) ||
+        product.registrationNumber
+          .toLowerCase()
+          .includes(normalizedSearchText) ||
+        ingredientsText.includes(normalizedSearchText) ||
+        allergensText.includes(normalizedSearchText)
+      );
+    });
+  }, [products, searchText]);
 
   const canVerifyUnknownBarcode =
-    filteredProducts.length === 0 &&
-    searchText.trim().length > 0 &&
-    /^\d+$/.test(searchText.trim());
+    filteredProducts.length === 0 && /^\d{8,14}$/.test(searchText.trim());
 
   const goBack = () => {
     router.back();
@@ -153,6 +271,8 @@ export default function SearchProductScreen() {
             placeholder="Search product, brand, barcode..."
             placeholderTextColor="#90A1B9"
             style={styles.searchInput}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
 
           {searchText.length > 0 && (
@@ -170,8 +290,8 @@ export default function SearchProductScreen() {
           />
 
           <Text style={styles.infoText}>
-            This searches the current demo database. Later, this can connect to
-            Firebase or your real product database.
+            The Codify catalog loads once, then your searches are filtered
+            instantly on this device.
           </Text>
         </View>
 

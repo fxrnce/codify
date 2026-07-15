@@ -1,8 +1,8 @@
 import {
-    Router,
-    type NextFunction,
-    type Request,
-    type Response,
+  Router,
+  type NextFunction,
+  type Request,
+  type Response,
 } from "express";
 import { z } from "zod";
 
@@ -24,6 +24,83 @@ const productStatusLabels = {
   CAUTION: "Caution",
   NOT_APPROVED: "Not Approved",
 } as const;
+
+/*
+ * Load the product catalog once.
+ *
+ * The mobile Search Product screen filters this list locally, so typing does
+ * not create a new network request for every letter.
+ */
+productRouter.get(
+  "/products",
+  async (_request: Request, response: Response, next: NextFunction) => {
+    try {
+      const products = await prisma.product.findMany({
+        orderBy: [
+          {
+            name: "asc",
+          },
+          {
+            brand: "asc",
+          },
+        ],
+
+        take: 500,
+
+        select: {
+          slug: true,
+          barcode: true,
+          name: true,
+          brand: true,
+          category: true,
+          status: true,
+          fdaStatusLabel: true,
+          registrationNumber: true,
+
+          ingredients: {
+            orderBy: {
+              position: "asc",
+            },
+
+            select: {
+              name: true,
+            },
+          },
+
+          allergens: {
+            orderBy: {
+              position: "asc",
+            },
+
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
+      response.status(200).json({
+        success: true,
+        count: products.length,
+
+        products: products.map((product) => ({
+          id: product.slug,
+          barcode: product.barcode,
+          name: product.name,
+          brand: product.brand,
+          category: product.category,
+          status: productStatusLabels[product.status],
+          fdaStatusLabel: product.fdaStatusLabel,
+          registrationNumber: product.registrationNumber,
+          ingredients: product.ingredients.map((ingredient) => ingredient.name),
+          allergens: product.allergens.map((allergen) => allergen.name),
+        })),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 productRouter.get(
   "/products/:barcode",
