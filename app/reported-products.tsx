@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import {
   Alert,
   Pressable,
@@ -12,18 +11,10 @@ import {
   View,
 } from "react-native";
 
-const REPORTS_STORAGE_KEY = "codify_product_reports";
-
-type ProductReport = {
-  id: string;
-  barcode: string;
-  productName: string;
-  brand: string;
-  category: string;
-  reason: string;
-  notes: string;
-  submittedAt: string;
-};
+import {
+  type ProductReport,
+  useProductReports,
+} from "@/contexts/ProductReportsContext";
 
 function formatReportTime(dateValue: string) {
   const date = new Date(dateValue);
@@ -39,31 +30,20 @@ function formatReportTime(dateValue: string) {
 export default function ReportedProductsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ from?: string }>();
+  const {
+    reports,
+    refreshReports,
+    clearReports: clearSavedReports,
+  } = useProductReports();
 
   const openedAfterReport = params.from === "report-submitted";
 
-  const [reports, setReports] = useState<ProductReport[]>([]);
-
   const isNavigatingRef = useRef(false);
-
-  const loadReports = async () => {
-    try {
-      const savedReports = await AsyncStorage.getItem(REPORTS_STORAGE_KEY);
-
-      const parsedReports: ProductReport[] = savedReports
-        ? JSON.parse(savedReports)
-        : [];
-
-      setReports(parsedReports);
-    } catch (error) {
-      console.log("Failed to load reports:", error);
-    }
-  };
 
   useFocusEffect(
     useCallback(() => {
-      loadReports();
-    }, []),
+      void refreshReports();
+    }, [refreshReports]),
   );
 
   const navigateWithLock = (navigationAction: () => void) => {
@@ -129,7 +109,7 @@ export default function ReportedProductsScreen() {
   const clearReports = () => {
     Alert.alert(
       "Clear Reports",
-      "Are you sure you want to remove all saved product reports?",
+      "Are you sure you want to remove all submitted product reports?",
       [
         {
           text: "Cancel",
@@ -139,11 +119,13 @@ export default function ReportedProductsScreen() {
           text: "Clear",
           style: "destructive",
           onPress: async () => {
-            try {
-              await AsyncStorage.removeItem(REPORTS_STORAGE_KEY);
-              setReports([]);
-            } catch (error) {
-              console.log("Failed to clear reports:", error);
+            const didClearReports = await clearSavedReports();
+
+            if (!didClearReports) {
+              Alert.alert(
+                "Clear Failed",
+                "Your reports could not be cleared from the backend. Please try again.",
+              );
             }
           },
         },
@@ -180,8 +162,8 @@ export default function ReportedProductsScreen() {
 
           <Text style={styles.headerSubtitle}>
             {reports.length === 1
-              ? "1 saved report"
-              : `${reports.length} saved reports`}
+              ? "1 submitted report"
+              : `${reports.length} submitted reports`}
           </Text>
         </View>
       </LinearGradient>
@@ -242,7 +224,7 @@ export default function ReportedProductsScreen() {
                   <Text style={styles.infoLabel}>Barcode</Text>
 
                   <Text numberOfLines={1} style={styles.infoValue}>
-                    {report.barcode}
+                    {report.barcode || "No barcode"}
                   </Text>
                 </View>
 

@@ -8,6 +8,7 @@ import express, {
 
 import { env } from "./config/env.js";
 import { productRouter } from "./routes/product.routes.js";
+import { reportRouter } from "./routes/report.routes.js";
 import { scanRouter } from "./routes/scan.routes.js";
 import { userRouter } from "./routes/user.routes.js";
 
@@ -58,6 +59,7 @@ app.use("/api", productRouter);
  */
 app.use("/api", userRouter);
 app.use("/api", scanRouter);
+app.use("/api", reportRouter);
 
 app.use((_request: Request, response: Response) => {
   response.status(404).json({

@@ -1,6 +1,4 @@
-import { findProductByBarcode } from "@/constants/MockData";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,62 +14,105 @@ import {
   View,
 } from "react-native";
 
-const REPORTS_STORAGE_KEY = "codify_product_reports";
+import {
+  PRODUCT_REPORT_REASONS,
+  type ProductReportReason,
+  useProductReports,
+} from "@/contexts/ProductReportsContext";
 
-const REPORT_REASONS = [
-  "No FDA record found",
-  "Wrong product information",
-  "Suspicious product",
-  "Possible counterfeit",
-  "Other concern",
-];
+const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
 
-type ProductReport = {
-  id: string;
-  barcode: string;
-  productName: string;
+type ReportProductDetails = {
+  name: string;
   brand: string;
   category: string;
-  reason: string;
-  notes: string;
-  submittedAt: string;
+  status: "Approved" | "Caution" | "Not Approved";
+};
+
+type ProductLookupApiResponse = {
+  product?: ReportProductDetails;
 };
 
 export default function ReportProductScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ barcode?: string }>();
+  const { submitReport: submitProductReport } = useProductReports();
 
   const barcode = params.barcode ?? "";
-  const product = findProductByBarcode(barcode);
 
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
-  const [selectedReason, setSelectedReason] = useState(REPORT_REASONS[0]);
+  const [selectedReason, setSelectedReason] = useState<ProductReportReason>(
+    PRODUCT_REPORT_REASONS[0],
+  );
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!product) {
-      return;
-    }
+    const controller = new AbortController();
 
-    setProductName(product.name);
-    setBrand(product.brand);
-    setCategory(product.category);
+    const loadProductDetails = async () => {
+      if (!barcode || !API_URL) {
+        return;
+      }
 
-    if (product.status === "Approved") {
-      setSelectedReason("Wrong product information");
-      return;
-    }
+      try {
+        const response = await fetch(
+          `${API_URL}/api/products/${encodeURIComponent(barcode)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+            signal: controller.signal,
+          },
+        );
 
-    if (product.status === "Caution") {
-      setSelectedReason("Suspicious product");
-      return;
-    }
+        if (!response.ok) {
+          return;
+        }
 
-    setSelectedReason("No FDA record found");
-  }, [product]);
+        const responseBody = (await response
+          .json()
+          .catch(() => ({}))) as ProductLookupApiResponse;
+
+        if (!responseBody.product) {
+          return;
+        }
+
+        const product = responseBody.product;
+
+        setProductName(product.name);
+        setBrand(product.brand);
+        setCategory(product.category);
+
+        if (product.status === "Approved") {
+          setSelectedReason("Wrong product information");
+          return;
+        }
+
+        if (product.status === "Caution") {
+          setSelectedReason("Suspicious product");
+          return;
+        }
+
+        setSelectedReason("No FDA record found");
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+
+        console.log("Failed to load report product details:", error);
+      }
+    };
+
+    void loadProductDetails();
+
+    return () => {
+      controller.abort();
+    };
+  }, [barcode]);
 
   const goBack = () => {
     router.back();
@@ -95,36 +136,20 @@ export default function ReportProductScreen() {
     setIsSubmitting(true);
 
     try {
-      const newReport: ProductReport = {
-        id: `${barcode || "no-barcode"}-${Date.now()}`,
-        barcode: barcode || "No barcode",
+      const submissionResult = await submitProductReport({
+        barcode,
         productName: cleanedProductName,
         brand: cleanedBrand || "Unknown Brand",
         category: cleanedCategory || "Uncategorized",
         reason: selectedReason,
         notes: cleanedNotes,
-        submittedAt: new Date().toISOString(),
-      };
-
-      const savedReports = await AsyncStorage.getItem(REPORTS_STORAGE_KEY);
-      const currentReports: ProductReport[] = savedReports
-        ? JSON.parse(savedReports)
-        : [];
-
-      const reportsWithoutSameBarcode = currentReports.filter(
-        (report) => report.barcode !== newReport.barcode,
-      );
-
-      const updatedReports = [newReport, ...reportsWithoutSameBarcode];
-
-      await AsyncStorage.setItem(
-        REPORTS_STORAGE_KEY,
-        JSON.stringify(updatedReports),
-      );
+      });
 
       Alert.alert(
         "Report Submitted",
-        "Your report has been saved locally for review. Backend submission will be connected later.",
+        submissionResult.savedToBackend
+          ? "Your report was submitted and saved to your account."
+          : "Your report was saved on this device and will sync when the backend is available.",
         [
           {
             text: "View Reports",
@@ -181,7 +206,7 @@ export default function ReportProductScreen() {
           <Text style={styles.headerLabel}>REPORT PRODUCT</Text>
           <Text style={styles.headerTitle}>Help verify this item</Text>
           <Text style={styles.headerSubtitle}>
-            Submit product details so it can be checked later.
+            Submit product details so they can be reviewed securely.
           </Text>
         </View>
       </LinearGradient>
@@ -227,6 +252,7 @@ export default function ReportProductScreen() {
             <TextInput
               value={productName}
               onChangeText={setProductName}
+              maxLength={160}
               placeholder="Example: Energy Drink"
               placeholderTextColor="#90A1B9"
               style={styles.input}
@@ -238,6 +264,7 @@ export default function ReportProductScreen() {
             <TextInput
               value={brand}
               onChangeText={setBrand}
+              maxLength={120}
               placeholder="Example: Unknown Brand"
               placeholderTextColor="#90A1B9"
               style={styles.input}
@@ -249,6 +276,7 @@ export default function ReportProductScreen() {
             <TextInput
               value={category}
               onChangeText={setCategory}
+              maxLength={120}
               placeholder="Example: Beverage, Cosmetic, Medicine"
               placeholderTextColor="#90A1B9"
               style={styles.input}
@@ -260,7 +288,7 @@ export default function ReportProductScreen() {
           <Text style={styles.cardTitle}>Reason for Report</Text>
 
           <View style={styles.reasonList}>
-            {REPORT_REASONS.map((reason) => {
+            {PRODUCT_REPORT_REASONS.map((reason) => {
               const isSelected = selectedReason === reason;
 
               return (
@@ -301,6 +329,7 @@ export default function ReportProductScreen() {
           <TextInput
             value={notes}
             onChangeText={setNotes}
+            maxLength={2000}
             placeholder="Add any details about the product, label, store, or concern..."
             placeholderTextColor="#90A1B9"
             multiline
@@ -318,7 +347,7 @@ export default function ReportProductScreen() {
         >
           <Ionicons name="send-outline" size={18} color="#FFFFFF" />
           <Text style={styles.submitText}>
-            {isSubmitting ? "Saving Report..." : "Submit Report"}
+            {isSubmitting ? "Submitting Report..." : "Submit Report"}
           </Text>
         </Pressable>
 
