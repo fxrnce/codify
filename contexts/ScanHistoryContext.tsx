@@ -164,7 +164,13 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const token = await getToken();
+        /*
+         * Read getToken from the ref so changes to the function reference
+         * do not repeatedly trigger this loading effect.
+         */
+        const token = await authRef.current.getToken({
+          skipCache: true,
+        });
 
         if (!token) {
           throw new Error("Clerk did not return a session token.");
@@ -213,7 +219,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
     return () => {
       isCancelled = true;
     };
-  }, [getToken, isLoaded, isSignedIn, userId]);
+  }, [isLoaded, isSignedIn, userId]);
 
   const saveScanToBackend = useCallback(
     async (barcode: string) => {

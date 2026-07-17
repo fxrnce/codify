@@ -15,6 +15,17 @@ export const app = express();
 
 app.disable("x-powered-by");
 
+/*
+ * Clerk must run before every other middleware and route.
+ * It attaches authentication information to the request.
+ */
+app.use(
+  clerkMiddleware({
+    publishableKey: env.CLERK_PUBLISHABLE_KEY,
+    secretKey: env.CLERK_SECRET_KEY,
+  }),
+);
+
 app.use(
   cors({
     origin: env.CORS_ORIGIN,
@@ -38,19 +49,9 @@ app.get("/health", (_request: Request, response: Response) => {
 
 /*
  * Public product routes.
- * Product lookup must not wait for Clerk authentication.
+ * Authentication information is available, but sign-in is not required.
  */
 app.use("/api", productRouter);
-
-/*
- * Clerk middleware only applies to protected routes below.
- */
-app.use(
-  clerkMiddleware({
-    publishableKey: env.CLERK_PUBLISHABLE_KEY,
-    secretKey: env.CLERK_SECRET_KEY,
-  }),
-);
 
 /*
  * Protected Clerk-authenticated routes.
