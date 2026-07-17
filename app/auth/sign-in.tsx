@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -29,6 +29,7 @@ function getErrorMessage(error: any) {
 export default function SignInScreen() {
   const router = useRouter();
   const { signIn, fetchStatus } = useSignIn();
+  const initialSignInRef = useRef(signIn);
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -40,8 +41,10 @@ export default function SignInScreen() {
   const isLoading = fetchStatus === "fetching";
 
   useEffect(() => {
-    if (signIn.status === "needs_client_trust") {
-      signIn.reset();
+    const initialSignIn = initialSignInRef.current;
+
+    if (initialSignIn.status === "needs_client_trust") {
+      initialSignIn.reset();
     }
   }, []);
 
@@ -325,7 +328,7 @@ export default function SignInScreen() {
         </View>
 
         <View style={styles.bottomRow}>
-          <Text style={styles.bottomText}>Don't have an account?</Text>
+          <Text style={styles.bottomText}>{"Don't have an account?"}</Text>
 
           <Pressable onPress={() => router.push("/auth/sign-up" as never)}>
             <Text style={styles.linkText}> Sign Up</Text>
