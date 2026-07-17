@@ -7,6 +7,7 @@ import express, {
 } from "express";
 
 import { env } from "./config/env.js";
+import { allergenRouter } from "./routes/allergen.routes.js";
 import { productRouter } from "./routes/product.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
 import { scanRouter } from "./routes/scan.routes.js";
@@ -57,6 +58,7 @@ app.use("/api", productRouter);
 /*
  * Protected Clerk-authenticated routes.
  */
+app.use("/api", allergenRouter);
 app.use("/api", userRouter);
 app.use("/api", scanRouter);
 app.use("/api", reportRouter);
