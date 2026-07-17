@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -12,7 +12,10 @@ import {
   View,
 } from "react-native";
 
-import { ScanHistoryItem, useScanHistory } from "@/contexts/ScanHistoryContext";
+import {
+  type ScanHistoryItem,
+  useScanHistory,
+} from "@/contexts/ScanHistoryContext";
 
 type HistoryFilter = "All" | "Approved" | "Caution" | "Unsafe";
 
@@ -58,12 +61,19 @@ function formatScanTime(dateValue: string) {
 
 export default function HistoryScreen() {
   const router = useRouter();
-  const { scanHistory, clearScanHistory } = useScanHistory();
+  const { scanHistory, refreshScanHistory, clearScanHistory } =
+    useScanHistory();
 
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<HistoryFilter>("All");
 
   const isNavigatingRef = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      void refreshScanHistory();
+    }, [refreshScanHistory]),
+  );
 
   const approvedCount = scanHistory.filter(
     (item) => item.status === "Approved",
@@ -142,7 +152,16 @@ export default function HistoryScreen() {
         {
           text: "Clear",
           style: "destructive",
-          onPress: clearScanHistory,
+          onPress: async () => {
+            const didClearHistory = await clearScanHistory();
+
+            if (!didClearHistory) {
+              Alert.alert(
+                "Clear Failed",
+                "Your scan history could not be cleared from the backend. Please try again.",
+              );
+            }
+          },
         },
       ],
     );

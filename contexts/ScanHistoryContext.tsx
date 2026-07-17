@@ -18,8 +18,12 @@ const SCAN_HISTORY_STORAGE_KEY_PREFIX = "codify_scan_history_user";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export type ScanHistoryItem = {
   id: string;
+  clientScanId?: string;
   barcode: string;
   name: string;
   brand: string;
@@ -27,6 +31,7 @@ export type ScanHistoryItem = {
   status: ProductStatus;
   fdaStatusLabel: string;
   scannedAt: string;
+  pendingSync?: boolean;
 };
 
 type ScanHistoryApiResponse = {
@@ -39,10 +44,26 @@ type ScanHistoryApiResponse = {
 
 type ScanHistoryContextValue = {
   scanHistory: ScanHistoryItem[];
+  refreshScanHistory: () => Promise<void>;
   addScanToHistory: (product: DemoProduct) => void;
   addUnknownScanToHistory: (barcode: string) => void;
-  clearScanHistory: () => void;
+  clearScanHistory: () => Promise<boolean>;
 };
+
+class AsyncOperationQueue {
+  private tail: Promise<unknown> = Promise.resolve();
+
+  run<T>(operation: () => Promise<T>) {
+    const result = this.tail.then(operation, operation);
+
+    this.tail = result.then(
+      () => undefined,
+      () => undefined,
+    );
+
+    return result;
+  }
+}
 
 const ScanHistoryContext = createContext<ScanHistoryContextValue | undefined>(
   undefined,
@@ -56,6 +77,83 @@ function getStorageKey(userId?: string | null) {
   return `${SCAN_HISTORY_STORAGE_KEY_PREFIX}_${userId}`;
 }
 
+function createClientScanId() {
+  return `scan-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function getClientScanId(scan: Pick<ScanHistoryItem, "clientScanId" | "id">) {
+  return scan.clientScanId?.trim() || scan.id;
+}
+
+function needsBackendSync(scan: ScanHistoryItem) {
+  return scan.pendingSync === true || !UUID_PATTERN.test(scan.id);
+}
+
+function normalizeStoredScan(value: unknown): ScanHistoryItem | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const scan = value as Partial<ScanHistoryItem>;
+  const status = scan.status;
+  const validStatus =
+    status === "Approved" ||
+    status === "Caution" ||
+    status === "Not Approved";
+
+  if (
+    typeof scan.id !== "string" ||
+    typeof scan.barcode !== "string" ||
+    typeof scan.name !== "string" ||
+    typeof scan.brand !== "string" ||
+    typeof scan.category !== "string" ||
+    !validStatus ||
+    typeof scan.fdaStatusLabel !== "string" ||
+    typeof scan.scannedAt !== "string" ||
+    Number.isNaN(new Date(scan.scannedAt).getTime())
+  ) {
+    return null;
+  }
+
+  return {
+    id: scan.id,
+    clientScanId:
+      typeof scan.clientScanId === "string" && scan.clientScanId.length > 0
+        ? scan.clientScanId
+        : scan.id,
+    barcode: scan.barcode,
+    name: scan.name,
+    brand: scan.brand,
+    category: scan.category,
+    status,
+    fdaStatusLabel: scan.fdaStatusLabel,
+    scannedAt: scan.scannedAt,
+    pendingSync: scan.pendingSync === true || !UUID_PATTERN.test(scan.id),
+  };
+}
+
+function sortScanHistory(history: ScanHistoryItem[]) {
+  return [...history].sort(
+    (firstScan, secondScan) =>
+      new Date(secondScan.scannedAt).getTime() -
+      new Date(firstScan.scannedAt).getTime(),
+  );
+}
+
+function mergeLatestScan(
+  scan: ScanHistoryItem,
+  currentHistory: ScanHistoryItem[],
+) {
+  return sortScanHistory([
+    scan,
+    ...currentHistory.filter(
+      (currentScan) =>
+        currentScan.barcode !== scan.barcode &&
+        getClientScanId(currentScan) !== getClientScanId(scan),
+    ),
+  ]);
+}
+
 async function readStoredHistory(storageKey: string) {
   try {
     const savedHistory = await AsyncStorage.getItem(storageKey);
@@ -64,7 +162,20 @@ async function readStoredHistory(storageKey: string) {
       return [];
     }
 
-    return JSON.parse(savedHistory) as ScanHistoryItem[];
+    const parsedHistory = JSON.parse(savedHistory) as unknown;
+
+    if (!Array.isArray(parsedHistory)) {
+      return [];
+    }
+
+    const normalizedHistory = parsedHistory
+      .map(normalizeStoredScan)
+      .filter((scan): scan is ScanHistoryItem => scan !== null);
+
+    return normalizedHistory.reduce<ScanHistoryItem[]>(
+      (history, scan) => mergeLatestScan(scan, history),
+      [],
+    );
   } catch (error) {
     console.log("Failed to load scan history:", error);
     return [];
@@ -82,13 +193,59 @@ async function saveStoredHistory(
   }
 }
 
+async function postScanToBackend(token: string, scan: ScanHistoryItem) {
+  if (!API_URL) {
+    throw new Error("EXPO_PUBLIC_API_URL is missing.");
+  }
+
+  const response = await fetch(`${API_URL}/api/scans`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      barcode: scan.barcode,
+      clientScanId: getClientScanId(scan),
+      scannedAt: scan.scannedAt,
+    }),
+  });
+
+  const responseBody = (await response
+    .json()
+    .catch(() => ({}))) as ScanHistoryApiResponse;
+
+  if (!response.ok || !responseBody.scan) {
+    throw new Error(
+      responseBody.message || `Failed to save scan (${response.status}).`,
+    );
+  }
+
+  const savedScan = normalizeStoredScan(responseBody.scan);
+
+  if (!savedScan) {
+    throw new Error("The backend returned an invalid scan.");
+  }
+
+  return {
+    ...savedScan,
+    pendingSync: false,
+  };
+}
+
 export function ScanHistoryProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
 
   const [scanHistory, setScanHistory] = useState<ScanHistoryItem[]>([]);
 
   const scanHistoryRef = useRef<ScanHistoryItem[]>([]);
-  const storageKeyRef = useRef(getStorageKey(userId));
+  const localMutationVersionRef = useRef(0);
+  const clearVersionRef = useRef(0);
+  const refreshPromiseRef = useRef<Promise<void> | null>(null);
+  const refreshUserKeyRef = useRef<string | null>(null);
+  const localStorageQueueRef = useRef(new AsyncOperationQueue());
+  const backendMutationQueueRef = useRef(new AsyncOperationQueue());
 
   const authRef = useRef({
     getToken,
@@ -98,8 +255,6 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
   });
 
   scanHistoryRef.current = scanHistory;
-  storageKeyRef.current = getStorageKey(userId);
-
   authRef.current = {
     getToken,
     isLoaded,
@@ -107,68 +262,88 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
     userId,
   };
 
-  const updateLocalHistory = useCallback(
-    (
-      updateFunction: (currentHistory: ScanHistoryItem[]) => ScanHistoryItem[],
-    ) => {
-      setScanHistory((currentHistory) => {
-        const updatedHistory = updateFunction(currentHistory);
+  const replaceScanHistory = useCallback(
+    async (storageKey: string, nextHistory: ScanHistoryItem[]) => {
+      const sortedHistory = sortScanHistory(nextHistory);
 
-        scanHistoryRef.current = updatedHistory;
+      scanHistoryRef.current = sortedHistory;
+      setScanHistory(sortedHistory);
 
-        void saveStoredHistory(storageKeyRef.current, updatedHistory);
-
-        return updatedHistory;
-      });
+      await localStorageQueueRef.current.run(() =>
+        saveStoredHistory(storageKey, sortedHistory),
+      );
     },
     [],
   );
 
-  useEffect(() => {
-    if (!isLoaded) {
-      return;
+  const refreshScanHistory = useCallback(async () => {
+    if (refreshPromiseRef.current) {
+      const requestedUserKey = authRef.current.userId ?? "guest";
+      const activeUserKey = refreshUserKeyRef.current;
+
+      await refreshPromiseRef.current;
+
+      if (activeUserKey === requestedUserKey) {
+        return;
+      }
     }
 
-    let isCancelled = false;
+    const refreshUserKey = authRef.current.userId ?? "guest";
+    const refreshPromise = (async () => {
+      const currentAuth = authRef.current;
+      const refreshMutationVersion = localMutationVersionRef.current;
 
-    const loadScanHistory = async () => {
-      const currentStorageKey = getStorageKey(userId);
+      if (!currentAuth.isLoaded) {
+        return;
+      }
 
-      let cachedHistory = await readStoredHistory(currentStorageKey);
+      const currentStorageKey = getStorageKey(currentAuth.userId);
+      let cachedHistory = await localStorageQueueRef.current.run(() =>
+        readStoredHistory(currentStorageKey),
+      );
 
-      /*
-       * Move the old shared AsyncStorage history into the signed-in
-       * user's cache the first time this backend version is opened.
-       */
-      if (userId && cachedHistory.length === 0) {
-        const legacyHistory = await readStoredHistory(
-          LEGACY_SCAN_HISTORY_STORAGE_KEY,
+      if (
+        authRef.current.userId !== currentAuth.userId ||
+        localMutationVersionRef.current !== refreshMutationVersion
+      ) {
+        return;
+      }
+
+      if (currentAuth.userId && cachedHistory.length === 0) {
+        const legacyHistory = await localStorageQueueRef.current.run(() =>
+          readStoredHistory(LEGACY_SCAN_HISTORY_STORAGE_KEY),
         );
 
         if (legacyHistory.length > 0) {
           cachedHistory = legacyHistory;
 
-          await saveStoredHistory(currentStorageKey, legacyHistory);
-
-          await AsyncStorage.removeItem(LEGACY_SCAN_HISTORY_STORAGE_KEY);
+          await localStorageQueueRef.current.run(async () => {
+            await saveStoredHistory(currentStorageKey, legacyHistory);
+            await AsyncStorage.removeItem(LEGACY_SCAN_HISTORY_STORAGE_KEY);
+          });
         }
       }
 
-      if (!isCancelled) {
-        scanHistoryRef.current = cachedHistory;
-        setScanHistory(cachedHistory);
+      if (
+        authRef.current.userId !== currentAuth.userId ||
+        localMutationVersionRef.current !== refreshMutationVersion
+      ) {
+        return;
       }
 
-      if (!isSignedIn || !userId || !API_URL) {
+      scanHistoryRef.current = cachedHistory;
+      setScanHistory(cachedHistory);
+
+      if (
+        !currentAuth.isSignedIn ||
+        !currentAuth.userId ||
+        !API_URL
+      ) {
         return;
       }
 
       try {
-        /*
-         * Read getToken from the ref so changes to the function reference
-         * do not repeatedly trigger this loading effect.
-         */
-        const token = await authRef.current.getToken({
+        const token = await currentAuth.getToken({
           skipCache: true,
         });
 
@@ -195,116 +370,253 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
           );
         }
 
-        const serverHistory = Array.isArray(responseBody.scans)
+        let synchronizedHistory: ScanHistoryItem[] = Array.isArray(
+          responseBody.scans,
+        )
           ? responseBody.scans
+              .map(normalizeStoredScan)
+              .filter((scan): scan is ScanHistoryItem => scan !== null)
+              .map((scan) => ({
+                ...scan,
+                pendingSync: false,
+              }))
           : [];
 
-        if (!isCancelled) {
-          scanHistoryRef.current = serverHistory;
-          setScanHistory(serverHistory);
+        for (const cachedScan of cachedHistory) {
+          if (
+            authRef.current.userId !== currentAuth.userId ||
+            localMutationVersionRef.current !== refreshMutationVersion
+          ) {
+            return;
+          }
 
-          await saveStoredHistory(currentStorageKey, serverHistory);
+          if (!needsBackendSync(cachedScan)) {
+            continue;
+          }
+
+          const matchingServerScan = synchronizedHistory.find(
+            (serverScan) =>
+              getClientScanId(serverScan) === getClientScanId(cachedScan),
+          );
+
+          if (matchingServerScan) {
+            synchronizedHistory = mergeLatestScan(
+              matchingServerScan,
+              synchronizedHistory,
+            );
+            continue;
+          }
+
+          const latestServerScan = synchronizedHistory.find(
+            (serverScan) => serverScan.barcode === cachedScan.barcode,
+          );
+          const cachedScanIsNewer =
+            !latestServerScan ||
+            new Date(cachedScan.scannedAt).getTime() >
+              new Date(latestServerScan.scannedAt).getTime();
+
+          if (!cachedScanIsNewer) {
+            continue;
+          }
+
+          try {
+            const synchronizedScan =
+              await backendMutationQueueRef.current.run(async () => {
+                const pendingAuth = authRef.current;
+
+                if (
+                  !pendingAuth.isSignedIn ||
+                  pendingAuth.userId !== currentAuth.userId
+                ) {
+                  throw new Error("The signed-in account changed.");
+                }
+
+                const pendingToken = await pendingAuth.getToken({
+                  skipCache: true,
+                });
+
+                if (!pendingToken) {
+                  throw new Error("Clerk did not return a session token.");
+                }
+
+                return postScanToBackend(pendingToken, cachedScan);
+              });
+
+            synchronizedHistory = mergeLatestScan(
+              synchronizedScan,
+              synchronizedHistory,
+            );
+          } catch (error) {
+            console.log("Failed to synchronize cached scan:", error);
+
+            synchronizedHistory = mergeLatestScan(
+              cachedScan,
+              synchronizedHistory,
+            );
+          }
         }
+
+        if (
+          authRef.current.userId !== currentAuth.userId ||
+          localMutationVersionRef.current !== refreshMutationVersion
+        ) {
+          return;
+        }
+
+        await replaceScanHistory(currentStorageKey, synchronizedHistory);
       } catch (error) {
-        /*
-         * The cached AsyncStorage history remains visible when
-         * the backend cannot be reached.
-         */
         console.log("Failed to load scan history from backend:", error);
       }
-    };
+    })();
 
-    void loadScanHistory();
+    refreshPromiseRef.current = refreshPromise;
+    refreshUserKeyRef.current = refreshUserKey;
 
-    return () => {
-      isCancelled = true;
-    };
-  }, [isLoaded, isSignedIn, userId]);
-
-  const saveScanToBackend = useCallback(
-    async (barcode: string) => {
-      const currentAuth = authRef.current;
-
-      if (
-        !currentAuth.isLoaded ||
-        !currentAuth.isSignedIn ||
-        !currentAuth.userId ||
-        !API_URL
-      ) {
-        return;
+    try {
+      await refreshPromise;
+    } finally {
+      if (refreshPromiseRef.current === refreshPromise) {
+        refreshPromiseRef.current = null;
+        refreshUserKeyRef.current = null;
       }
+    }
+  }, [replaceScanHistory]);
 
+  useEffect(() => {
+    scanHistoryRef.current = [];
+    setScanHistory([]);
+
+    void refreshScanHistory();
+  }, [isLoaded, isSignedIn, refreshScanHistory, userId]);
+
+  const synchronizeLocalScan = useCallback(
+    async (
+      localScan: ScanHistoryItem,
+      scanUserId: string,
+      storageKey: string,
+      scanClearVersion: number,
+    ) => {
       try {
-        const token = await currentAuth.getToken();
+        const savedScan = await backendMutationQueueRef.current.run(
+          async () => {
+            const currentAuth = authRef.current;
 
-        if (!token) {
-          throw new Error("Clerk did not return a session token.");
-        }
+            if (
+              !currentAuth.isLoaded ||
+              !currentAuth.isSignedIn ||
+              currentAuth.userId !== scanUserId ||
+              clearVersionRef.current !== scanClearVersion ||
+              !API_URL
+            ) {
+              return null;
+            }
 
-        const response = await fetch(`${API_URL}/api/scans`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            const token = await currentAuth.getToken({
+              skipCache: true,
+            });
+
+            if (!token) {
+              throw new Error("Clerk did not return a session token.");
+            }
+
+            return postScanToBackend(token, localScan);
           },
-          body: JSON.stringify({
-            barcode,
-          }),
-        });
+        );
 
-        const responseBody = (await response
-          .json()
-          .catch(() => ({}))) as ScanHistoryApiResponse;
-
-        if (!response.ok) {
-          throw new Error(
-            responseBody.message || `Failed to save scan (${response.status}).`,
-          );
+        if (
+          !savedScan ||
+          authRef.current.userId !== scanUserId ||
+          clearVersionRef.current !== scanClearVersion
+        ) {
+          return;
         }
 
-        if (responseBody.scan) {
-          const savedScan = responseBody.scan;
+        const currentScan = scanHistoryRef.current.find(
+          (scan) => scan.barcode === localScan.barcode,
+        );
 
-          updateLocalHistory((currentHistory) => [
-            savedScan,
-            ...currentHistory.filter(
-              (item) => item.barcode !== savedScan.barcode,
-            ),
-          ]);
+        if (
+          !currentScan ||
+          getClientScanId(currentScan) !== getClientScanId(localScan)
+        ) {
+          return;
         }
+
+        await replaceScanHistory(
+          storageKey,
+          mergeLatestScan(savedScan, scanHistoryRef.current),
+        );
       } catch (error) {
-        /*
-         * The optimistic local scan remains in AsyncStorage when
-         * the backend is temporarily unavailable.
-         */
         console.log("Failed to save scan to backend:", error);
       }
     },
-    [updateLocalHistory],
+    [replaceScanHistory],
+  );
+
+  const addLocalScan = useCallback(
+    (
+      barcode: string,
+      productDetails: Omit<
+        ScanHistoryItem,
+        "barcode" | "clientScanId" | "id" | "pendingSync" | "scannedAt"
+      >,
+    ) => {
+      const currentAuth = authRef.current;
+      const currentStorageKey = getStorageKey(currentAuth.userId);
+      const clientScanId = createClientScanId();
+      const scanClearVersion = clearVersionRef.current;
+
+      localMutationVersionRef.current += 1;
+
+      const localScan: ScanHistoryItem = {
+        ...productDetails,
+        id: clientScanId,
+        clientScanId,
+        barcode,
+        scannedAt: new Date().toISOString(),
+        pendingSync: Boolean(currentAuth.isSignedIn && currentAuth.userId),
+      };
+
+      const nextHistory = mergeLatestScan(
+        localScan,
+        scanHistoryRef.current,
+      );
+
+      scanHistoryRef.current = nextHistory;
+      setScanHistory(nextHistory);
+
+      void (async () => {
+        await localStorageQueueRef.current.run(() =>
+          saveStoredHistory(currentStorageKey, nextHistory),
+        );
+
+        if (
+          currentAuth.userId &&
+          clearVersionRef.current === scanClearVersion
+        ) {
+          await synchronizeLocalScan(
+            localScan,
+            currentAuth.userId,
+            currentStorageKey,
+            scanClearVersion,
+          );
+        }
+      })();
+    },
+    [synchronizeLocalScan],
   );
 
   const addScanToHistory = useCallback(
     (product: DemoProduct) => {
-      const newHistoryItem: ScanHistoryItem = {
-        id: `${product.barcode}-${Date.now()}`,
-        barcode: product.barcode,
+      addLocalScan(product.barcode, {
         name: product.name,
         brand: product.brand,
         category: product.category,
         status: product.status,
         fdaStatusLabel: product.fdaStatusLabel,
-        scannedAt: new Date().toISOString(),
-      };
-
-      updateLocalHistory((currentHistory) => [
-        newHistoryItem,
-        ...currentHistory.filter((item) => item.barcode !== product.barcode),
-      ]);
-
-      void saveScanToBackend(product.barcode);
+      });
     },
-    [saveScanToBackend, updateLocalHistory],
+    [addLocalScan],
   );
 
   const addUnknownScanToHistory = useCallback(
@@ -315,58 +627,67 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const newHistoryItem: ScanHistoryItem = {
-        id: `${cleanedBarcode}-${Date.now()}`,
-        barcode: cleanedBarcode,
+      addLocalScan(cleanedBarcode, {
         name: "Unknown Product",
         brand: "No FDA record found",
         category: "Unverified Product",
         status: "Not Approved",
         fdaStatusLabel: "Not Listed / Unverified",
-        scannedAt: new Date().toISOString(),
-      };
-
-      updateLocalHistory((currentHistory) => [
-        newHistoryItem,
-        ...currentHistory.filter((item) => item.barcode !== cleanedBarcode),
-      ]);
-
-      void saveScanToBackend(cleanedBarcode);
+      });
     },
-    [saveScanToBackend, updateLocalHistory],
+    [addLocalScan],
   );
 
-  const clearScanHistory = useCallback(() => {
+  const clearScanHistory = useCallback(async () => {
+    const currentAuth = authRef.current;
+    const currentStorageKey = getStorageKey(currentAuth.userId);
     const previousHistory = scanHistoryRef.current;
-    const currentStorageKey = storageKeyRef.current;
+    const clearMutationVersion = localMutationVersionRef.current + 1;
 
+    localMutationVersionRef.current = clearMutationVersion;
+    clearVersionRef.current += 1;
     scanHistoryRef.current = [];
     setScanHistory([]);
 
-    void AsyncStorage.removeItem(currentStorageKey);
+    try {
+      await localStorageQueueRef.current.run(() =>
+        AsyncStorage.removeItem(currentStorageKey),
+      );
+    } catch (error) {
+      console.log("Failed to clear cached scan history:", error);
 
-    const clearBackendHistory = async () => {
-      const currentAuth = authRef.current;
+      await replaceScanHistory(currentStorageKey, previousHistory);
+      return false;
+    }
 
-      if (
-        !currentAuth.isLoaded ||
-        !currentAuth.isSignedIn ||
-        !currentAuth.userId
-      ) {
-        return;
-      }
+    if (!currentAuth.isLoaded) {
+      await replaceScanHistory(currentStorageKey, previousHistory);
+      return false;
+    }
 
-      if (!API_URL) {
-        scanHistoryRef.current = previousHistory;
-        setScanHistory(previousHistory);
+    if (!currentAuth.isSignedIn || !currentAuth.userId) {
+      return true;
+    }
 
-        await saveStoredHistory(currentStorageKey, previousHistory);
+    if (!API_URL) {
+      await replaceScanHistory(currentStorageKey, previousHistory);
+      return false;
+    }
 
-        return;
-      }
+    try {
+      await backendMutationQueueRef.current.run(async () => {
+        const deleteAuth = authRef.current;
 
-      try {
-        const token = await currentAuth.getToken();
+        if (
+          !deleteAuth.isSignedIn ||
+          deleteAuth.userId !== currentAuth.userId
+        ) {
+          throw new Error("The signed-in account changed.");
+        }
+
+        const token = await deleteAuth.getToken({
+          skipCache: true,
+        });
 
         if (!token) {
           throw new Error("Clerk did not return a session token.");
@@ -390,27 +711,38 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
               `Failed to clear scan history (${response.status}).`,
           );
         }
-      } catch (error) {
-        console.log("Failed to clear backend scan history:", error);
+      });
 
-        scanHistoryRef.current = previousHistory;
-        setScanHistory(previousHistory);
+      return true;
+    } catch (error) {
+      console.log("Failed to clear backend scan history:", error);
 
-        await saveStoredHistory(currentStorageKey, previousHistory);
+      if (
+        authRef.current.userId === currentAuth.userId &&
+        localMutationVersionRef.current === clearMutationVersion
+      ) {
+        await replaceScanHistory(currentStorageKey, previousHistory);
       }
-    };
 
-    void clearBackendHistory();
-  }, []);
+      return false;
+    }
+  }, [replaceScanHistory]);
 
   const value = useMemo(
     () => ({
       scanHistory,
+      refreshScanHistory,
       addScanToHistory,
       addUnknownScanToHistory,
       clearScanHistory,
     }),
-    [scanHistory, addScanToHistory, addUnknownScanToHistory, clearScanHistory],
+    [
+      scanHistory,
+      refreshScanHistory,
+      addScanToHistory,
+      addUnknownScanToHistory,
+      clearScanHistory,
+    ],
   );
 
   return (

@@ -1,9 +1,11 @@
+import { randomUUID } from "node:crypto";
+
 import { getAuth } from "@clerk/express";
 import {
-    Router,
-    type NextFunction,
-    type Request,
-    type Response,
+  Router,
+  type NextFunction,
+  type Request,
+  type Response,
 } from "express";
 import { z } from "zod";
 
@@ -15,6 +17,7 @@ type DatabaseProductStatus = "APPROVED" | "CAUTION" | "NOT_APPROVED";
 
 type ScanWithProduct = {
   id: string;
+  clientScanId: string;
   barcode: string;
   scannedAt: Date;
 
@@ -27,14 +30,24 @@ type ScanWithProduct = {
   } | null;
 };
 
-const scanBodySchema = z.object({
-  barcode: z
-    .string()
-    .trim()
-    .regex(/^\d{8,14}$/, {
-      message: "Barcode must contain 8 to 14 digits.",
-    }),
-});
+const scanBodySchema = z
+  .object({
+    barcode: z
+      .string()
+      .trim()
+      .regex(/^\d{8,14}$/, {
+        message: "Barcode must contain 8 to 14 digits.",
+      }),
+    clientScanId: z
+      .string()
+      .trim()
+      .min(1)
+      .max(120)
+      .regex(/^[A-Za-z0-9_-]+$/)
+      .optional(),
+    scannedAt: z.string().datetime({ offset: true }).optional(),
+  })
+  .strict();
 
 function getAuthenticatedClerkUserId(
   request: Request,
@@ -84,6 +97,7 @@ function mapScanToHistoryItem(scan: ScanWithProduct) {
   if (!scan.product) {
     return {
       id: scan.id,
+      clientScanId: scan.clientScanId,
       barcode: scan.barcode,
       name: "Unknown Product",
       brand: "No FDA record found",
@@ -96,6 +110,7 @@ function mapScanToHistoryItem(scan: ScanWithProduct) {
 
   return {
     id: scan.id,
+    clientScanId: scan.clientScanId,
     barcode: scan.barcode,
     name: scan.product.name,
     brand: scan.product.brand,
@@ -184,6 +199,10 @@ scanRouter.post(
 
     try {
       const barcode = parsedBody.data.barcode;
+      const clientScanId = parsedBody.data.clientScanId ?? randomUUID();
+      const scannedAt = parsedBody.data.scannedAt
+        ? new Date(parsedBody.data.scannedAt)
+        : new Date();
 
       const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
 
@@ -197,11 +216,22 @@ scanRouter.post(
         },
       });
 
-      const createdScan = await prisma.scan.create({
-        data: {
+      const savedScan = await prisma.scan.upsert({
+        where: {
+          userId_clientScanId: {
+            userId: databaseUser.id,
+            clientScanId,
+          },
+        },
+
+        update: {},
+
+        create: {
           userId: databaseUser.id,
           productId: product?.id ?? null,
+          clientScanId,
           barcode,
+          scannedAt,
         },
 
         include: {
@@ -220,7 +250,7 @@ scanRouter.post(
       response.status(201).json({
         success: true,
         message: "Scan saved successfully",
-        scan: mapScanToHistoryItem(createdScan),
+        scan: mapScanToHistoryItem(savedScan),
       });
     } catch (error) {
       next(error);
