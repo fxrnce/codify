@@ -57,6 +57,8 @@ productRouter.get(
           status: true,
           fdaStatusLabel: true,
           registrationNumber: true,
+          imageUrl: true,
+          verificationUrl: true,
 
           ingredients: {
             orderBy: {
@@ -93,6 +95,8 @@ productRouter.get(
           status: productStatusLabels[product.status],
           fdaStatusLabel: product.fdaStatusLabel,
           registrationNumber: product.registrationNumber,
+          imageUrl: product.imageUrl,
+          verificationUrl: product.verificationUrl,
           ingredients: product.ingredients.map((ingredient) => ingredient.name),
           allergens: product.allergens.map((allergen) => allergen.name),
         })),
@@ -171,6 +175,8 @@ productRouter.get(
           healthScore: product.healthScore,
           servingSize: product.servingSize,
           warningMessage: product.warningMessage,
+          imageUrl: product.imageUrl,
+          verificationUrl: product.verificationUrl,
 
           nutrition: product.nutrition
             ? {

@@ -14,8 +14,8 @@ const barcodes = [
     color: "#FDB515",
   },
   {
-    code: "0000000000000",
-    name: "Energy Drink X",
+    code: "7891000304808",
+    name: "Nescafé Tradição Forte",
     color: "#FF6363",
   },
 ];

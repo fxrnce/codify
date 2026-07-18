@@ -18,6 +18,8 @@ type SeedProduct = {
   healthScore: number | null;
   servingSize: string;
   warningMessage: string;
+  imageUrl?: string | null;
+  verificationUrl?: string | null;
 
   nutrition: {
     calories: string;
@@ -141,53 +143,38 @@ const products: SeedProduct[] = [
   },
 
   {
-    slug: "energy-drink-x",
-    barcode: "0000000000000",
-    name: "Energy Drink X",
-    brand: "Unknown Brand",
-    category: "Beverage",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Unverified",
-    registrationNumber: "No FDA record found",
-    healthScore: 20,
-    servingSize: "250ml",
+    slug: "nescafe-tradicao-forte-200g",
+    barcode: "7891000304808",
+    name: "Nescafé Tradição Forte 200g",
+    brand: "Nescafé",
+    category: "Instant Coffee",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-0463",
+    registrationNumber: "No Certificate of Product Registration issued",
+    healthScore: null,
+    servingSize: "N/A",
     warningMessage:
-      "This product is not found in the demo FDA database. Avoid purchasing until verified.",
+      "The Philippine FDA warns the public not to purchase or consume this unregistered product.",
+    imageUrl:
+      "https://www.fda.gov.ph/wp-content/uploads/2026/05/FDA-ADVISORY-No.2026-0463.png",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-0463-public-health-warning-against-the-purchase-and-consumption-of-the-unregistered-food-product-nescafe-tradicao-forte-100-cafe/",
 
     nutrition: {
-      calories: "180",
-      protein: "0g",
-      carbohydrates: "44g",
-      totalFat: "0g",
-      sodium: "120mg",
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
     },
 
-    ingredients: [
-      {
-        name: "Carbonated Water",
-        isAllergen: false,
-      },
-      {
-        name: "Sugar",
-        isAllergen: false,
-      },
-      {
-        name: "Caffeine",
-        isAllergen: false,
-      },
-      {
-        name: "Artificial Flavor",
-        isAllergen: true,
-      },
-      {
-        name: "Coloring",
-        isAllergen: false,
-      },
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "FDA-registered instant coffee with matching Philippine-market packaging",
     ],
-
-    allergens: ["Artificial Flavor"],
-
-    alternatives: ["FDA Registered Energy Drink", "Low Sugar Sports Drink"],
   },
 
   {
@@ -203,6 +190,7 @@ const products: SeedProduct[] = [
     servingSize: "1 tsp with 180ml hot water",
     warningMessage:
       "No exact Philippine FDA record was found for this barcode. The photographed jar was produced in Brazil and labeled for the Algerian market, so verify this exact imported variant before purchase or use.",
+    verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
       calories: "N/A",
@@ -232,6 +220,18 @@ async function seedDatabase() {
   console.log("Seeding Codify demo products...");
   console.log("");
 
+  const removedDemoProducts = await prisma.product.deleteMany({
+    where: {
+      slug: {
+        in: ["energy-drink-x"],
+      },
+    },
+  });
+
+  if (removedDemoProducts.count > 0) {
+    console.log("Removed obsolete fictional product: Energy Drink X");
+  }
+
   for (const product of products) {
     await prisma.product.upsert({
       where: {
@@ -249,6 +249,8 @@ async function seedDatabase() {
         healthScore: product.healthScore,
         servingSize: product.servingSize,
         warningMessage: product.warningMessage,
+        imageUrl: product.imageUrl ?? null,
+        verificationUrl: product.verificationUrl ?? null,
 
         nutrition: {
           upsert: {
@@ -311,6 +313,8 @@ async function seedDatabase() {
         healthScore: product.healthScore,
         servingSize: product.servingSize,
         warningMessage: product.warningMessage,
+        imageUrl: product.imageUrl ?? null,
+        verificationUrl: product.verificationUrl ?? null,
 
         nutrition: {
           create: {

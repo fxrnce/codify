@@ -43,6 +43,8 @@ model Product {
   healthScore        Int?          @map("health_score")
   servingSize        String        @map("serving_size")
   warningMessage     String        @map("warning_message")
+  imageUrl           String?       @map("image_url")
+  verificationUrl    String?       @map("verification_url")
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
 

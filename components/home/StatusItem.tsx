@@ -38,11 +38,11 @@ export default function StatusItem({ type, title, description }: Props) {
 
     unverified: {
       icon: "help-circle-outline",
-      bg: "#EEF2FF",
-      border: "#E0E7FF",
-      title: "#3730A3",
-      desc: "#4F46E5",
-      iconColor: "#6366F1",
+      bg: "#F8FAFC",
+      border: "#CBD5E1",
+      title: "#334155",
+      desc: "#475569",
+      iconColor: "#64748B",
     },
   }[type];
 

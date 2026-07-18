@@ -39,8 +39,8 @@ const sampleBarcodes = [
     color: "#E17100",
   },
   {
-    code: "0000000000000",
-    name: "Energy Drink X",
+    code: "7891000304808",
+    name: "Nescafé Tradição Forte",
     bg: "#FEF2F2",
     color: "#E7000B",
   },

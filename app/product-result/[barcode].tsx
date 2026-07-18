@@ -1,9 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Linking,
   Pressable,
   ScrollView,
   Share,
@@ -16,6 +18,12 @@ import {
 import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
+
+const LOCAL_PRODUCT_IMAGES: Record<string, number> = {
+  "nescafe-classic-190g-brazil-algeria": require(
+    "../../assets/products/nescafe-classic-190g.jpg",
+  ),
+};
 
 type ProductLoadState = "loading" | "success" | "not-found" | "error";
 
@@ -44,7 +52,7 @@ function getStatusColors(status: ProductStatus) {
 
   if (status === "Unverified") {
     return {
-      gradient: ["#4F46E5", "#6366F1"] as const,
+      gradient: ["#475569", "#64748B"] as const,
       icon: "help-circle-outline" as const,
       scoreColor: "#64748B",
     };
@@ -55,6 +63,66 @@ function getStatusColors(status: ProductStatus) {
     icon: "close-circle-outline" as const,
     scoreColor: "#E7000B",
   };
+}
+
+function getStatusNoticeColors(status: ProductStatus) {
+  if (status === "Approved") {
+    return {
+      background: "#ECFDF5",
+      border: "#D0FAE5",
+      iconBackground: "#D0FAE5",
+      title: "#007A55",
+      text: "#009966",
+      icon: "#00A878",
+    };
+  }
+
+  if (status === "Caution") {
+    return {
+      background: "#FFFBEB",
+      border: "#FEF3C6",
+      iconBackground: "#FEF3C6",
+      title: "#BB4D00",
+      text: "#C65D00",
+      icon: "#E17100",
+    };
+  }
+
+  if (status === "FDA Advisory") {
+    return {
+      background: "#FEF2F2",
+      border: "#FFE2E2",
+      iconBackground: "#FFE2E2",
+      title: "#C10007",
+      text: "#E7000B",
+      icon: "#E7000B",
+    };
+  }
+
+  return {
+    background: "#F8FAFC",
+    border: "#CBD5E1",
+    iconBackground: "#E2E8F0",
+    title: "#334155",
+    text: "#475569",
+    icon: "#475569",
+  };
+}
+
+function getProductImageSource(product: DemoProduct) {
+  const localImage = LOCAL_PRODUCT_IMAGES[product.id];
+
+  if (localImage) {
+    return localImage;
+  }
+
+  if (product.imageUrl) {
+    return {
+      uri: product.imageUrl,
+    };
+  }
+
+  return null;
 }
 
 function getScoreWidth(score: number): DimensionValue {
@@ -320,7 +388,7 @@ export default function ProductResultScreen() {
     return (
       <View style={styles.screen}>
         <LinearGradient
-          colors={["#4F46E5", "#6366F1"]}
+          colors={["#475569", "#64748B"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.unknownHeader}
@@ -355,11 +423,11 @@ export default function ProductResultScreen() {
         >
           <View style={styles.warningCard}>
             <View style={styles.warningIconBox}>
-              <Ionicons name="shield-outline" size={22} color="#E7000B" />
+              <Ionicons name="shield-outline" size={22} color="#475569" />
             </View>
 
             <View style={styles.warningTextBox}>
-              <Text style={styles.warningTitle}>Use caution</Text>
+              <Text style={styles.warningTitle}>Verification needed</Text>
 
               <Text style={styles.warningText}>
                 This barcode is not available in the Codify demo database. The
@@ -440,6 +508,7 @@ export default function ProductResultScreen() {
   }
 
   const statusColors = getStatusColors(product.status);
+  const productImageSource = getProductImageSource(product);
 
   const matchedAllergens = product.allergens.filter((allergen) =>
     selectedAllergens.includes(normalizeAllergen(allergen)),
@@ -510,6 +579,17 @@ export default function ProductResultScreen() {
                 {matchedAllergens.join(", ")}
               </Text>
             </View>
+          </View>
+        )}
+
+        {productImageSource && (
+          <View style={[styles.card, styles.productImageCard]}>
+            <Image
+              source={productImageSource}
+              style={styles.productImage}
+              contentFit="contain"
+              transition={200}
+            />
           </View>
         )}
 
@@ -633,21 +713,58 @@ function NutritionCard({ product }: { product: DemoProduct }) {
 }
 
 function ProductSafetyCard({ product }: { product: DemoProduct }) {
+  const colors = getStatusNoticeColors(product.status);
+  const title =
+    product.status === "FDA Advisory"
+      ? "FDA Public Health Warning"
+      : product.status === "Unverified"
+        ? "Verification Note"
+        : "Safety Notes";
+
   return (
-    <View style={styles.safetyCard}>
-      <View style={styles.safetyIconBox}>
-        <Ionicons name="information-circle-outline" size={22} color="#4F39F6" />
+    <View
+      style={[
+        styles.safetyCard,
+        {
+          backgroundColor: colors.background,
+          borderColor: colors.border,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.safetyIconBox,
+          {
+            backgroundColor: colors.iconBackground,
+          },
+        ]}
+      >
+        <Ionicons
+          name="information-circle-outline"
+          size={22}
+          color={colors.icon}
+        />
       </View>
 
       <View style={styles.safetyTextBox}>
-        <Text style={styles.safetyTitle}>Safety Notes</Text>
-        <Text style={styles.safetyText}>{product.warningMessage}</Text>
+        <Text style={[styles.safetyTitle, { color: colors.title }]}>
+          {title}
+        </Text>
+        <Text style={[styles.safetyText, { color: colors.text }]}>
+          {product.warningMessage}
+        </Text>
       </View>
     </View>
   );
 }
 
 function ProductInfoCard({ product }: { product: DemoProduct }) {
+  const openVerificationPage = () => {
+    if (product.verificationUrl?.startsWith("https://")) {
+      void Linking.openURL(product.verificationUrl);
+    }
+  };
+
   return (
     <View style={styles.card}>
       <Text style={styles.ingredientsTitle}>Product Information</Text>
@@ -676,6 +793,15 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
           <Text style={styles.infoValue}>{product.category}</Text>
         </View>
       </View>
+
+      {product.verificationUrl && (
+        <Pressable style={styles.sourceButton} onPress={openVerificationPage}>
+          <Ionicons name="open-outline" size={16} color="#4F46E5" />
+          <Text style={styles.sourceButtonText}>
+            Open FDA verification source
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -686,24 +812,30 @@ function IngredientsCard({ product }: { product: DemoProduct }) {
       <Text style={styles.ingredientsTitle}>Ingredients</Text>
 
       <View style={styles.ingredientWrap}>
-        {product.ingredients.map((ingredient) => (
-          <View
-            key={ingredient.name}
-            style={[
-              styles.ingredientPill,
-              ingredient.isAllergen && styles.ingredientPillDanger,
-            ]}
-          >
-            <Text
+        {product.ingredients.length === 0 ? (
+          <Text style={styles.emptyDataText}>
+            Ingredient details were not provided in the verification source.
+          </Text>
+        ) : (
+          product.ingredients.map((ingredient) => (
+            <View
+              key={ingredient.name}
               style={[
-                styles.ingredientText,
-                ingredient.isAllergen && styles.ingredientTextDanger,
+                styles.ingredientPill,
+                ingredient.isAllergen && styles.ingredientPillDanger,
               ]}
             >
-              {ingredient.name}
-            </Text>
-          </View>
-        ))}
+              <Text
+                style={[
+                  styles.ingredientText,
+                  ingredient.isAllergen && styles.ingredientTextDanger,
+                ]}
+              >
+                {ingredient.name}
+              </Text>
+            </View>
+          ))
+        )}
       </View>
 
       {product.allergens.length > 0 && (
@@ -819,6 +951,27 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#1D293D",
     textAlign: "right",
+  },
+
+  sourceButton: {
+    marginTop: 14,
+    minHeight: 44,
+    borderRadius: 14,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1,
+    borderColor: "#E0E7FF",
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  sourceButtonText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#4F46E5",
   },
 
   screen: {
@@ -1005,6 +1158,17 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 
+  productImageCard: {
+    padding: 0,
+    overflow: "hidden",
+  },
+
+  productImage: {
+    width: "100%",
+    height: 260,
+    backgroundColor: "#FFFFFF",
+  },
+
   cardTitleRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1152,6 +1316,12 @@ const styles = StyleSheet.create({
   ingredientTextDanger: {
     fontWeight: "600",
     color: "#C10007",
+  },
+
+  emptyDataText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#64748B",
   },
 
   containsRow: {
@@ -1329,9 +1499,9 @@ const styles = StyleSheet.create({
   warningCard: {
     minHeight: 96,
     borderRadius: 16,
-    backgroundColor: "#FEF2F2",
+    backgroundColor: "#F8FAFC",
     borderWidth: 1.17,
-    borderColor: "#FFE2E2",
+    borderColor: "#CBD5E1",
     padding: 16,
     flexDirection: "row",
   },
@@ -1340,7 +1510,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 14,
-    backgroundColor: "#FFE2E2",
+    backgroundColor: "#E2E8F0",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1354,14 +1524,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "800",
-    color: "#C10007",
+    color: "#334155",
   },
 
   warningText: {
     marginTop: 4,
     fontSize: 13,
     lineHeight: 20,
-    color: "#E7000B",
+    color: "#475569",
   },
 
   unknownInfoRow: {
@@ -1397,7 +1567,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: "700",
-    color: "#E7000B",
+    color: "#475569",
   },
 
   reasonList: {

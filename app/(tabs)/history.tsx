@@ -53,8 +53,8 @@ function getStatusStyle(status: ScanHistoryItem["status"]) {
 
   if (status === "Unverified") {
     return {
-      bg: "#EEF2FF",
-      color: "#4F46E5",
+      bg: "#F1F5F9",
+      color: "#475569",
       icon: "help-circle" as const,
       label: "Unverified",
     };
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   },
 
   unverifiedCard: {
-    backgroundColor: "#EEF2FF",
+    backgroundColor: "#F1F5F9",
   },
 
   summaryNumber: {
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   },
 
   unverifiedText: {
-    color: "#4F46E5",
+    color: "#475569",
   },
 
   emptyContainer: {
