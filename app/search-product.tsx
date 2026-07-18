@@ -136,7 +136,7 @@ function getStatusStyle(status: ProductStatus) {
     bg: "#FEF2F2",
     color: "#E7000B",
     icon: "close-circle" as const,
-    label: "FDA Advisory",
+    label: "Not Approved",
   };
 }
 

@@ -30,8 +30,8 @@ export default function StatusGuide() {
 
         <StatusItem
           type="danger"
-          title="FDA Advisory"
-          description="Covered by an official FDA warning — avoid purchasing"
+          title="Not Approved"
+          description="Subject to an official FDA warning — avoid purchasing"
         />
 
         <StatusItem

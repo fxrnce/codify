@@ -21,14 +21,14 @@ type HistoryFilter =
   | "All"
   | "Approved"
   | "Caution"
-  | "FDA Advisory"
+  | "Not Approved"
   | "Unverified";
 
 const FILTERS: HistoryFilter[] = [
   "All",
   "Approved",
   "Caution",
-  "FDA Advisory",
+  "Not Approved",
   "Unverified",
 ];
 
@@ -64,7 +64,7 @@ function getStatusStyle(status: ScanHistoryItem["status"]) {
     bg: "#FEF2F2",
     color: "#E7000B",
     icon: "close-circle" as const,
-    label: "FDA Advisory",
+    label: "Not Approved",
   };
 }
 
@@ -123,7 +123,10 @@ export default function HistoryScreen() {
       item.fdaStatusLabel.toLowerCase().includes(normalizedSearchText);
 
     const matchesFilter =
-      selectedFilter === "All" || item.status === selectedFilter;
+      selectedFilter === "All" ||
+      (selectedFilter === "Not Approved"
+        ? item.status === "FDA Advisory"
+        : item.status === selectedFilter);
 
     return matchesSearch && matchesFilter;
   });
@@ -243,7 +246,7 @@ export default function HistoryScreen() {
                 {advisoryCount}
               </Text>
               <Text style={[styles.summaryLabel, styles.advisoryText]}>
-                Advisory
+                Not Approved
               </Text>
             </View>
 
