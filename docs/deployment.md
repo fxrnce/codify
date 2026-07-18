@@ -56,7 +56,7 @@ startup when multiple instances or zero-downtime deploys are in use.
 After deployment, verify:
 
 ```text
-https://YOUR-RENDER-SERVICE.onrender.com/health
+https://codify-api-hkjj.onrender.com/health
 ```
 
 The response should have HTTP status `200` and identify `codify-backend`.
@@ -73,16 +73,16 @@ npx eas-cli@latest project:info
 Create the public app variables for the preview environment:
 
 ```powershell
-npx eas-cli@latest env:create --name EXPO_PUBLIC_API_URL --value https://YOUR-RENDER-SERVICE.onrender.com --environment preview --visibility plainText
-npx eas-cli@latest env:create --name EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY --value YOUR_CLERK_PUBLISHABLE_KEY --environment preview --visibility plainText
+npx eas-cli@latest env:create --name EXPO_PUBLIC_API_URL --value https://codify-api-hkjj.onrender.com --environment preview --visibility plaintext
+npx eas-cli@latest env:create --name EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY --value YOUR_CLERK_PUBLISHABLE_KEY --environment preview --visibility plaintext
 ```
 
 Create the same variable names in the production environment, using production
 values:
 
 ```powershell
-npx eas-cli@latest env:create --name EXPO_PUBLIC_API_URL --value https://YOUR-RENDER-SERVICE.onrender.com --environment production --visibility plainText
-npx eas-cli@latest env:create --name EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY --value YOUR_CLERK_PUBLISHABLE_KEY --environment production --visibility plainText
+npx eas-cli@latest env:create --name EXPO_PUBLIC_API_URL --value https://codify-api-hkjj.onrender.com --environment production --visibility plaintext
+npx eas-cli@latest env:create --name EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY --value YOUR_CLERK_PUBLISHABLE_KEY --environment production --visibility plaintext
 ```
 
 Anything bundled into an Expo client is readable by users. Never add the Clerk
