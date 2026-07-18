@@ -1,50 +1,106 @@
-# Welcome to your Expo app 👋
+# Codify
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Codify is an Expo mobile application backed by an Express and PostgreSQL API.
+It provides a product catalog, barcode scan history, allergen preferences, and
+authenticated product reports.
 
-## Get started
+## Stack
 
-1. Install dependencies
+- Expo SDK 54, Expo Router, React Native, and TypeScript
+- Clerk authentication
+- Express 5 and TypeScript
+- Prisma 7 with PostgreSQL
+- EAS Build for preview and production app builds
+- Render for the backend API
 
-   ```bash
-   npm install
+## Requirements
+
+- Node.js 24 and npm
+- A PostgreSQL database
+- A Clerk application
+- Expo Go or an Expo development build for local device testing
+
+## Local setup
+
+1. Install frontend and backend dependencies:
+
+   ```powershell
+   npm ci
+   npm --prefix backend ci
    ```
 
-2. Start the app
+2. Create local environment files:
 
-   ```bash
-   npx expo start
+   ```powershell
+   Copy-Item .env.example .env
+   Copy-Item backend/.env.example backend/.env
    ```
 
-In the output, you'll find options to open the app in a
+3. Fill in the Clerk and PostgreSQL values in both environment files.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+4. Apply the database migrations:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+   ```powershell
+   npm --prefix backend run prisma:migrate:deploy
+   ```
 
-## Get a fresh project
+5. Start the API and Expo app in separate terminals:
 
-When you're ready, run:
+   ```powershell
+   npm --prefix backend run dev
+   ```
 
-```bash
-npm run reset-project
+   ```powershell
+   npm start
+   ```
+
+`EXPO_PUBLIC_API_URL=http://localhost:3000` works for a web browser and iOS
+Simulator. Android Emulator normally uses `http://10.0.2.2:3000`. A physical
+device must use the development computer's LAN address, such as
+`http://192.168.1.10:3000`.
+
+## Environment variables
+
+The Expo app requires:
+
+- `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `EXPO_PUBLIC_API_URL`
+
+The backend requires:
+
+- `CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `DATABASE_URL`
+- `NODE_ENV`, `PORT`, and `CORS_ORIGIN` have safe local defaults
+
+Never put a secret in an `EXPO_PUBLIC_*` variable. Expo embeds those variables
+in the application bundle.
+
+## Quality checks
+
+```powershell
+npm run lint
+npm run typecheck
+npm audit --omit=dev --audit-level=high
+npm --prefix backend run prisma:validate
+npm --prefix backend run typecheck
+npm --prefix backend run build
+npm --prefix backend audit --omit=dev --audit-level=high
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+GitHub Actions runs the same checks and creates an Android JavaScript bundle on
+every pull request and every push to `main`.
 
-## Learn more
+## Deployment
 
-To learn more about developing your project with Expo, look at the following resources:
+The production rollout intentionally follows this order:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. Deploy the backend to Render.
+2. Run the checked-in Prisma migrations against the production database.
+3. Verify the Render `/health` endpoint.
+4. Configure EAS preview and production variables with the Render HTTPS URL.
+5. Build and test a preview APK.
+6. Build the store-ready production artifacts.
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+See [Deployment guide](docs/deployment.md) for the complete Render, database,
+EAS, and rollback procedure.

@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "codify",
+    "name": "Codify",
     "slug": "codify",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "codify",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fxrnce.codify"
     },
     "android": {
       "adaptiveIcon": {

@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native projects are generated from app.json by EAS Build.
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+/ios
+/android
+
+# Metro
+.metro-health-check*
+
+# Debug and logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+logs/
+
+# macOS
+.DS_Store
+*.pem
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# TypeScript and test output
+*.tsbuildinfo
+coverage/
+
+# Files that are not part of the mobile build.
+/backend
+/.github
+/docs
+/render.yaml
+
+# Old Expo example folder
+app-example/
