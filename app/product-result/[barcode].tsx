@@ -19,12 +19,6 @@ import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
 
-const LOCAL_PRODUCT_IMAGES: Record<string, number> = {
-  "nescafe-classic-190g-brazil-algeria": require(
-    "../../assets/products/nescafe-classic-190g.jpg",
-  ),
-};
-
 type ProductLoadState = "loading" | "success" | "not-found" | "error";
 
 type ProductApiResponse = {
@@ -109,14 +103,20 @@ function getStatusNoticeColors(status: ProductStatus) {
   };
 }
 
-function getProductImageSource(product: DemoProduct) {
-  const localImage = LOCAL_PRODUCT_IMAGES[product.id];
-
-  if (localImage) {
-    return localImage;
+function getHeaderStatusLabel(status: ProductStatus) {
+  if (status === "Unverified") {
+    return "Not Verified";
   }
 
-  if (product.imageUrl) {
+  if (status === "FDA Advisory") {
+    return "Not Approved";
+  }
+
+  return status;
+}
+
+function getAdvisoryImageSource(product: DemoProduct) {
+  if (product.status === "FDA Advisory" && product.imageUrl) {
     return {
       uri: product.imageUrl,
     };
@@ -508,7 +508,7 @@ export default function ProductResultScreen() {
   }
 
   const statusColors = getStatusColors(product.status);
-  const productImageSource = getProductImageSource(product);
+  const productImageSource = getAdvisoryImageSource(product);
 
   const matchedAllergens = product.allergens.filter((allergen) =>
     selectedAllergens.includes(normalizeAllergen(allergen)),
@@ -543,10 +543,8 @@ export default function ProductResultScreen() {
               <Ionicons name={statusColors.icon} size={18} color="#FFFFFF" />
             </View>
 
-            <Text style={styles.statusLabel}>{product.fdaStatusLabel}</Text>
-
-            <Text style={styles.registrationNumber}>
-              {product.registrationNumber}
+            <Text style={styles.statusLabel}>
+              {getHeaderStatusLabel(product.status)}
             </Text>
           </View>
 
@@ -759,8 +757,12 @@ function ProductSafetyCard({ product }: { product: DemoProduct }) {
 }
 
 function ProductInfoCard({ product }: { product: DemoProduct }) {
+  const hasOfficialAdvisorySource =
+    product.status === "FDA Advisory" &&
+    product.verificationUrl?.startsWith("https://");
+
   const openVerificationPage = () => {
-    if (product.verificationUrl?.startsWith("https://")) {
+    if (hasOfficialAdvisorySource && product.verificationUrl) {
       void Linking.openURL(product.verificationUrl);
     }
   };
@@ -794,12 +796,10 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
         </View>
       </View>
 
-      {product.verificationUrl && (
+      {hasOfficialAdvisorySource && (
         <Pressable style={styles.sourceButton} onPress={openVerificationPage}>
           <Ionicons name="open-outline" size={16} color="#4F46E5" />
-          <Text style={styles.sourceButtonText}>
-            Open FDA verification source
-          </Text>
+          <Text style={styles.sourceButtonText}>Open FDA advisory source</Text>
         </Pressable>
       )}
     </View>
@@ -1046,13 +1046,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: "500",
     color: "rgba(255,255,255,0.9)",
-  },
-
-  registrationNumber: {
-    marginLeft: "auto",
-    fontSize: 12,
-    lineHeight: 16,
-    color: "rgba(255,255,255,0.7)",
   },
 
   productName: {

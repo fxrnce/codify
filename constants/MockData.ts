@@ -160,8 +160,7 @@ export const demoProducts: DemoProduct[] = [
     healthScore: null,
     servingSize: "1 tsp with 180ml hot water",
     warningMessage:
-      "No exact Philippine FDA record was found for this barcode. The photographed jar was produced in Brazil and labeled for the Algerian market, so verify this exact imported variant before purchase or use.",
-    verificationUrl: "https://verification.fda.gov.ph/",
+      "No exact Philippine FDA record was found for this barcode. The label identifies it as produced in Brazil for the Algerian market, so verify this exact imported variant before purchase or use.",
     nutrition: {
       calories: "N/A",
       protein: "N/A",
