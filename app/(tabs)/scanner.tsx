@@ -33,8 +33,8 @@ const sampleBarcodes = [
     color: "#009966",
   },
   {
-    code: "4800017654321",
-    name: "PureGlow Facial Care",
+    code: "0745125547008",
+    name: "Athlene Creatine 300g",
     bg: "#FFFBEB",
     color: "#E17100",
   },

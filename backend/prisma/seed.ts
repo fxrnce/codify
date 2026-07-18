@@ -93,18 +93,20 @@ const products: SeedProduct[] = [
   },
 
   {
-    slug: "pureglow-facial-care",
-    barcode: "4800017654321",
-    name: "PureGlow Facial Care",
-    brand: "PureGlow",
-    category: "Cosmetics",
+    slug: "athlene-active-creatine-monohydrate-300g",
+    barcode: "0745125547008",
+    name: "Athlene Active Creatine Monohydrate 300g",
+    brand: "Athlene",
+    category: "Food Supplement",
     status: "CAUTION",
-    fdaStatusLabel: "FDA Caution",
-    registrationNumber: "FR-4000017654321",
-    healthScore: 48,
-    servingSize: "External use only",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000009873654",
+    healthScore: null,
+    servingSize: "5g (1 scoop)",
     warningMessage:
-      "This product may contain fragrance ingredients. Check for skin sensitivity.",
+      "For healthy adults only. Consult a physician before use if taking medication or if you have a medical condition. Do not use if under 18, pregnant, trying to become pregnant, or breastfeeding. Follow the recommended dosage and stay hydrated.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/All_FoodProductslist.php/All_FoodProductsview.php?ACCOUNTCODE=FR-4000009873654&showdetail=",
 
     nutrition: {
       calories: "N/A",
@@ -116,30 +118,17 @@ const products: SeedProduct[] = [
 
     ingredients: [
       {
-        name: "Water",
-        isAllergen: false,
-      },
-      {
-        name: "Glycerin",
-        isAllergen: false,
-      },
-      {
-        name: "Fragrance",
-        isAllergen: true,
-      },
-      {
-        name: "Alcohol",
-        isAllergen: false,
-      },
-      {
-        name: "Preservatives",
+        name: "Creatine Monohydrate (Micronized)",
         isAllergen: false,
       },
     ],
 
-    allergens: ["Fragrance"],
+    allergens: [],
 
-    alternatives: ["Fragrance-Free Facial Wash", "Sensitive Skin Cleanser"],
+    alternatives: [
+      "Creatine-rich foods such as meat or fish",
+      "Professional nutrition guidance before another supplement",
+    ],
   },
 
   {
@@ -222,13 +211,13 @@ async function seedDatabase() {
   const removedDemoProducts = await prisma.product.deleteMany({
     where: {
       slug: {
-        in: ["energy-drink-x"],
+        in: ["energy-drink-x", "pureglow-facial-care"],
       },
     },
   });
 
   if (removedDemoProducts.count > 0) {
-    console.log("Removed obsolete fictional product: Energy Drink X");
+    console.log("Removed obsolete fictional demo products.");
   }
 
   for (const product of products) {

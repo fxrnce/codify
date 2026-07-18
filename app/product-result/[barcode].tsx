@@ -715,6 +715,8 @@ function ProductSafetyCard({ product }: { product: DemoProduct }) {
   const title =
     product.status === "FDA Advisory"
       ? "FDA Public Health Warning"
+      : product.status === "Caution"
+        ? "Usage Precautions"
       : product.status === "Unverified"
         ? "Verification Note"
         : "Safety Notes";
@@ -757,12 +759,12 @@ function ProductSafetyCard({ product }: { product: DemoProduct }) {
 }
 
 function ProductInfoCard({ product }: { product: DemoProduct }) {
-  const hasOfficialAdvisorySource =
-    product.status === "FDA Advisory" &&
+  const hasOfficialFdaSource =
+    product.status !== "Unverified" &&
     product.verificationUrl?.startsWith("https://");
 
   const openVerificationPage = () => {
-    if (hasOfficialAdvisorySource && product.verificationUrl) {
+    if (hasOfficialFdaSource && product.verificationUrl) {
       void Linking.openURL(product.verificationUrl);
     }
   };
@@ -796,10 +798,14 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
         </View>
       </View>
 
-      {hasOfficialAdvisorySource && (
+      {hasOfficialFdaSource && (
         <Pressable style={styles.sourceButton} onPress={openVerificationPage}>
           <Ionicons name="open-outline" size={16} color="#4F46E5" />
-          <Text style={styles.sourceButtonText}>Open FDA advisory source</Text>
+          <Text style={styles.sourceButtonText}>
+            {product.status === "FDA Advisory"
+              ? "Open FDA advisory source"
+              : "Open FDA registration source"}
+          </Text>
         </Pressable>
       )}
     </View>

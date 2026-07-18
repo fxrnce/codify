@@ -9,8 +9,8 @@ const barcodes = [
     color: "#10D39A",
   },
   {
-    code: "4800017654321",
-    name: "PureGlow Facial Cleaner",
+    code: "0745125547008",
+    name: "Athlene Creatine 300g",
     color: "#FDB515",
   },
   {
