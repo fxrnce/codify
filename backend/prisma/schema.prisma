@@ -11,7 +11,8 @@ datasource db {
 enum ProductStatus {
   APPROVED
   CAUTION
-  NOT_APPROVED
+  FDA_ADVISORY
+  UNVERIFIED
 
   @@map("product_status")
 }
@@ -39,7 +40,7 @@ model Product {
   status             ProductStatus
   fdaStatusLabel     String        @map("fda_status_label")
   registrationNumber String        @map("registration_number")
-  healthScore        Int           @map("health_score")
+  healthScore        Int?          @map("health_score")
   servingSize        String        @map("serving_size")
   warningMessage     String        @map("warning_message")
   createdAt          DateTime      @default(now()) @map("created_at")

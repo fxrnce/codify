@@ -1,6 +1,10 @@
 import { prisma } from "../src/lib/prisma.js";
 
-type SeedProductStatus = "APPROVED" | "CAUTION" | "NOT_APPROVED";
+type SeedProductStatus =
+  | "APPROVED"
+  | "CAUTION"
+  | "FDA_ADVISORY"
+  | "UNVERIFIED";
 
 type SeedProduct = {
   slug: string;
@@ -11,7 +15,7 @@ type SeedProduct = {
   status: SeedProductStatus;
   fdaStatusLabel: string;
   registrationNumber: string;
-  healthScore: number;
+  healthScore: number | null;
   servingSize: string;
   warningMessage: string;
 
@@ -142,8 +146,8 @@ const products: SeedProduct[] = [
     name: "Energy Drink X",
     brand: "Unknown Brand",
     category: "Beverage",
-    status: "NOT_APPROVED",
-    fdaStatusLabel: "Not Approved",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Unverified",
     registrationNumber: "No FDA record found",
     healthScore: 20,
     servingSize: "250ml",
@@ -184,6 +188,42 @@ const products: SeedProduct[] = [
     allergens: ["Artificial Flavor"],
 
     alternatives: ["FDA Registered Energy Drink", "Low Sugar Sports Drink"],
+  },
+
+  {
+    slug: "nescafe-classic-190g-brazil-algeria",
+    barcode: "7891000361917",
+    name: "Nescafé Classic 190g",
+    brand: "Nescafé",
+    category: "Instant Coffee",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA record",
+    healthScore: null,
+    servingSize: "1 tsp with 180ml hot water",
+    warningMessage:
+      "No exact Philippine FDA record was found for this barcode. The photographed jar was produced in Brazil and labeled for the Algerian market, so verify this exact imported variant before purchase or use.",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      {
+        name: "100% Soluble Robusta Coffee",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Philippine-market Nescafé Classic with a matching FDA registration and local label",
+    ],
   },
 ];
 

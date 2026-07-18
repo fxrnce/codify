@@ -123,11 +123,20 @@ function getStatusStyle(status: ProductStatus) {
     };
   }
 
+  if (status === "Unverified") {
+    return {
+      bg: "#EEF2FF",
+      color: "#4F46E5",
+      icon: "help-circle" as const,
+      label: "Unverified",
+    };
+  }
+
   return {
     bg: "#FEF2F2",
     color: "#E7000B",
     icon: "close-circle" as const,
-    label: "Unsafe",
+    label: "FDA Advisory",
   };
 }
 

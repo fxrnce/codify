@@ -30,8 +30,14 @@ export default function StatusGuide() {
 
         <StatusItem
           type="danger"
-          title="Not Approved"
-          description="Not registered — avoid purchasing"
+          title="FDA Advisory"
+          description="Covered by an official FDA warning — avoid purchasing"
+        />
+
+        <StatusItem
+          type="unverified"
+          title="Unverified"
+          description="Exact barcode or market variant has not been matched"
         />
       </View>
     </Card>

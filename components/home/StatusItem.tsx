@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
-  type: "approved" | "warning" | "danger";
+  type: "approved" | "warning" | "danger" | "unverified";
   title: string;
   description: string;
 };
@@ -34,6 +34,15 @@ export default function StatusItem({ type, title, description }: Props) {
       title: "#C10007",
       desc: "#E7000B",
       iconColor: "#FB2C36",
+    },
+
+    unverified: {
+      icon: "help-circle-outline",
+      bg: "#EEF2FF",
+      border: "#E0E7FF",
+      title: "#3730A3",
+      desc: "#4F46E5",
+      iconColor: "#6366F1",
     },
   }[type];
 

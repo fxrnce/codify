@@ -22,7 +22,8 @@ const barcodeParamsSchema = z.object({
 const productStatusLabels = {
   APPROVED: "Approved",
   CAUTION: "Caution",
-  NOT_APPROVED: "Not Approved",
+  FDA_ADVISORY: "FDA Advisory",
+  UNVERIFIED: "Unverified",
 } as const;
 
 /*

@@ -26,7 +26,7 @@ type ReportProductDetails = {
   name: string;
   brand: string;
   category: string;
-  status: "Approved" | "Caution" | "Not Approved";
+  status: "Approved" | "Caution" | "FDA Advisory" | "Unverified";
 };
 
 type ProductLookupApiResponse = {

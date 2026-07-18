@@ -13,7 +13,11 @@ import { prisma } from "../lib/prisma.js";
 
 export const scanRouter = Router();
 
-type DatabaseProductStatus = "APPROVED" | "CAUTION" | "NOT_APPROVED";
+type DatabaseProductStatus =
+  | "APPROVED"
+  | "CAUTION"
+  | "FDA_ADVISORY"
+  | "UNVERIFIED";
 
 type ScanWithProduct = {
   id: string;
@@ -90,7 +94,11 @@ function getProductStatusLabel(status: DatabaseProductStatus) {
     return "Caution" as const;
   }
 
-  return "Not Approved" as const;
+  if (status === "UNVERIFIED") {
+    return "Unverified" as const;
+  }
+
+  return "FDA Advisory" as const;
 }
 
 function mapScanToHistoryItem(scan: ScanWithProduct) {
@@ -102,7 +110,7 @@ function mapScanToHistoryItem(scan: ScanWithProduct) {
       name: "Unknown Product",
       brand: "No FDA record found",
       category: "Unverified Product",
-      status: "Not Approved" as const,
+      status: "Unverified" as const,
       fdaStatusLabel: "Not Listed / Unverified",
       scannedAt: scan.scannedAt.toISOString(),
     };

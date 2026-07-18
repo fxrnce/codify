@@ -33,7 +33,7 @@ export default function Header() {
   ).length;
 
   const alertCount = scanHistory.filter(
-    (item) => item.status === "Caution" || item.status === "Not Approved",
+    (item) => item.status === "Caution" || item.status === "FDA Advisory",
   ).length;
 
   const displayName =

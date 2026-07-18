@@ -42,6 +42,14 @@ function getStatusColors(status: ProductStatus) {
     };
   }
 
+  if (status === "Unverified") {
+    return {
+      gradient: ["#4F46E5", "#6366F1"] as const,
+      icon: "help-circle-outline" as const,
+      scoreColor: "#64748B",
+    };
+  }
+
   return {
     gradient: ["#FB2C36", "#E7000B"] as const,
     icon: "close-circle-outline" as const,
@@ -312,7 +320,7 @@ export default function ProductResultScreen() {
     return (
       <View style={styles.screen}>
         <LinearGradient
-          colors={["#FB2C36", "#E7000B"]}
+          colors={["#4F46E5", "#6366F1"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.unknownHeader}
@@ -328,7 +336,7 @@ export default function ProductResultScreen() {
 
           <View style={styles.unknownHeaderContent}>
             <View style={styles.unknownIconBox}>
-              <Ionicons name="alert-circle-outline" size={32} color="#FFFFFF" />
+              <Ionicons name="help-circle-outline" size={32} color="#FFFFFF" />
             </View>
 
             <Text style={styles.unknownStatus}>Not Listed / Unverified</Text>
@@ -375,7 +383,7 @@ export default function ProductResultScreen() {
 
             <View style={styles.unknownInfoRowLast}>
               <Text style={styles.unknownInfoLabel}>History Status</Text>
-              <Text style={styles.unknownInfoDanger}>Saved as Unsafe</Text>
+              <Text style={styles.unknownInfoValue}>Saved as Unverified</Text>
             </View>
           </View>
 
@@ -536,6 +544,8 @@ function HealthScoreCard({
   product: DemoProduct;
   scoreColor: string;
 }) {
+  const healthScore = product.healthScore;
+
   return (
     <View style={styles.card}>
       <View style={styles.healthTopRow}>
@@ -545,27 +555,35 @@ function HealthScoreCard({
         </View>
 
         <Text style={[styles.healthScore, { color: scoreColor }]}>
-          {product.healthScore}
+          {healthScore ?? "N/A"}
         </Text>
       </View>
 
-      <View style={styles.scoreTrack}>
-        <LinearGradient
-          colors={["#FFB900", "#FF6900"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[
-            styles.scoreFill,
-            { width: getScoreWidth(product.healthScore) },
-          ]}
-        />
-      </View>
+      {healthScore === null ? (
+        <Text style={styles.servingText}>
+          Not enough verified nutrition data to calculate a score.
+        </Text>
+      ) : (
+        <>
+          <View style={styles.scoreTrack}>
+            <LinearGradient
+              colors={["#FFB900", "#FF6900"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[
+                styles.scoreFill,
+                { width: getScoreWidth(healthScore) },
+              ]}
+            />
+          </View>
 
-      <View style={styles.scoreLabelRow}>
-        <Text style={styles.scoreLabel}>Poor</Text>
-        <Text style={styles.scoreLabel}>🟡 Moderate</Text>
-        <Text style={styles.scoreLabel}>Excellent</Text>
-      </View>
+          <View style={styles.scoreLabelRow}>
+            <Text style={styles.scoreLabel}>Poor</Text>
+            <Text style={styles.scoreLabel}>🟡 Moderate</Text>
+            <Text style={styles.scoreLabel}>Excellent</Text>
+          </View>
+        </>
+      )}
     </View>
   );
 }
@@ -709,7 +727,7 @@ function AlternativesCard({ product }: { product: DemoProduct }) {
     <View style={styles.card}>
       <View style={styles.cardTitleRow}>
         <Ionicons name="bulb-outline" size={22} color="#615FFF" />
-        <Text style={styles.cardTitle}>Healthier Alternatives</Text>
+        <Text style={styles.cardTitle}>Suggested Alternatives</Text>
       </View>
 
       <View style={styles.alternativesList}>

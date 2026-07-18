@@ -17,9 +17,20 @@ import {
   useScanHistory,
 } from "@/contexts/ScanHistoryContext";
 
-type HistoryFilter = "All" | "Approved" | "Caution" | "Unsafe";
+type HistoryFilter =
+  | "All"
+  | "Approved"
+  | "Caution"
+  | "FDA Advisory"
+  | "Unverified";
 
-const FILTERS: HistoryFilter[] = ["All", "Approved", "Caution", "Unsafe"];
+const FILTERS: HistoryFilter[] = [
+  "All",
+  "Approved",
+  "Caution",
+  "FDA Advisory",
+  "Unverified",
+];
 
 function getStatusStyle(status: ScanHistoryItem["status"]) {
   if (status === "Approved") {
@@ -40,11 +51,20 @@ function getStatusStyle(status: ScanHistoryItem["status"]) {
     };
   }
 
+  if (status === "Unverified") {
+    return {
+      bg: "#EEF2FF",
+      color: "#4F46E5",
+      icon: "help-circle" as const,
+      label: "Unverified",
+    };
+  }
+
   return {
     bg: "#FEF2F2",
     color: "#E7000B",
     icon: "close-circle" as const,
-    label: "Unsafe",
+    label: "FDA Advisory",
   };
 }
 
@@ -83,8 +103,12 @@ export default function HistoryScreen() {
     (item) => item.status === "Caution",
   ).length;
 
-  const unsafeCount = scanHistory.filter(
-    (item) => item.status === "Not Approved",
+  const advisoryCount = scanHistory.filter(
+    (item) => item.status === "FDA Advisory",
+  ).length;
+
+  const unverifiedCount = scanHistory.filter(
+    (item) => item.status === "Unverified",
   ).length;
 
   const normalizedSearchText = searchText.trim().toLowerCase();
@@ -99,9 +123,7 @@ export default function HistoryScreen() {
       item.fdaStatusLabel.toLowerCase().includes(normalizedSearchText);
 
     const matchesFilter =
-      selectedFilter === "All" ||
-      item.status === selectedFilter ||
-      (selectedFilter === "Unsafe" && item.status === "Not Approved");
+      selectedFilter === "All" || item.status === selectedFilter;
 
     return matchesSearch && matchesFilter;
   });
@@ -216,12 +238,21 @@ export default function HistoryScreen() {
               </Text>
             </View>
 
-            <View style={[styles.summaryCard, styles.unsafeCard]}>
-              <Text style={[styles.summaryNumber, styles.unsafeText]}>
-                {unsafeCount}
+            <View style={[styles.summaryCard, styles.advisoryCard]}>
+              <Text style={[styles.summaryNumber, styles.advisoryText]}>
+                {advisoryCount}
               </Text>
-              <Text style={[styles.summaryLabel, styles.unsafeText]}>
-                Unsafe
+              <Text style={[styles.summaryLabel, styles.advisoryText]}>
+                Advisory
+              </Text>
+            </View>
+
+            <View style={[styles.summaryCard, styles.unverifiedCard]}>
+              <Text style={[styles.summaryNumber, styles.unverifiedText]}>
+                {unverifiedCount}
+              </Text>
+              <Text style={[styles.summaryLabel, styles.unverifiedText]}>
+                Unverified
               </Text>
             </View>
           </View>
@@ -482,8 +513,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFBEB",
   },
 
-  unsafeCard: {
+  advisoryCard: {
     backgroundColor: "#FEF2F2",
+  },
+
+  unverifiedCard: {
+    backgroundColor: "#EEF2FF",
   },
 
   summaryNumber: {
@@ -509,8 +544,12 @@ const styles = StyleSheet.create({
     color: "#E17100",
   },
 
-  unsafeText: {
+  advisoryText: {
     color: "#E7000B",
+  },
+
+  unverifiedText: {
+    color: "#4F46E5",
   },
 
   emptyContainer: {
@@ -639,6 +678,7 @@ const styles = StyleSheet.create({
 
   filterRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     marginBottom: 14,
   },

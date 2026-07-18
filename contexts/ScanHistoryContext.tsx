@@ -99,7 +99,8 @@ function normalizeStoredScan(value: unknown): ScanHistoryItem | null {
   const validStatus =
     status === "Approved" ||
     status === "Caution" ||
-    status === "Not Approved";
+    status === "FDA Advisory" ||
+    status === "Unverified";
 
   if (
     typeof scan.id !== "string" ||
@@ -631,7 +632,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
         name: "Unknown Product",
         brand: "No FDA record found",
         category: "Unverified Product",
-        status: "Not Approved",
+        status: "Unverified",
         fdaStatusLabel: "Not Listed / Unverified",
       });
     },

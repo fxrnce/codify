@@ -13,12 +13,13 @@
     "prebuild": "prisma generate",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
-    "start:render": "npm run prisma:migrate:deploy && npm start",
+    "start:render": "npm run prisma:migrate:deploy && npm run prisma:seed && npm start",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
+    "prisma:seed": "tsx prisma/seed.ts",
     "db:test": "tsx src/scripts/test-database.ts"
   },
   "engines": {
