@@ -2,11 +2,10 @@ services:
   - type: web
     name: codify-api
     runtime: node
-    plan: starter
+    plan: free
     rootDir: backend
     buildCommand: npm ci --include=dev && npm run build
-    preDeployCommand: npm run prisma:migrate:deploy
-    startCommand: npm start
+    startCommand: npm run start:render
     healthCheckPath: /health
     autoDeployTrigger: checksPass
     envVars:

@@ -26,7 +26,7 @@ The root `render.yaml` defines a `codify-api` Node web service with:
 - `backend/` as the monorepo root directory
 - deterministic installation through `npm ci`
 - a TypeScript production build
-- `prisma migrate deploy` before each release
+- `prisma migrate deploy` before the API starts
 - the `/health` health check
 - automatic deployment only after GitHub CI checks pass
 
@@ -42,20 +42,16 @@ In the Render Dashboard:
    called from a deployed web app, replace it with that web app's exact origin.
 5. Create the Blueprint and wait for CI, build, migration, and health checks.
 
-The Blueprint uses Render's Starter instance because Render pre-deploy commands
-are not available on Free web services. The pre-deploy phase is the safe place
-to apply database migrations before new application code starts.
+The Blueprint starts on Render's Free instance type. Because Free services do
+not support pre-deploy commands, `npm run start:render` applies pending Prisma
+migrations before starting the compiled API. The command also runs after a Free
+service wakes from sleep; when there are no pending migrations it exits quickly.
 
-For temporary free-tier testing, change the service plan to `free`, remove the
-Blueprint `preDeployCommand`, and run the following locally with the production
-`DATABASE_URL` set before each backend deployment:
-
-```powershell
-npm --prefix backend run prisma:migrate:deploy
-```
-
-Render Free services can sleep after inactivity and are not recommended for a
-production mobile API.
+Render Free services can sleep after inactivity and are intended for testing,
+not a production mobile API. Before a public release, upgrade to a paid instance,
+move `npm run prisma:migrate:deploy` to `preDeployCommand`, and change the start
+command back to `npm start`. This keeps migrations separate from application
+startup when multiple instances or zero-downtime deploys are in use.
 
 After deployment, verify:
 
