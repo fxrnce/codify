@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import * as WebBrowser from "expo-web-browser";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Linking,
+  Alert,
   Pressable,
   ScrollView,
   Share,
@@ -766,9 +767,20 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
     product.status !== "Unverified" &&
     product.verificationUrl?.startsWith("https://");
 
-  const openVerificationPage = () => {
-    if (hasOfficialFdaSource && product.verificationUrl) {
-      void Linking.openURL(product.verificationUrl);
+  const openVerificationPage = async () => {
+    if (!hasOfficialFdaSource || !product.verificationUrl) {
+      return;
+    }
+
+    try {
+      await WebBrowser.openBrowserAsync(product.verificationUrl);
+    } catch (error) {
+      console.log("Failed to open FDA verification source:", error);
+
+      Alert.alert(
+        "Unable to open FDA source",
+        "The FDA website could not be opened. Please try again later or search the displayed registration number on the FDA Verification Portal.",
+      );
     }
   };
 
