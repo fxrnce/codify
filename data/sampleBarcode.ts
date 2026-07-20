@@ -1,8 +1,8 @@
 export const sampleBarcodes = [
   {
     id: "1",
-    barcode: "4800016644283",
-    product: "Milk Chocolate Bar",
+    barcode: "4800365881315",
+    product: "Super Delights Brownie Bites 14g",
     status: "approved",
   },
   {

@@ -511,7 +511,10 @@ export default function ProductResultScreen() {
   const productImageSource = getAdvisoryImageSource(product);
 
   const matchedAllergens = product.allergens.filter((allergen) =>
-    selectedAllergens.includes(normalizeAllergen(allergen)),
+    selectedAllergens.some(
+      (selectedAllergen) =>
+        normalizeAllergen(selectedAllergen) === normalizeAllergen(allergen),
+    ),
   );
 
   const hasPersonalAllergenAlert = matchedAllergens.length > 0;

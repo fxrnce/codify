@@ -27,8 +27,8 @@ const GRID_ITEMS = Array.from({ length: 36 });
 
 const sampleBarcodes = [
   {
-    code: "4800011234567",
-    name: "Milk Chocolate Bar",
+    code: "4800365881315",
+    name: "Super Delights Brownie Bites",
     bg: "#ECFDF5",
     color: "#009966",
   },

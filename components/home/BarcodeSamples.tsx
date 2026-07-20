@@ -4,8 +4,8 @@ import Card from "@/components/common/Card";
 
 const barcodes = [
   {
-    code: "4800011234567",
-    name: "Milk Chocolate Bar",
+    code: "4800365881315",
+    name: "Super Delights Brownie Bites",
     color: "#10D39A",
   },
   {
