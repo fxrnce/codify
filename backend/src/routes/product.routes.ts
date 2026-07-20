@@ -19,6 +19,18 @@ const barcodeParamsSchema = z.object({
     }),
 });
 
+function getEquivalentUpcEanBarcode(barcode: string) {
+  if (/^\d{12}$/.test(barcode)) {
+    return `0${barcode}`;
+  }
+
+  if (/^0\d{12}$/.test(barcode)) {
+    return barcode.slice(1);
+  }
+
+  return null;
+}
+
 const productStatusLabels = {
   APPROVED: "Approved",
   CAUTION: "Caution",
@@ -122,33 +134,47 @@ productRouter.get(
     }
 
     try {
-      const product = await prisma.product.findUnique({
+      const productInclude = {
+        nutrition: true,
+
+        ingredients: {
+          orderBy: {
+            position: "asc" as const,
+          },
+        },
+
+        allergens: {
+          orderBy: {
+            position: "asc" as const,
+          },
+        },
+
+        alternatives: {
+          orderBy: {
+            position: "asc" as const,
+          },
+        },
+      };
+
+      let product = await prisma.product.findUnique({
         where: {
           barcode: parsedParams.data.barcode,
         },
-
-        include: {
-          nutrition: true,
-
-          ingredients: {
-            orderBy: {
-              position: "asc",
-            },
-          },
-
-          allergens: {
-            orderBy: {
-              position: "asc",
-            },
-          },
-
-          alternatives: {
-            orderBy: {
-              position: "asc",
-            },
-          },
-        },
+        include: productInclude,
       });
+
+      const equivalentBarcode = getEquivalentUpcEanBarcode(
+        parsedParams.data.barcode,
+      );
+
+      if (!product && equivalentBarcode) {
+        product = await prisma.product.findUnique({
+          where: {
+            barcode: equivalentBarcode,
+          },
+          include: productInclude,
+        });
+      }
 
       if (!product) {
         response.status(404).json({
