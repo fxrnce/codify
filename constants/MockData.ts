@@ -59,6 +59,43 @@ export const recentScans = [
 
 export const demoProducts: DemoProduct[] = [
   {
+    id: "green-cross-total-defense-hand-spray-40ml",
+    barcode: "4800047865152",
+    name: "Green Cross Total Defense Antibacterial Hand Spray 40mL",
+    brand: "Green Cross",
+    category: "Hand Sanitizer",
+    status: "Approved",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000011397349",
+    healthScore: null,
+    servingSize: "40mL spray bottle",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000011397349 is valid through November 28, 2026. For external use only. Do not swallow or use near the eyes. Keep tightly closed and away from flame or heat; children should use it under adult supervision.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+    ingredients: [
+      { name: "Ethyl Alcohol", isAllergen: false },
+      { name: "Purified Water", isAllergen: false },
+      { name: "Polyhexamethylene Biguanide", isAllergen: false },
+      { name: "Benzalkonium Chloride", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Aloe Barbadensis Leaf Extract", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Fragrance", isAllergen: false },
+    ],
+    allergens: [],
+    alternatives: [
+      "Wash hands with soap and water when available",
+      "Another FDA-notified hand sanitizer suitable for the user",
+    ],
+  },
+  {
     id: "super-delights-brownie-bites-14g",
     barcode: "4800365881315",
     name: "Super Delights Brownie Bites 14g",
@@ -71,8 +108,7 @@ export const demoProducts: DemoProduct[] = [
     servingSize: "14g (1 pack)",
     warningMessage:
       "FDA registration FR-4000010589283 is valid through February 1, 2028. The FDA portal does not publish retail barcodes; this match uses the product name, brand, manufacturer, address, and packaging. Contains wheat/gluten, eggs, milk, and soy. The label also states that it is manufactured on equipment and/or in facilities that use nut ingredients.",
-    verificationUrl:
-      "https://verification.fda.gov.ph/FoodProduct_Medriskview.php?ACCOUNTCODE=FR-4000010589283&showdetail=",
+    verificationUrl: "https://verification.fda.gov.ph/",
     nutrition: {
       calories: "60",
       protein: "Less than 1g",
@@ -115,8 +151,7 @@ export const demoProducts: DemoProduct[] = [
     servingSize: "5g (1 scoop)",
     warningMessage:
       "For healthy adults only. Consult a physician before use if taking medication or if you have a medical condition. Do not use if under 18, pregnant, trying to become pregnant, or breastfeeding. Follow the recommended dosage and stay hydrated.",
-    verificationUrl:
-      "https://verification.fda.gov.ph/All_FoodProductslist.php/All_FoodProductsview.php?ACCOUNTCODE=FR-4000009873654&showdetail=",
+    verificationUrl: "https://verification.fda.gov.ph/",
     nutrition: {
       calories: "N/A",
       protein: "N/A",

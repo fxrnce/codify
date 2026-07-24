@@ -28,6 +28,46 @@ type ProductApiResponse = {
   product?: DemoProduct;
 };
 
+type FdaFoodProductRecord = {
+  ACCOUNTCODE: string;
+  PRODUCT_NAME: string;
+  BRAND_NAME?: string | null;
+  COMPANY_NAME: string;
+  TYPE_FOOD_PRODUCT_LABEL?: string | null;
+  LOW_RISK_DECISION?: string | null;
+  DATE_VALIDITY?: string | null;
+  IS_CANCELED?: string | null;
+};
+
+type FdaCosmeticNotificationRecord = {
+  ACCOUNTCODE: string;
+  PRODUCT_NAME: string;
+  BRAND_NAME?: string | null;
+  PROD_VARIANTS?: string | null;
+  PRODUCT_INTENDED_USE?: string | null;
+  COMPANY_NAME: string;
+  NOTIFICATION_DECISION_DATE?: string | null;
+  NOTIFICATION_VALIDITY?: string | null;
+};
+
+type FdaSearchResponse = {
+  fdafoodproducts?: FdaFoodProductRecord[];
+  cosmetic_NN?: FdaCosmeticNotificationRecord[];
+};
+
+const FDA_VERIFICATION_PORTAL_URL = "https://verification.fda.gov.ph/";
+const FDA_VERIFICATION_SEARCH_URL = `${FDA_VERIFICATION_PORTAL_URL}api/search`;
+const FDA_SEARCH_USER_AGENT =
+  "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126.0.0.0 Mobile Safari/537.36";
+
+function isFoodRegistrationNumber(value: string) {
+  return /^FR-\d{13}$/.test(value);
+}
+
+function isCosmeticNotificationNumber(value: string) {
+  return /^NN-\d{13}$/.test(value);
+}
+
 function getStatusColors(status: ProductStatus) {
   if (status === "Approved") {
     return {
@@ -595,16 +635,20 @@ export default function ProductResultScreen() {
           </View>
         )}
 
-        <HealthScoreCard
-          product={product}
-          scoreColor={statusColors.scoreColor}
-        />
+        {!isCosmeticNotificationNumber(product.registrationNumber) && (
+          <HealthScoreCard
+            product={product}
+            scoreColor={statusColors.scoreColor}
+          />
+        )}
 
         <ProductSafetyCard product={product} />
 
         <ProductInfoCard product={product} />
 
-        <NutritionCard product={product} />
+        {!isCosmeticNotificationNumber(product.registrationNumber) && (
+          <NutritionCard product={product} />
+        )}
 
         <IngredientsCard product={product} />
 
@@ -763,24 +807,150 @@ function ProductSafetyCard({ product }: { product: DemoProduct }) {
 }
 
 function ProductInfoCard({ product }: { product: DemoProduct }) {
+  const [isCheckingFda, setIsCheckingFda] = useState(false);
+
+  const hasFoodRegistrationNumber = isFoodRegistrationNumber(
+    product.registrationNumber,
+  );
+  const hasCosmeticNotificationNumber = isCosmeticNotificationNumber(
+    product.registrationNumber,
+  );
+  const hasFdaRecordNumber =
+    hasFoodRegistrationNumber || hasCosmeticNotificationNumber;
   const hasOfficialFdaSource =
     product.status !== "Unverified" &&
-    product.verificationUrl?.startsWith("https://");
+    ((product.status === "FDA Advisory" &&
+      product.verificationUrl?.startsWith("https://")) ||
+      hasFdaRecordNumber);
+
+  const openExternalPage = async (url: string) => {
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch (error) {
+      console.log("Failed to open FDA page:", error);
+
+      Alert.alert(
+        "Unable to open FDA page",
+        "The FDA website could not be opened. Please try again later.",
+      );
+    }
+  };
 
   const openVerificationPage = async () => {
-    if (!hasOfficialFdaSource || !product.verificationUrl) {
+    if (!hasOfficialFdaSource || isCheckingFda) {
       return;
     }
 
+    if (product.status === "FDA Advisory" && product.verificationUrl) {
+      await openExternalPage(product.verificationUrl);
+      return;
+    }
+
+    if (!hasFdaRecordNumber) {
+      Alert.alert(
+        "Unable to verify FDA record",
+        "The FDA registration or notification number is unavailable.",
+      );
+      return;
+    }
+
+    setIsCheckingFda(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30_000);
+
     try {
-      await WebBrowser.openBrowserAsync(product.verificationUrl);
-    } catch (error) {
-      console.log("Failed to open FDA verification source:", error);
+      const response = await fetch(
+        `${FDA_VERIFICATION_SEARCH_URL}?q=${encodeURIComponent(product.registrationNumber)}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "User-Agent": FDA_SEARCH_USER_AGENT,
+          },
+          signal: controller.signal,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`The FDA portal returned status ${response.status}.`);
+      }
+
+      const responseBody = (await response.json()) as FdaSearchResponse;
+      const foodRecord = responseBody.fdafoodproducts?.find(
+        (candidate) =>
+          candidate.ACCOUNTCODE === product.registrationNumber,
+      );
+      const cosmeticRecord = responseBody.cosmetic_NN?.find(
+        (candidate) =>
+          candidate.ACCOUNTCODE === product.registrationNumber,
+      );
+
+      if (cosmeticRecord) {
+        Alert.alert(
+          "FDA Notification Verified",
+          `Notification: ${cosmeticRecord.ACCOUNTCODE}\nProduct: ${cosmeticRecord.PRODUCT_NAME}\nBrand: ${cosmeticRecord.BRAND_NAME ?? "Not provided"}\nCompany: ${cosmeticRecord.COMPANY_NAME.trim()}\nIntended Use: ${cosmeticRecord.PRODUCT_INTENDED_USE ?? "Not provided"}\nIssued: ${cosmeticRecord.NOTIFICATION_DECISION_DATE ?? "Not provided"}\nValid Until: ${cosmeticRecord.NOTIFICATION_VALIDITY ?? "Not provided"}`,
+          [
+            {
+              text: "Close",
+              style: "cancel",
+            },
+            {
+              text: "Open FDA Portal",
+              onPress: () => {
+                void openExternalPage(FDA_VERIFICATION_PORTAL_URL);
+              },
+            },
+          ],
+        );
+        return;
+      }
+
+      if (!foodRecord) {
+        throw new Error("No exact FDA record was returned by the portal.");
+      }
+
+      const canceledNotice = foodRecord.IS_CANCELED === "Y"
+        ? "\nStatus: Canceled"
+        : "";
 
       Alert.alert(
-        "Unable to open FDA source",
-        "The FDA website could not be opened. Please try again later or search the displayed registration number on the FDA Verification Portal.",
+        "FDA Registration Verified",
+        `Registration: ${foodRecord.ACCOUNTCODE}\nProduct: ${foodRecord.PRODUCT_NAME}\nBrand: ${foodRecord.BRAND_NAME ?? "Not provided"}\nCompany: ${foodRecord.COMPANY_NAME}\nType: ${foodRecord.TYPE_FOOD_PRODUCT_LABEL ?? "Not provided"}\nFDA Decision: ${foodRecord.LOW_RISK_DECISION ?? "Not provided"}\nValid Until: ${foodRecord.DATE_VALIDITY ?? "Not provided"}${canceledNotice}`,
+        [
+          {
+            text: "Close",
+            style: "cancel",
+          },
+          {
+            text: "Open FDA Portal",
+            onPress: () => {
+              void openExternalPage(FDA_VERIFICATION_PORTAL_URL);
+            },
+          },
+        ],
       );
+    } catch (error) {
+      console.log("Failed to verify FDA registration:", error);
+
+      Alert.alert(
+        "FDA portal lookup unavailable",
+        `The live lookup could not be completed. You can open the FDA portal and search for ${product.registrationNumber}.`,
+        [
+          {
+            text: "Close",
+            style: "cancel",
+          },
+          {
+            text: "Open FDA Portal",
+            onPress: () => {
+              void openExternalPage(FDA_VERIFICATION_PORTAL_URL);
+            },
+          },
+        ],
+      );
+    } finally {
+      clearTimeout(timeoutId);
+      setIsCheckingFda(false);
     }
   };
 
@@ -800,7 +970,11 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Registration No.</Text>
+          <Text style={styles.infoLabel}>
+            {hasCosmeticNotificationNumber
+              ? "Notification No."
+              : "Registration No."}
+          </Text>
 
           <Text numberOfLines={1} style={styles.infoValue}>
             {product.registrationNumber}
@@ -814,12 +988,24 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
       </View>
 
       {hasOfficialFdaSource && (
-        <Pressable style={styles.sourceButton} onPress={openVerificationPage}>
-          <Ionicons name="open-outline" size={16} color="#4F46E5" />
+        <Pressable
+          disabled={isCheckingFda}
+          style={styles.sourceButton}
+          onPress={openVerificationPage}
+        >
+          {isCheckingFda ? (
+            <ActivityIndicator size="small" color="#4F46E5" />
+          ) : (
+            <Ionicons name="open-outline" size={16} color="#4F46E5" />
+          )}
           <Text style={styles.sourceButtonText}>
-            {product.status === "FDA Advisory"
+            {isCheckingFda
+              ? "Checking FDA record..."
+              : product.status === "FDA Advisory"
               ? "Open FDA advisory source"
-              : "Open FDA registration source"}
+              : hasCosmeticNotificationNumber
+                ? "Verify FDA notification"
+                : "Verify FDA registration"}
           </Text>
         </Pressable>
       )}
