@@ -222,6 +222,60 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "atc-fish-oil-1000mg-30-softgels",
+    barcode: "4806518900247",
+    name: "ATC Fish Oil 1000mg 30 Softgel Capsules",
+    brand: "ATC Healthcare",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000009275304",
+    healthScore: null,
+    servingSize: "1 softgel capsule",
+    warningMessage:
+      "Philippine FDA registration FR-4000009275304 is approved, active, and valid through June 2, 2027, but this food supplement has no approved therapeutic claims. For adult use only. Consult a physician or healthcare professional before use if taking prescription medicine. Not recommended for children or for pregnant or lactating women. Contains fish.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Fish Oil (1000mg)",
+        isAllergen: true,
+      },
+      {
+        name: "EPA / Eicosapentaenoic Acid (360mg)",
+        isAllergen: false,
+      },
+      {
+        name: "DHA / Docosahexaenoic Acid (240mg)",
+        isAllergen: false,
+      },
+      {
+        name: "Natural Vitamin E (1mg)",
+        isAllergen: false,
+      },
+      {
+        name: "Soft Gelatin Capsule (Bovine Gelatin Powder, Glycerin)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Fish"],
+
+    alternatives: [
+      "Plant-based omega-3 foods such as chia seeds or flaxseed, if appropriate",
+      "An omega-3 option recommended by a physician or pharmacist",
+    ],
+  },
+
+  {
     slug: "nescafe-tradicao-forte-200g",
     barcode: "7891000304808",
     name: "Nescafé Tradição Forte 200g",
