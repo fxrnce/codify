@@ -221,6 +221,8 @@ const products: SeedProduct[] = [
     ],
   },
 
+  // Caution reflects the supplement's label precautions and fish allergen;
+  // the linked Philippine FDA registration remains approved and active.
   {
     slug: "atc-fish-oil-1000mg-30-softgels",
     barcode: "4806518900247",
