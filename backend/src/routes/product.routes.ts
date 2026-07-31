@@ -210,6 +210,9 @@ productRouter.get(
                 protein: product.nutrition.protein,
                 carbohydrates: product.nutrition.carbohydrates,
                 totalFat: product.nutrition.totalFat,
+                saturatedFat: product.nutrition.saturatedFat,
+                totalSugars: product.nutrition.totalSugars,
+                dietaryFiber: product.nutrition.dietaryFiber,
                 sodium: product.nutrition.sodium,
               }
             : {
@@ -217,6 +220,9 @@ productRouter.get(
                 protein: "N/A",
                 carbohydrates: "N/A",
                 totalFat: "N/A",
+                saturatedFat: "N/A",
+                totalSugars: "N/A",
+                dietaryFiber: "N/A",
                 sodium: "N/A",
               },
 

@@ -73,7 +73,6 @@ function getStatusColors(status: ProductStatus) {
     return {
       gradient: ["#00BC7D", "#00BBA7"] as const,
       icon: "checkmark-circle-outline" as const,
-      scoreColor: "#F0B100",
     };
   }
 
@@ -81,7 +80,6 @@ function getStatusColors(status: ProductStatus) {
     return {
       gradient: ["#FE9A00", "#F59E0B"] as const,
       icon: "warning-outline" as const,
-      scoreColor: "#FE9A00",
     };
   }
 
@@ -89,14 +87,12 @@ function getStatusColors(status: ProductStatus) {
     return {
       gradient: ["#475569", "#64748B"] as const,
       icon: "help-circle-outline" as const,
-      scoreColor: "#64748B",
     };
   }
 
   return {
     gradient: ["#FB2C36", "#E7000B"] as const,
     icon: "close-circle-outline" as const,
-    scoreColor: "#E7000B",
   };
 }
 
@@ -176,6 +172,38 @@ function getScoreWidth(score: number): DimensionValue {
   }
 
   return `${score}%` as DimensionValue;
+}
+
+function getNutritionScorePresentation(score: number) {
+  if (score <= 39) {
+    return {
+      label: "Poor",
+      color: "#E7000B",
+      gradient: ["#FF6467", "#E7000B"] as const,
+    };
+  }
+
+  if (score <= 59) {
+    return {
+      label: "Moderate",
+      color: "#F59E0B",
+      gradient: ["#FFB900", "#FF6900"] as const,
+    };
+  }
+
+  if (score <= 79) {
+    return {
+      label: "Good",
+      color: "#009966",
+      gradient: ["#00BC7D", "#00A63E"] as const,
+    };
+  }
+
+  return {
+    label: "Excellent",
+    color: "#008236",
+    gradient: ["#00C951", "#008236"] as const,
+  };
 }
 
 function normalizeAllergen(value: string) {
@@ -636,10 +664,7 @@ export default function ProductResultScreen() {
         )}
 
         {!isCosmeticNotificationNumber(product.registrationNumber) && (
-          <HealthScoreCard
-            product={product}
-            scoreColor={statusColors.scoreColor}
-          />
+          <NutritionScoreCard product={product} />
         )}
 
         <ProductSafetyCard product={product} />
@@ -663,26 +688,33 @@ export default function ProductResultScreen() {
   );
 }
 
-function HealthScoreCard({
-  product,
-  scoreColor,
-}: {
-  product: DemoProduct;
-  scoreColor: string;
-}) {
+function NutritionScoreCard({ product }: { product: DemoProduct }) {
   const healthScore = product.healthScore;
+  const scorePresentation =
+    healthScore === null ? null : getNutritionScorePresentation(healthScore);
 
   return (
     <View style={styles.card}>
       <View style={styles.healthTopRow}>
         <View style={styles.cardTitleRow}>
           <Ionicons name="shield-outline" size={22} color="#45556C" />
-          <Text style={styles.cardTitle}>Health Score</Text>
+          <Text style={styles.cardTitle}>Nutrition Score</Text>
         </View>
 
-        <Text style={[styles.healthScore, { color: scoreColor }]}>
-          {healthScore ?? "N/A"}
-        </Text>
+        <View style={styles.healthScoreValueRow}>
+          <Text
+            style={[
+              styles.healthScore,
+              { color: scorePresentation?.color ?? "#64748B" },
+            ]}
+          >
+            {healthScore ?? "N/A"}
+          </Text>
+
+          {healthScore !== null && (
+            <Text style={styles.healthScoreMaximum}>/100</Text>
+          )}
+        </View>
       </View>
 
       {healthScore === null ? (
@@ -691,9 +723,24 @@ function HealthScoreCard({
         </Text>
       ) : (
         <>
+          <Text
+            style={[
+              styles.scoreRating,
+              { color: scorePresentation?.color ?? "#64748B" },
+            ]}
+          >
+            {scorePresentation?.label}
+          </Text>
+
+          <Text style={styles.scoreExplanation}>
+            Estimated from verified label data using values standardized per
+            100g. Unknown beneficial nutrients receive no bonus. This is not an
+            FDA rating.
+          </Text>
+
           <View style={styles.scoreTrack}>
             <LinearGradient
-              colors={["#FFB900", "#FF6900"]}
+              colors={scorePresentation?.gradient ?? ["#94A3B8", "#64748B"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[
@@ -716,9 +763,36 @@ function HealthScoreCard({
 
 function NutritionCard({ product }: { product: DemoProduct }) {
   const nutritionRows = [
-    { label: "Protein", value: product.nutrition.protein },
-    { label: "Carbohydrates", value: product.nutrition.carbohydrates },
     { label: "Total Fat", value: product.nutrition.totalFat },
+    ...(product.nutrition.saturatedFat &&
+    product.nutrition.saturatedFat !== "N/A"
+      ? [
+          {
+            label: "Saturated Fat",
+            value: product.nutrition.saturatedFat,
+          },
+        ]
+      : []),
+    { label: "Carbohydrates", value: product.nutrition.carbohydrates },
+    ...(product.nutrition.totalSugars &&
+    product.nutrition.totalSugars !== "N/A"
+      ? [
+          {
+            label: "Total Sugars",
+            value: product.nutrition.totalSugars,
+          },
+        ]
+      : []),
+    ...(product.nutrition.dietaryFiber &&
+    product.nutrition.dietaryFiber !== "N/A"
+      ? [
+          {
+            label: "Dietary Fiber",
+            value: product.nutrition.dietaryFiber,
+          },
+        ]
+      : []),
+    { label: "Protein", value: product.nutrition.protein },
     { label: "Sodium", value: product.nutrition.sodium },
   ];
 
@@ -1024,24 +1098,31 @@ function IngredientsCard({ product }: { product: DemoProduct }) {
             Ingredient details were not provided in the verification source.
           </Text>
         ) : (
-          product.ingredients.map((ingredient) => (
-            <View
-              key={ingredient.name}
-              style={[
-                styles.ingredientPill,
-                ingredient.isAllergen && styles.ingredientPillDanger,
-              ]}
-            >
-              <Text
+          product.ingredients.map((ingredient) => {
+            const isLongIngredient = ingredient.name.length > 36;
+
+            return (
+              <View
+                key={ingredient.name}
                 style={[
-                  styles.ingredientText,
-                  ingredient.isAllergen && styles.ingredientTextDanger,
+                  styles.ingredientPill,
+                  isLongIngredient && styles.ingredientPillLong,
+                  ingredient.isAllergen && styles.ingredientPillDanger,
                 ]}
               >
-                {ingredient.name}
-              </Text>
-            </View>
-          ))
+                <Text
+                  selectable
+                  style={[
+                    styles.ingredientText,
+                    isLongIngredient && styles.ingredientTextLong,
+                    ingredient.isAllergen && styles.ingredientTextDanger,
+                  ]}
+                >
+                  {ingredient.name}
+                </Text>
+              </View>
+            );
+          })
         )}
       </View>
 
@@ -1049,7 +1130,7 @@ function IngredientsCard({ product }: { product: DemoProduct }) {
         <View style={styles.containsRow}>
           <Ionicons name="alert-circle-outline" size={18} color="#FB2C36" />
 
-          <Text style={styles.containsText}>
+          <Text selectable style={styles.containsText}>
             Contains:{" "}
             <Text style={styles.containsMuted}>
               {product.allergens.join(", ")}
@@ -1392,6 +1473,34 @@ const styles = StyleSheet.create({
     fontSize: 36,
     lineHeight: 40,
     fontWeight: "900",
+    fontVariant: ["tabular-nums"],
+  },
+
+  healthScoreValueRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+
+  healthScoreMaximum: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#90A1B9",
+    fontVariant: ["tabular-nums"],
+  },
+
+  scoreRating: {
+    marginTop: 6,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "800",
+  },
+
+  scoreExplanation: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#64748B",
   },
 
   scoreTrack: {
@@ -1496,11 +1605,19 @@ const styles = StyleSheet.create({
   },
 
   ingredientPill: {
-    height: 24,
+    minHeight: 24,
+    maxWidth: "100%",
     borderRadius: 999,
     backgroundColor: "#F1F5F9",
     paddingHorizontal: 10,
+    paddingVertical: 4,
     justifyContent: "center",
+  },
+
+  ingredientPillLong: {
+    width: "100%",
+    borderRadius: 12,
+    paddingVertical: 7,
   },
 
   ingredientPillDanger: {
@@ -1511,6 +1628,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: "#45556C",
+  },
+
+  ingredientTextLong: {
+    width: "100%",
+    lineHeight: 18,
+    flexShrink: 1,
   },
 
   ingredientTextDanger: {
@@ -1535,6 +1658,7 @@ const styles = StyleSheet.create({
   },
 
   containsText: {
+    flex: 1,
     fontSize: 12,
     lineHeight: 16,
     fontWeight: "600",
