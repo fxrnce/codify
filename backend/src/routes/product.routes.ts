@@ -7,16 +7,15 @@ import {
 import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
+import {
+  INVALID_PRODUCT_CODE_MESSAGE,
+  productCodeSchema,
+} from "../lib/product-code.js";
 
 export const productRouter = Router();
 
 const barcodeParamsSchema = z.object({
-  barcode: z
-    .string()
-    .trim()
-    .regex(/^\d{8,14}$/, {
-      message: "Barcode must contain 8 to 14 digits.",
-    }),
+  barcode: productCodeSchema,
 });
 
 function getEquivalentUpcEanBarcode(barcode: string) {
@@ -127,7 +126,7 @@ productRouter.get(
     if (!parsedParams.success) {
       response.status(400).json({
         success: false,
-        message: "Invalid barcode. Barcode must contain 8 to 14 digits.",
+        message: INVALID_PRODUCT_CODE_MESSAGE,
       });
 
       return;

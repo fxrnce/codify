@@ -68,6 +68,10 @@ function isCosmeticNotificationNumber(value: string) {
   return /^NN-\d{13}$/.test(value);
 }
 
+function isFdaAdvisoryReference(value: string) {
+  return /^FDA-\d{4}-\d{4}$/.test(value);
+}
+
 function getStatusColors(status: ProductStatus) {
   if (status === "Approved") {
     return {
@@ -410,8 +414,12 @@ export default function ProductResultScreen() {
       return;
     }
 
+    const identifierLabel = isFdaAdvisoryReference(product.barcode)
+      ? "Advisory Reference"
+      : "Barcode";
+
     await Share.share({
-      message: `${product.name}\nStatus: ${product.fdaStatusLabel}\nBarcode: ${product.barcode}`,
+      message: `${product.name}\nStatus: ${product.fdaStatusLabel}\n${identifierLabel}: ${product.barcode}`,
     });
   };
 
@@ -1034,7 +1042,11 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
 
       <View style={styles.infoRows}>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Barcode</Text>
+          <Text style={styles.infoLabel}>
+            {isFdaAdvisoryReference(product.barcode)
+              ? "Advisory Reference"
+              : "Barcode"}
+          </Text>
           <Text style={styles.infoValue}>{product.barcode}</Text>
         </View>
 

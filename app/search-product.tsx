@@ -277,7 +277,7 @@ export default function SearchProductScreen() {
           <TextInput
             value={searchText}
             onChangeText={setSearchText}
-            placeholder="Search product, brand, barcode..."
+            placeholder="Search product, barcode, FDA advisory..."
             placeholderTextColor="#90A1B9"
             style={styles.searchInput}
             autoCapitalize="none"
@@ -378,7 +378,11 @@ export default function SearchProductScreen() {
                       {product.brand} • {product.category}
                     </Text>
 
-                    <Text style={styles.barcodeText}>{product.barcode}</Text>
+                    <Text style={styles.barcodeText}>
+                      {product.barcode.startsWith("FDA-")
+                        ? `Advisory Reference: ${product.barcode}`
+                        : product.barcode}
+                    </Text>
                   </View>
 
                   <View style={styles.rightSide}>

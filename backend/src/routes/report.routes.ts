@@ -8,6 +8,7 @@ import {
 import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
+import { productCodeSchema } from "../lib/product-code.js";
 
 export const reportRouter = Router();
 
@@ -20,14 +21,7 @@ const REPORT_REASONS = [
 ] as const;
 
 const reportBodySchema = z.object({
-  barcode: z
-    .string()
-    .trim()
-    .regex(/^\d{8,14}$/, {
-      message: "Barcode must contain 8 to 14 digits.",
-    })
-    .nullable()
-    .optional(),
+  barcode: productCodeSchema.nullable().optional(),
   productName: z.string().trim().min(1).max(160),
   brand: z.string().trim().min(1).max(120),
   category: z.string().trim().min(1).max(120),

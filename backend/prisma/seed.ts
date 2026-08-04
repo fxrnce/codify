@@ -211,6 +211,52 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "johnsons-baby-powder-25g",
+    barcode: "48032742",
+    name: "Johnson's Baby Powder 25g",
+    brand: "Johnson's Baby",
+    category: "Body Powder",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000010711083",
+    healthScore: null,
+    servingSize: "25g bottle",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000010711083 is valid through December 23, 2026. Keep powder away from children's nose and mouth because inhalation can cause breathing problems. Avoid contact with eyes, use externally only, and do not apply to broken skin.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      {
+        name: "Zea Mays (Corn) Starch",
+        isAllergen: false,
+      },
+      {
+        name: "Tricalcium Phosphate",
+        isAllergen: false,
+      },
+      {
+        name: "Fragrance",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free cornstarch body powder used as directed",
+      "Keep skin clean and dry without using loose powder near the face",
+    ],
+  },
+
+  {
     slug: "super-delights-brownie-bites-14g",
     barcode: "4800365881315",
     name: "Super Delights Brownie Bites 14g",
@@ -359,6 +405,92 @@ const products: SeedProduct[] = [
     alternatives: [
       "Water",
       "Unsweetened sparkling water",
+    ],
+  },
+
+  {
+    slug: "tang-orange-instant-drink-mix-19g",
+    barcode: "7622300559991",
+    name: "Tang Orange Instant Drink Mix 19g",
+    brand: "Tang",
+    category: "Powdered Drink Mix",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012378562",
+    healthScore: calculateConservativeCategory1NutritionScore({
+      servingSizeMilliliters: 250,
+      caloriesPerServing: 20,
+      totalSugarsGramsPerServing: 3,
+    }),
+    servingSize:
+      "Approx. 5g powder prepared as directed (about 4 servings per 19g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012378562 lists Tang Orange Flavor Instant Drink Mix by Mondelez Philippines, Inc. as approved through April 4, 2029. The nutrition score assumes one prepared 250mL serving. Contains aspartame and phenylalanine; people with phenylketonuria should follow the package warning.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "20",
+      protein: "0g",
+      carbohydrates: "4g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "3g",
+      dietaryFiber: "Less than 1g",
+      sodium: "45mg",
+    },
+
+    ingredients: [
+      {
+        name: "Refined Cane Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Acidity Regulator (Citric Acid)",
+        isAllergen: false,
+      },
+      {
+        name: "Natural and Nature-Identical Orange Flavor",
+        isAllergen: false,
+      },
+      {
+        name: "Anti-Caking Agent (Calcium Phosphate)",
+        isAllergen: false,
+      },
+      {
+        name: "Stabilizer (Sodium Carboxymethylcellulose)",
+        isAllergen: false,
+      },
+      {
+        name: "Artificial Sweeteners (Aspartame and Acesulfame Potassium)",
+        isAllergen: false,
+      },
+      {
+        name: "Flavor Enhancers (Sodium Citrate and Sodium Chloride)",
+        isAllergen: false,
+      },
+      {
+        name: "Artificial Colors (Sunset Yellow and Tartrazine)",
+        isAllergen: false,
+      },
+      {
+        name: "Titanium Dioxide (Color)",
+        isAllergen: false,
+      },
+      {
+        name: "Vitamin C, Zinc, and Vitamin D",
+        isAllergen: false,
+      },
+      {
+        name: "Powdered Orange Extract",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Water with fresh orange slices",
+      "An unsweetened drink with no artificial sweeteners",
     ],
   },
 
@@ -528,6 +660,50 @@ const products: SeedProduct[] = [
     alternatives: [
       "Plant-based omega-3 foods such as chia seeds or flaxseed, if appropriate",
       "An omega-3 option recommended by a physician or pharmacist",
+    ],
+  },
+
+  {
+    slug: "dvdc-acai-berry-beauty-35g",
+    barcode: "FDA-2026-0830",
+    name: "DVDC Acai Berry Beauty 35g",
+    brand: "DVDC",
+    category: "Food Supplement",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "Not Approved",
+    registrationNumber: "No Certificate of Product Registration issued",
+    healthScore: null,
+    servingSize: "5g sachet (7 sachets per 35g pack)",
+    warningMessage:
+      "FDA Advisory No. 2026-0830 warns the public not to purchase or consume this unregistered food supplement. No Certificate of Product Registration has been issued, so the Philippine FDA cannot assure its quality and safety.",
+    imageUrl:
+      "https://www.fda.gov.ph/wp-content/uploads/2026/07/FDA-Advisory-No.2026-0830.png",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-0830-public-health-warning-against-the-purchase-and-consumption-of-the-unregistered-food-supplement-dvdc-acai-berry-beauty-acai-raspberry-cranberry-cherry-strawberry-el/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Acai", isAllergen: false },
+      { name: "Raspberry", isAllergen: false },
+      { name: "Cranberry", isAllergen: false },
+      { name: "Cherry", isAllergen: false },
+      { name: "Strawberry", isAllergen: false },
+      { name: "Elderberry", isAllergen: false },
+      { name: "Blackberry", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Choose only food supplements with a valid Philippine FDA registration",
+      "Use whole fruit or a balanced diet instead of an unregistered supplement",
     ],
   },
 
