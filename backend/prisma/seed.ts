@@ -409,6 +409,83 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "lipton-soda-iced-tea-lemon-zero-sugar-1-5l",
+    barcode: "4803925370328",
+    name: "Lipton Soda Iced Tea Lemon Zero Sugar 1.5L",
+    brand: "Lipton",
+    category: "Zero-Sugar Carbonated Tea",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000014670413",
+    healthScore: calculateConservativeCategory1NutritionScore({
+      servingSizeMilliliters: 200,
+      caloriesPerServing: 1,
+      totalSugarsGramsPerServing: 0,
+    }),
+    servingSize: "200mL (about 7.5 servings per 1.5L bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014670413 lists Lipton Soda Ice Tea Lemon Flavor - Zero Sugar as approved, active, and valid through August 17, 2028. Its Medium Risk Food Product classification is a regulatory category, not an FDA warning. It contains zero sugar and uses sucralose, steviol glycosides, and acesulfame potassium as sweeteners. One 200mL serving contains 56mg sodium.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "1",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "56mg",
+    },
+
+    ingredients: [
+      {
+        name: "Carbonated Water",
+        isAllergen: false,
+      },
+      {
+        name: "Citric Acid (Acidity Regulator)",
+        isAllergen: false,
+      },
+      {
+        name: "Black Tea Extract",
+        isAllergen: false,
+      },
+      {
+        name: "Sodium Hexametaphosphate (Stabilizer)",
+        isAllergen: false,
+      },
+      {
+        name: "Sucralose, Steviol Glycosides, and Acesulfame Potassium (Sweeteners)",
+        isAllergen: false,
+      },
+      {
+        name: "Potassium Sorbate (Preservative)",
+        isAllergen: false,
+      },
+      {
+        name: "Ascorbic Acid",
+        isAllergen: false,
+      },
+      {
+        name: "Trisodium Citrate (Acidity Regulator)",
+        isAllergen: false,
+      },
+      {
+        name: "Natural Lemon Flavourings",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain sparkling water with fresh lemon",
+      "Unsweetened brewed tea served cold",
+    ],
+  },
+
+  {
     slug: "tang-orange-instant-drink-mix-19g",
     barcode: "7622300559991",
     name: "Tang Orange Instant Drink Mix 19g",
@@ -491,6 +568,279 @@ const products: SeedProduct[] = [
     alternatives: [
       "Water with fresh orange slices",
       "An unsweetened drink with no artificial sweeteners",
+    ],
+  },
+
+  {
+    slug: "gardenia-classic-white-bread-regular-slice-600g",
+    barcode: "4806502720615",
+    name: "Gardenia Classic White Bread 600g",
+    brand: "Gardenia",
+    category: "White Bread",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000015595825",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 56,
+      caloriesPerServing: 153,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 5,
+      sodiumMilligramsPerServing: 215,
+    }),
+    servingSize: "56g (2 slices; about 10 servings per 600g loaf)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015595825 lists Gardenia Classic Enriched White Bread 600g as approved, active, and valid through March 5, 2031. The FDA portal does not publish retail barcodes; barcode 4806502720615 matches the Philippine 600g regular-slice pack. Contains wheat/gluten and milk and may contain soy and egg. One serving contains 215mg sodium.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "153",
+      protein: "5g",
+      carbohydrates: "31g",
+      totalFat: "1g",
+      saturatedFat: "0g",
+      totalSugars: "5g",
+      dietaryFiber: "1g",
+      sodium: "215mg",
+    },
+
+    ingredients: [
+      {
+        name: "High Protein Wheat Flour",
+        isAllergen: true,
+      },
+      {
+        name: "Water",
+        isAllergen: false,
+      },
+      {
+        name: "Malted Barley Flour",
+        isAllergen: true,
+      },
+      {
+        name: "Whey",
+        isAllergen: true,
+      },
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Skimmed Milk Powder",
+        isAllergen: true,
+      },
+      {
+        name: "Dextrose",
+        isAllergen: false,
+      },
+      {
+        name: "Pure Vegetable Shortening",
+        isAllergen: false,
+      },
+      {
+        name: "Dough Conditioners",
+        isAllergen: false,
+      },
+      {
+        name: "Soy Flour",
+        isAllergen: true,
+      },
+      {
+        name: "Mineral Yeast Food",
+        isAllergen: false,
+      },
+      {
+        name: "Vitamin B1 (Thiamine) and Folic Acid",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy", "Eggs"],
+
+    alternatives: [
+      "A higher-fiber whole-grain bread after comparing nutrition labels",
+      "A lower-sodium bread that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "magnolia-quickmelt-processed-cheese-160g",
+    barcode: "4805358323032",
+    name: "Magnolia Quickmelt Processed Cheese 160g",
+    brand: "Magnolia",
+    category: "Processed Cheese",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000009868111",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 110,
+      saturatedFatGramsPerServing: 6,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 350,
+    }),
+    servingSize: "30g (about 5 servings per 160g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000009868111 lists Magnolia Quickmelt Pasteurized Processed Cheese Product as approved, active, and valid through January 15, 2029. Its High Risk Food Product classification is a regulatory category for the dairy product, not an FDA warning. One 30g serving contains 6g saturated fat and 350mg sodium. Contains milk and is made in a facility that also processes soy and gluten-containing cereals.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "110",
+      protein: "5g",
+      carbohydrates: "2g",
+      totalFat: "9g",
+      saturatedFat: "6g",
+      totalSugars: "Not listed",
+      dietaryFiber: "1g",
+      sodium: "350mg",
+    },
+
+    ingredients: [
+      {
+        name: "Cheese",
+        isAllergen: true,
+      },
+      {
+        name: "Water",
+        isAllergen: false,
+      },
+      {
+        name: "Vegetable Oil",
+        isAllergen: false,
+      },
+      {
+        name: "Buttermilk Powder",
+        isAllergen: true,
+      },
+      {
+        name: "Milk Proteins",
+        isAllergen: true,
+      },
+      {
+        name: "Sodium Citrate and Disodium Phosphate (Emulsifying Agents)",
+        isAllergen: false,
+      },
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Lactic Acid (Acidulant)",
+        isAllergen: false,
+      },
+      {
+        name: "Carrageenan (Stabilizer)",
+        isAllergen: false,
+      },
+      {
+        name: "Potassium Sorbate and Nisin (Preservatives)",
+        isAllergen: false,
+      },
+      {
+        name: "Flavor",
+        isAllergen: false,
+      },
+      {
+        name: "Beta-Carotene (Colorant)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Soy", "Wheat / Gluten"],
+
+    alternatives: [
+      "A lower-sodium cheese after comparing nutrition labels",
+      "A reduced-saturated-fat cheese that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "eden-original-processed-filled-cheese-spread-160g",
+    barcode: "4808647020094",
+    name: "Eden Original Processed Filled Cheese Spread 160g",
+    brand: "Eden",
+    category: "Processed Cheese Spread",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000015357502",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 90,
+      saturatedFatGramsPerServing: 6,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 450,
+    }),
+    servingSize: "30g (about 5 servings per 160g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015357502 lists Eden Original Processed Filled Cheese Spread as approved, active, and valid through November 6, 2030. Its High Risk Food Product classification is a regulatory category for the dairy product, not an FDA warning. One 30g serving contains 6g saturated fat and 450mg sodium. Contains milk.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "90",
+      protein: "3g",
+      carbohydrates: "4g",
+      totalFat: "7g",
+      saturatedFat: "6g",
+      totalSugars: "1g",
+      dietaryFiber: "Not listed",
+      sodium: "450mg",
+    },
+
+    ingredients: [
+      {
+        name: "Water",
+        isAllergen: false,
+      },
+      {
+        name: "Vegetable Oil (Coconut, Palm, and Palm Olein)",
+        isAllergen: false,
+      },
+      {
+        name: "Milk Powder",
+        isAllergen: true,
+      },
+      {
+        name: "Food Starch (Corn and Tapioca)",
+        isAllergen: false,
+      },
+      {
+        name: "Cheese Powder",
+        isAllergen: true,
+      },
+      {
+        name: "Emulsifiers (E339 and E471)",
+        isAllergen: false,
+      },
+      {
+        name: "Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Acidity Regulator (E260)",
+        isAllergen: false,
+      },
+      {
+        name: "Stabilizer (E341)",
+        isAllergen: false,
+      },
+      {
+        name: "Color (E101)",
+        isAllergen: false,
+      },
+      {
+        name: "Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Preservative (E202)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A lower-sodium cheese after comparing nutrition labels",
+      "A reduced-saturated-fat cheese that matches your allergen preferences",
     ],
   },
 
