@@ -957,6 +957,128 @@ const products: SeedProduct[] = [
     ],
   },
 
+  // Caution reflects the stimulant, dosage, and label precautions; the
+  // Philippine FDA registration remains approved and active through April 2, 2031.
+  {
+    slug: "athlene-active-pre-workout-lemon-lime-390g",
+    barcode: "0745125547138",
+    name: "Athlene Active Pre-Workout Lemon Lime 390g",
+    brand: "Athlene",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000010114915",
+    healthScore: null,
+    servingSize: "1 scoop (6.5g); suggested use: 2 scoops (13g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000010114915 is approved, active, and valid through April 2, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Do not use if under 18, pregnant, trying to become pregnant, breastfeeding, or sensitive to caffeine or beta-alanine. Consult a physician before use if taking medication or managing a medical condition. Limit other caffeine sources, do not take within four hours of alcohol, and do not exceed four scoops in 24 hours.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "23",
+      protein: "0g",
+      carbohydrates: "6g",
+      totalFat: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Citrulline Malate (4,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "Beta-Alanine (2,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "Betaine Anhydrous (2,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "Taurine (1,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "Agmatine Sulfate (1,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "N-Acetyl-L-Tyrosine (1,000mg per 2 scoops)",
+        isAllergen: false,
+      },
+      {
+        name: "Caffeine Anhydrous (200mg per 2 scoops)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A caffeine-free pre-workout routine based on food, water, and adequate rest",
+      "A stimulant product or dosage recommended by a physician or sports dietitian",
+    ],
+  },
+
+  // Caution reflects the supplement's adult-use precautions and milk/soy
+  // allergens; its Philippine FDA registration remains approved and active.
+  {
+    slug: "athlene-active-whey-protein-chocolate-454g",
+    barcode: "0745125547022",
+    name: "Athlene Active Whey Protein Chocolate 454g",
+    brand: "Athlene",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000014471625",
+    healthScore: null,
+    servingSize: "1 scoop (32.4g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014471625 is approved, active, and valid through June 2, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Not intended for children or for pregnant or breastfeeding women. Consult a physician before use if managing a medical condition. Contains milk and soy lecithin.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "124",
+      protein: "24g",
+      carbohydrates: "3g",
+      totalFat: "2g",
+      saturatedFat: "1g",
+      totalSugars: "1g",
+      sodium: "104mg",
+    },
+
+    ingredients: [
+      {
+        name: "Whey Protein Concentrate",
+        isAllergen: true,
+      },
+      {
+        name: "Cocoa",
+        isAllergen: false,
+      },
+      {
+        name: "Lecithin",
+        isAllergen: true,
+      },
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Sucralose",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "Protein-rich whole foods selected for your dietary needs and allergens",
+      "Another FDA-registered protein supplement recommended by a physician or dietitian",
+    ],
+  },
+
   // Caution reflects the supplement's label precautions and fish allergen;
   // the linked Philippine FDA registration remains approved and active.
   {
@@ -1010,6 +1132,80 @@ const products: SeedProduct[] = [
     alternatives: [
       "Plant-based omega-3 foods such as chia seeds or flaxseed, if appropriate",
       "An omega-3 option recommended by a physician or pharmacist",
+    ],
+  },
+
+  // Caution reflects the supplement's label precautions; the Philippine FDA
+  // registration remains approved and active through June 4, 2028.
+  {
+    slug: "pure-form-pre-probiotic-gut-health-90-capsules",
+    barcode: "4809016479130",
+    name: "Pure Form Pre+Probiotic for Gut Health 90 Capsules",
+    brand: "Pure Form",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000014693821",
+    healthScore: null,
+    servingSize: "1 capsule",
+    warningMessage:
+      "Philippine FDA registration FR-4000014693821 is approved, active, and valid through June 4, 2028, but this food supplement has no approved therapeutic claims. Take one capsule on an empty stomach one hour before a meal, or as recommended by a physician. Consult a physician before use if pregnant, breastfeeding, taking medication, or managing a medical condition.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Gut Health Probiotic Blend (325mg)",
+        isAllergen: false,
+      },
+      {
+        name: "Lactobacillus Acidophilus JYLA-191",
+        isAllergen: false,
+      },
+      {
+        name: "Lactobacillus Rhamnosus JYLR-127",
+        isAllergen: false,
+      },
+      {
+        name: "Lactobacillus Reuteri JYLB-291",
+        isAllergen: false,
+      },
+      {
+        name: "Lactobacillus Plantarum JYLP-002",
+        isAllergen: false,
+      },
+      {
+        name: "Bifidobacterium Lactis BLG-19",
+        isAllergen: false,
+      },
+      {
+        name: "Prebiotic Fiber (Inulin) (175mg)",
+        isAllergen: false,
+      },
+      {
+        name: "Prebiotic Fructooligosaccharides (200mg)",
+        isAllergen: false,
+      },
+      {
+        name: "100% Vegan HPMC Capsule Shell",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Probiotic foods such as yogurt or fermented foods, if appropriate",
+      "Another FDA-registered probiotic recommended by a physician or pharmacist",
     ],
   },
 
@@ -1089,6 +1285,67 @@ const products: SeedProduct[] = [
 
     alternatives: [
       "FDA-registered instant coffee with matching Philippine-market packaging",
+    ],
+  },
+
+  {
+    slug: "kirkland-signature-fish-oil-1000mg-400-softgels",
+    barcode: "096619926626",
+    name: "Kirkland Signature Fish Oil 1000mg 400 Softgels",
+    brand: "Kirkland Signature",
+    category: "Food Supplement",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Not Verified",
+    registrationNumber: "No matching Philippine FDA record",
+    healthScore: null,
+    servingSize: "1 softgel; suggested use: 1 softgel twice daily",
+    warningMessage:
+      "No exact Philippine FDA registration or advisory was found for barcode 096619926626. The bottle is labeled as a U.S. Costco product and does not show a Philippine FDA registration or local importer. The USP Verified seal is separate from Philippine FDA product registration. Verify this exact imported product before purchase or use, especially if pregnant, nursing, taking medication, planning a medical procedure, or managing a medical condition.",
+
+    nutrition: {
+      calories: "10",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "1g",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      {
+        name: "Fish Oil (1,000mg)",
+        isAllergen: true,
+      },
+      {
+        name: "Total Omega-3 Fatty Acids (300mg)",
+        isAllergen: false,
+      },
+      {
+        name: "EPA and DHA Omega-3 Fatty Acids (250mg)",
+        isAllergen: false,
+      },
+      {
+        name: "Gelatin (Porcine)",
+        isAllergen: false,
+      },
+      {
+        name: "Glycerin",
+        isAllergen: false,
+      },
+      {
+        name: "Water",
+        isAllergen: false,
+      },
+      {
+        name: "Tocopherols",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Fish"],
+
+    alternatives: [
+      "A fish-oil supplement with a matching active Philippine FDA registration",
+      "Omega-3 food sources recommended for your dietary and medical needs",
     ],
   },
 
