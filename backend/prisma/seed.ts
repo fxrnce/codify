@@ -344,6 +344,88 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "sip-purified-water-500ml",
+    barcode: "4806531431216",
+    name: "SIP Purified Water 500mL",
+    brand: "SIP",
+    category: "Purified Water",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012963838",
+    healthScore: 100,
+    servingSize: "500mL (1 bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012963838 lists SIP Purified Water as approved, active, and valid through September 30, 2029. Its High Risk Food Product classification is a regulatory category for bottled water, not an FDA warning. The 500mL bottle label lists zero calories, fat, carbohydrates, sodium, and protein.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Purified Water",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Safe drinking water from a tested source",
+      "Filtered water in a reusable bottle",
+    ],
+  },
+
+  {
+    slug: "summit-natural-drinking-water-500ml",
+    barcode: "4800014211081",
+    name: "Summit Natural Drinking Water 500mL",
+    brand: "Summit",
+    category: "Natural Drinking Water",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000010780064",
+    healthScore: 100,
+    servingSize: "500mL (1 bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000010780064 lists Summit Natural Drinking Water as approved, active, and valid through April 26, 2028. Its High Risk Food Product classification is a regulatory category for bottled water, not an FDA warning. The 500mL bottle label lists zero calories, fat, carbohydrates, sodium, and protein.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Natural Drinking Water",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Safe drinking water from a tested source",
+      "Filtered water in a reusable bottle",
+    ],
+  },
+
+  {
     slug: "coca-cola-original-taste-can-320ml",
     barcode: "4801981110001",
     name: "Coca-Cola Original Taste 320mL Can",
@@ -844,6 +926,212 @@ const products: SeedProduct[] = [
     ],
   },
 
+  // Caution reflects the mix's high sodium per serving and allergen notices;
+  // its Philippine FDA registration remains approved and active.
+  {
+    slug: "knorr-sinigang-sa-sampalok-mix-original-44g",
+    barcode: "4800888600806",
+    name: "Knorr Sinigang sa Sampalok Mix Original 44g",
+    brand: "Knorr",
+    category: "Soup and Seasoning Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000007690965",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 2.8,
+      caloriesPerServing: 6,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 476,
+    }),
+    servingSize: "2.8g mix (makes 1/2 cup / 125mL; about 16 servings per pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000007690965 lists Knorr Sinigang sa Sampalok Mix Original as approved, active, and valid through September 8, 2030. Its Low Risk Food Product classification is a regulatory category, not an FDA warning. One 2.8g serving contains 476mg sodium (24% RENI). Contains milk and crustaceans, and may contain eggs, fish, soy, and wheat.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "6",
+      protein: "0g",
+      carbohydrates: "1g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "476mg",
+    },
+
+    ingredients: [
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Citric Acid (Acidity Regulator)",
+        isAllergen: false,
+      },
+      {
+        name: "Monosodium Glutamate and Disodium 5'-Ribonucleotides (Flavor Enhancers)",
+        isAllergen: false,
+      },
+      {
+        name: "Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Tomato Powder",
+        isAllergen: false,
+      },
+      {
+        name: "Tamarind",
+        isAllergen: false,
+      },
+      {
+        name: "Xanthan Gum (Thickener)",
+        isAllergen: false,
+      },
+      {
+        name: "Spices",
+        isAllergen: false,
+      },
+      {
+        name: "Palm Oil",
+        isAllergen: false,
+      },
+      {
+        name: "Shrimp",
+        isAllergen: true,
+      },
+      {
+        name: "Yeast Extract",
+        isAllergen: false,
+      },
+      {
+        name: "Caramel and Paprika Colors",
+        isAllergen: false,
+      },
+      {
+        name: "Natural Flavor",
+        isAllergen: false,
+      },
+      {
+        name: "Vitamin C",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Shellfish", "Eggs", "Fish", "Soy", "Wheat / Gluten"],
+
+    alternatives: [
+      "Fresh tamarind and aromatics with salt added to taste",
+      "A lower-sodium soup base checked against your allergen preferences",
+    ],
+  },
+
+  // Caution reflects the mix's high sodium per serving and allergen notices;
+  // its Philippine FDA registration remains approved and active.
+  {
+    slug: "knorr-sinigang-sa-sampalok-mix-gabi-44g",
+    barcode: "4800888602251",
+    name: "Knorr Sinigang sa Sampalok Mix Gabi 44g",
+    brand: "Knorr",
+    category: "Soup and Seasoning Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000009681523",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 3,
+      caloriesPerServing: 6,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 470,
+    }),
+    servingSize: "3g mix (makes 1/2 cup / 125mL; about 15 servings per pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000009681523 lists Knorr Sinigang sa Sampalok Mix Gabi for the local and export markets as approved, active, and valid through May 9, 2028. Its Low Risk Food Product classification is a regulatory category, not an FDA warning. One 3g serving contains 470mg sodium (24% RENI). Contains milk, crustaceans, and gluten-containing cereals, and may contain eggs, fish, and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "6",
+      protein: "0g",
+      carbohydrates: "1g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "470mg",
+    },
+
+    ingredients: [
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Citric Acid (Acidity Regulator)",
+        isAllergen: false,
+      },
+      {
+        name: "Monosodium Glutamate and Ribonucleotides (Flavor Enhancers)",
+        isAllergen: false,
+      },
+      {
+        name: "Tamarind",
+        isAllergen: false,
+      },
+      {
+        name: "Wheat Flour",
+        isAllergen: true,
+      },
+      {
+        name: "Xanthan Gum (Thickener)",
+        isAllergen: false,
+      },
+      {
+        name: "Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Taro",
+        isAllergen: false,
+      },
+      {
+        name: "Tomato",
+        isAllergen: false,
+      },
+      {
+        name: "Spices",
+        isAllergen: false,
+      },
+      {
+        name: "Yeast Extract",
+        isAllergen: false,
+      },
+      {
+        name: "Shrimp",
+        isAllergen: true,
+      },
+      {
+        name: "Palm Oil",
+        isAllergen: false,
+      },
+      {
+        name: "Natural Flavor",
+        isAllergen: false,
+      },
+      {
+        name: "Caramel Color",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Shellfish", "Wheat / Gluten", "Eggs", "Fish", "Soy"],
+
+    alternatives: [
+      "Fresh tamarind, taro, and aromatics with salt added to taste",
+      "A lower-sodium soup base checked against your allergen preferences",
+    ],
+  },
+
   {
     slug: "century-tuna-flakes-in-oil-155g",
     barcode: "748485100401",
@@ -916,6 +1204,87 @@ const products: SeedProduct[] = [
     alternatives: [
       "Lower-sodium tuna in water after comparing labels",
       "Fresh or frozen fish prepared with less added salt",
+    ],
+  },
+
+  {
+    slug: "argentina-corned-beef-260g",
+    barcode: "748485800035",
+    name: "Argentina Corned Beef 260g",
+    brand: "Argentina",
+    category: "Canned Corned Beef",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Not Verified",
+    registrationNumber: "No current matching Philippine FDA record",
+    healthScore: null,
+    servingSize: "56g; about 5 servings per can",
+    warningMessage:
+      "No currently active Philippine FDA registration was found for this exact regular 260g retail variant and barcode as of August 11, 2026. FDA registration FR-4000008091671 covers a different Argentina Century Pacific Food Service product and expired on July 15, 2026; other active Argentina records found are for Hot and Spicy or export variants. This does not prove the product is unsafe, but this exact variant could not be verified in the current FDA registry.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "90",
+      protein: "6g",
+      carbohydrates: "5g",
+      totalFat: "5g",
+      saturatedFat: "3g",
+      totalSugars: "0g",
+      dietaryFiber: "1g",
+      sodium: "260mg",
+    },
+
+    ingredients: [
+      {
+        name: "Cooked Beef",
+        isAllergen: false,
+      },
+      {
+        name: "Beef Broth",
+        isAllergen: false,
+      },
+      {
+        name: "Soy Protein",
+        isAllergen: true,
+      },
+      {
+        name: "Iodized Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Spices",
+        isAllergen: false,
+      },
+      {
+        name: "Monosodium Glutamate (Flavor Enhancer)",
+        isAllergen: false,
+      },
+      {
+        name: "Sodium Tripolyphosphate (Water Retention Agent)",
+        isAllergen: false,
+      },
+      {
+        name: "Sodium Erythorbate (Antioxidant)",
+        isAllergen: false,
+      },
+      {
+        name: "Sodium Nitrite (Color Retention Agent)",
+        isAllergen: false,
+      },
+      {
+        name: "Zinc and Iron",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Soy"],
+
+    alternatives: [
+      "An FDA-registered corned beef with a current matching product record",
+      "Fresh lean beef prepared with less added sodium",
     ],
   },
 
@@ -1067,6 +1436,64 @@ const products: SeedProduct[] = [
       },
       {
         name: "Sucralose",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "Protein-rich whole foods selected for your dietary needs and allergens",
+      "Another FDA-registered protein supplement recommended by a physician or dietitian",
+    ],
+  },
+
+  // Caution reflects the supplement's adult-use precautions and milk/soy
+  // allergens; its Philippine FDA registration remains approved and active.
+  {
+    slug: "athlene-active-whey-protein-vanilla-454g",
+    barcode: "0745125547060",
+    name: "Athlene Active Whey Protein Vanilla 454g",
+    brand: "Athlene",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000014732971",
+    healthScore: null,
+    servingSize: "1 scoop (31.5g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014732971 is approved, active, and valid through June 30, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Not intended for children or for pregnant or breastfeeding women. Consult a physician before use if managing a medical condition. Contains milk and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "120",
+      protein: "24g",
+      carbohydrates: "2g",
+      totalFat: "2g",
+      saturatedFat: "1g",
+      totalSugars: "1g",
+      sodium: "101mg",
+    },
+
+    ingredients: [
+      {
+        name: "Whey Protein Concentrate",
+        isAllergen: true,
+      },
+      {
+        name: "Lecithin",
+        isAllergen: true,
+      },
+      {
+        name: "Salt",
+        isAllergen: false,
+      },
+      {
+        name: "Sucralose",
+        isAllergen: false,
+      },
+      {
+        name: "Vanillin",
         isAllergen: false,
       },
     ],
