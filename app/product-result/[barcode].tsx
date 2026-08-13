@@ -68,6 +68,10 @@ function isCosmeticNotificationNumber(value: string) {
   return /^NN-\d{13}$/.test(value);
 }
 
+function isMedicineRegistrationNumber(value: string) {
+  return /^DR-[A-Z0-9-]+$/i.test(value);
+}
+
 function isFdaAdvisoryReference(value: string) {
   return /^FDA-\d{4}-\d{4}$/.test(value);
 }
@@ -416,10 +420,16 @@ export default function ProductResultScreen() {
 
     const identifierLabel = isFdaAdvisoryReference(product.barcode)
       ? "Advisory Reference"
-      : "Barcode";
+      : isMedicineRegistrationNumber(product.registrationNumber)
+        ? "FDA Registration"
+        : "Barcode";
+
+    const identifier = isMedicineRegistrationNumber(product.registrationNumber)
+      ? product.registrationNumber
+      : product.barcode;
 
     await Share.share({
-      message: `${product.name}\nStatus: ${product.fdaStatusLabel}\n${identifierLabel}: ${product.barcode}`,
+      message: `${product.name}\nStatus: ${product.fdaStatusLabel}\n${identifierLabel}: ${identifier}`,
     });
   };
 
@@ -671,7 +681,8 @@ export default function ProductResultScreen() {
           </View>
         )}
 
-        {!isCosmeticNotificationNumber(product.registrationNumber) && (
+        {!isCosmeticNotificationNumber(product.registrationNumber) &&
+          !isMedicineRegistrationNumber(product.registrationNumber) && (
           <NutritionScoreCard product={product} />
         )}
 
@@ -679,13 +690,16 @@ export default function ProductResultScreen() {
 
         <ProductInfoCard product={product} />
 
-        {!isCosmeticNotificationNumber(product.registrationNumber) && (
+        {!isCosmeticNotificationNumber(product.registrationNumber) &&
+          !isMedicineRegistrationNumber(product.registrationNumber) && (
           <NutritionCard product={product} />
         )}
 
         <IngredientsCard product={product} />
 
-        <AlternativesCard product={product} />
+        {!isMedicineRegistrationNumber(product.registrationNumber) && (
+          <AlternativesCard product={product} />
+        )}
 
         <Pressable style={styles.reportButton} onPress={handleReportProduct}>
           <Ionicons name="flag-outline" size={18} color="#E7000B" />
@@ -842,8 +856,11 @@ function NutritionCard({ product }: { product: DemoProduct }) {
 
 function ProductSafetyCard({ product }: { product: DemoProduct }) {
   const colors = getStatusNoticeColors(product.status);
+  const isMedicine = isMedicineRegistrationNumber(product.registrationNumber);
   const title =
-    product.status === "FDA Advisory"
+    isMedicine
+      ? "Medicine Safety"
+      : product.status === "FDA Advisory"
       ? "FDA Public Health Warning"
       : product.status === "Caution"
         ? "Usage Precautions"
@@ -897,8 +914,13 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
   const hasCosmeticNotificationNumber = isCosmeticNotificationNumber(
     product.registrationNumber,
   );
+  const hasMedicineRegistrationNumber = isMedicineRegistrationNumber(
+    product.registrationNumber,
+  );
   const hasFdaRecordNumber =
-    hasFoodRegistrationNumber || hasCosmeticNotificationNumber;
+    hasFoodRegistrationNumber ||
+    hasCosmeticNotificationNumber ||
+    hasMedicineRegistrationNumber;
   const hasOfficialFdaSource =
     product.status !== "Unverified" &&
     ((product.status === "FDA Advisory" &&
@@ -924,6 +946,11 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
     }
 
     if (product.status === "FDA Advisory" && product.verificationUrl) {
+      await openExternalPage(product.verificationUrl);
+      return;
+    }
+
+    if (hasMedicineRegistrationNumber && product.verificationUrl) {
       await openExternalPage(product.verificationUrl);
       return;
     }
@@ -1045,9 +1072,15 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
           <Text style={styles.infoLabel}>
             {isFdaAdvisoryReference(product.barcode)
               ? "Advisory Reference"
-              : "Barcode"}
+              : hasMedicineRegistrationNumber
+                ? "Package Barcode"
+                : "Barcode"}
           </Text>
-          <Text style={styles.infoValue}>{product.barcode}</Text>
+          <Text style={styles.infoValue}>
+            {hasMedicineRegistrationNumber
+              ? "Not yet cataloged"
+              : product.barcode}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
@@ -1067,10 +1100,21 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
           </Text>
         </View>
 
-        <View style={styles.infoRowLast}>
+        <View
+          style={
+            hasMedicineRegistrationNumber ? styles.infoRow : styles.infoRowLast
+          }
+        >
           <Text style={styles.infoLabel}>Category</Text>
           <Text style={styles.infoValue}>{product.category}</Text>
         </View>
+
+        {hasMedicineRegistrationNumber && (
+          <View style={styles.infoRowLast}>
+            <Text style={styles.infoLabel}>Dosage Form / Pack</Text>
+            <Text style={styles.infoValue}>{product.servingSize}</Text>
+          </View>
+        )}
       </View>
 
       {hasOfficialFdaSource && (
@@ -1088,7 +1132,9 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
             {isCheckingFda
               ? "Checking FDA record..."
               : product.status === "FDA Advisory"
-              ? "Open FDA advisory source"
+                ? "Open FDA advisory source"
+              : hasMedicineRegistrationNumber
+                ? "Open FDA drug record"
               : hasCosmeticNotificationNumber
                 ? "Verify FDA notification"
                 : "Verify FDA registration"}
@@ -1100,9 +1146,13 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
 }
 
 function IngredientsCard({ product }: { product: DemoProduct }) {
+  const isMedicine = isMedicineRegistrationNumber(product.registrationNumber);
+
   return (
     <View style={styles.card}>
-      <Text style={styles.ingredientsTitle}>Ingredients</Text>
+      <Text style={styles.ingredientsTitle}>
+        {isMedicine ? "Active Ingredients" : "Ingredients"}
+      </Text>
 
       <View style={styles.ingredientWrap}>
         {product.ingredients.length === 0 ? (

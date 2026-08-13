@@ -1777,6 +1777,103 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "biogesic-paracetamol-500mg-tablet",
+    barcode: "DR-XY39670",
+    name: "Biogesic Paracetamol 500mg Tablet",
+    brand: "Biogesic",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY39670",
+    healthScore: null,
+    servingSize:
+      "500mg tablet; blister x10 (box of 10) or blister x20 (box of 500)",
+    warningMessage:
+      "Philippine FDA registration DR-XY39670 is valid through June 22, 2031. The exact retail-package barcode is not yet cataloged. This medicine contains paracetamol. Do not take it with another medicine containing paracetamol or acetaminophen, do not exceed the label dose, and ask a doctor or pharmacist if you have liver or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/ALL_DrugProductslist.php/api/api/ALL_DrugProductsview.php?registration_number=DR-XY39670&showdetail=",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Paracetamol 500mg", isAllergen: false }],
+    allergens: [],
+    alternatives: [],
+  },
+
+  {
+    slug: "neozep-forte-tablet",
+    barcode: "DR-XY29559",
+    name: "Neozep Forte Tablet",
+    brand: "Neozep Forte",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY29559",
+    healthScore: null,
+    servingSize: "tablet; Alu/PVC blister pack x10 tablets",
+    warningMessage:
+      "Philippine FDA registration DR-XY29559 is valid through May 3, 2029. The exact retail-package barcode is not yet cataloged. Contains paracetamol; do not combine it with Biogesic, Bioflu, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/drug_productsview.php?export=pdf&registration_number=DR-XY29559",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: false },
+      { name: "Chlorphenamine Maleate 2mg", isAllergen: false },
+      { name: "Paracetamol 500mg", isAllergen: false },
+    ],
+    allergens: [],
+    alternatives: [],
+  },
+
+  {
+    slug: "bioflu-tablet",
+    barcode: "DR-XY34482",
+    name: "Bioflu Tablet",
+    brand: "Bioflu",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY34482",
+    healthScore: null,
+    servingSize:
+      "film-coated tablet; blister x10 (box of 100) or blister x5 (envelope of 5)",
+    warningMessage:
+      "Philippine FDA registration DR-XY34482 is valid through April 30, 2030. The exact retail-package barcode is not yet cataloged. Contains paracetamol; do not combine it with Biogesic, Neozep Forte, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/ALL_DrugProductsview.php?registration_number=DR-XY34482&showdetail=",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: false },
+      { name: "Chlorphenamine Maleate 2mg", isAllergen: false },
+      { name: "Paracetamol 500mg", isAllergen: false },
+    ],
+    allergens: [],
+    alternatives: [],
+  },
+
+  {
     slug: "nescafe-classic-190g-brazil-algeria",
     barcode: "7891000361917",
     name: "Nescafé Classic 190g",

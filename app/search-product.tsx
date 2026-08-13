@@ -140,6 +140,10 @@ function getStatusStyle(status: ProductStatus) {
   };
 }
 
+function isMedicineRegistrationNumber(value: string) {
+  return /^DR-[A-Z0-9-]+$/i.test(value);
+}
+
 export default function SearchProductScreen() {
   const router = useRouter();
 
@@ -381,7 +385,11 @@ export default function SearchProductScreen() {
                     <Text style={styles.barcodeText}>
                       {product.barcode.startsWith("FDA-")
                         ? `Advisory Reference: ${product.barcode}`
-                        : product.barcode}
+                        : isMedicineRegistrationNumber(
+                              product.registrationNumber,
+                            )
+                          ? `FDA Registration: ${product.registrationNumber}`
+                          : product.barcode}
                     </Text>
                   </View>
 
