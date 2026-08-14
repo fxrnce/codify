@@ -211,6 +211,62 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "colgate-total-advanced-health-antibacterial-toothpaste-80g",
+    barcode: "8901314850805",
+    name: "Colgate Total Advanced Health Antibacterial Toothpaste 80g",
+    brand: "Colgate",
+    category: "Fluoride Toothpaste",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA notification",
+    healthScore: null,
+    servingSize: "80g tube",
+    warningMessage:
+      "No exact Philippine FDA notification was found for this 80g product and barcode. The package is labeled as made in India, so other Philippine-notified Colgate Total variants must not be treated as an exact match. Do not swallow. Children under 6 should use a pea-sized amount under adult supervision, and use should be discontinued if irritation occurs.",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Glycerin", isAllergen: false },
+      { name: "Silica", isAllergen: false },
+      { name: "Sodium Lauryl Sulphate", isAllergen: false },
+      { name: "Arginine", isAllergen: false },
+      { name: "Flavor", isAllergen: false },
+      { name: "Cocamidopropyl Betaine", isAllergen: false },
+      { name: "Zinc Oxide", isAllergen: false },
+      { name: "Sodium Carboxymethyl Cellulose", isAllergen: false },
+      { name: "Titanium Dioxide", isAllergen: false },
+      { name: "Poloxamer 407", isAllergen: false },
+      { name: "Zinc Citrate Trihydrate", isAllergen: false },
+      { name: "Tetrasodium Pyrophosphate", isAllergen: false },
+      { name: "Xanthan Gum", isAllergen: false },
+      { name: "Benzyl Alcohol", isAllergen: false },
+      { name: "Phosphoric Acid", isAllergen: false },
+      { name: "Sodium Saccharin", isAllergen: false },
+      { name: "Sodium Fluoride", isAllergen: false },
+      { name: "Titanium Dioxide Coated Mica", isAllergen: false },
+      { name: "Sucralose", isAllergen: false },
+      { name: "CI 74260", isAllergen: false },
+      { name: "CI 47005:1", isAllergen: false },
+      { name: "Eugenol", isAllergen: false },
+      { name: "Aqueous Base", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A Philippine FDA-notified fluoride toothpaste with matching local packaging",
+      "A dentist-recommended toothpaste suitable for the user's age and oral-health needs",
+    ],
+  },
+
+  {
     slug: "johnsons-baby-powder-25g",
     barcode: "48032742",
     name: "Johnson's Baby Powder 25g",
@@ -1208,6 +1264,65 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "heinz-seriously-good-mayonnaise-120g",
+    barcode: "8850343011322",
+    name: "Heinz Seriously Good Mayonnaise 120g",
+    brand: "Heinz",
+    category: "Mayonnaise",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000011512404",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 15,
+      caloriesPerServing: 98,
+      saturatedFatGramsPerServing: 1.5,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 82,
+    }),
+    servingSize: "15g (about 8 servings per 120g pouch)",
+    warningMessage:
+      "Philippine FDA registration FR-4000011512404 lists Heinz Seriously Good Mayonnaise as approved, active, and valid through November 4, 2030. The FDA record specifies pouch packaging and the same manufacturer address in Thailand shown on this label. One 15g serving contains 98 calories, 10g total fat, and 1.5g saturated fat, so use it in moderation. Contains egg and mustard. Refrigerate after opening.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "98",
+      protein: "0g",
+      carbohydrates: "1g",
+      totalFat: "10g",
+      saturatedFat: "1.5g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "82mg",
+    },
+
+    ingredients: [
+      { name: "Soybean Oil", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Egg", isAllergen: true },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Salt", isAllergen: false },
+      {
+        name: "Modified Starch (Sodium Octenyl Succinate, INS 1450)",
+        isAllergen: false,
+      },
+      { name: "Xanthan Gum (INS 415)", isAllergen: false },
+      { name: "Mustard", isAllergen: true },
+      {
+        name: "Calcium Disodium EDTA (INS 385)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Eggs", "Mustard"],
+
+    alternatives: [
+      "A lower-fat mayonnaise checked against your allergen preferences",
+      "Plain Greek yogurt-based spread if milk is suitable for you",
+    ],
+  },
+
+  {
     slug: "argentina-corned-beef-260g",
     barcode: "748485800035",
     name: "Argentina Corned Beef 260g",
@@ -1773,6 +1888,175 @@ const products: SeedProduct[] = [
     alternatives: [
       "A fish-oil supplement with a matching active Philippine FDA registration",
       "Omega-3 food sources recommended for your dietary and medical needs",
+    ],
+  },
+
+  {
+    slug: "cowhead-pure-milk-1l",
+    barcode: "8888440000048",
+    name: "Cowhead Pure Milk 1L",
+    brand: "Cowhead",
+    category: "UHT Full Cream Milk",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012611623",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 250,
+      caloriesPerServing: 158,
+      saturatedFatGramsPerServing: 6.4,
+      totalSugarsGramsPerServing: 12,
+      sodiumMilligramsPerServing: 100,
+    }),
+    servingSize: "250mL (about 4 servings per 1L carton)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012611623 lists Cowhead Pure Milk by Sabrosa Foods, Inc. as approved, active, and valid through September 23, 2029. The company matches the Philippine distributor printed on the carton; the FDA portal does not publish retail barcodes. One 250mL serving contains 6.4g saturated fat and 12g naturally occurring milk sugar. Contains milk.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "158",
+      protein: "8.3g",
+      carbohydrates: "12g",
+      totalFat: "8.5g",
+      saturatedFat: "6.4g",
+      totalSugars: "12g",
+      dietaryFiber: "0g",
+      sodium: "100mg",
+    },
+
+    ingredients: [
+      {
+        name: "100% Natural Fresh Cow's Milk",
+        isAllergen: true,
+      },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A lower-saturated-fat milk after comparing nutrition labels",
+      "A lactose-free or non-dairy option that matches your dietary needs",
+    ],
+  },
+
+  {
+    slug: "nestle-non-fat-milk-1l",
+    barcode: "4800361381581",
+    name: "Nestlé Non-Fat Milk 1L",
+    brand: "Nestlé",
+    category: "UHT Non-Fat Milk",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000014732317",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 250,
+      caloriesPerServing: 90,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 12.5,
+      sodiumMilligramsPerServing: 100,
+    }),
+    servingSize: "250mL (about 4 servings per 1L carton)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014732317 lists Nestlé Non-Fat Milk by Nestlé Philippines, Inc. as approved, active, and valid through July 3, 2028. The product name, brand, company, 1L retail barcode, and New Zealand UHT packaging match the photographed carton. One 250mL serving contains 90 calories, less than 1g fat, 9g protein, and 350mg calcium. Contains milk.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "90",
+      protein: "9g",
+      carbohydrates: "12.5g",
+      totalFat: "Less than 1g",
+      saturatedFat: "0g",
+      totalSugars: "12.5g",
+      dietaryFiber: "0g",
+      sodium: "100mg",
+    },
+
+    ingredients: [
+      {
+        name: "100% Fresh Cow's Milk",
+        isAllergen: true,
+      },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "Another FDA-registered non-fat milk",
+      "A lactose-free or non-dairy option that matches your dietary needs",
+    ],
+  },
+
+  {
+    slug: "selecta-fortified-milk-1l",
+    barcode: "4800110093888",
+    name: "Selecta Fortified Milk 1L",
+    brand: "Selecta",
+    category: "Sterilized Filled Milk",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012481347",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 245,
+      caloriesPerServing: 160,
+      saturatedFatGramsPerServing: 6,
+      totalSugarsGramsPerServing: 13,
+      sodiumMilligramsPerServing: 135,
+    }),
+    servingSize: "245mL (about 4 servings per 1L carton)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012481347 lists Selecta Fortified Sterilized Filled Milk by RFM Corporation as approved, active, and valid through March 14, 2029. The FDA product and company match the photographed 1L carton and barcode. One 245mL serving contains 6g saturated fat, 13g total sugar, and 135mg sodium. Contains milk and is manufactured in a facility that processes soy products.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "160",
+      protein: "7g",
+      carbohydrates: "16g",
+      totalFat: "8g",
+      saturatedFat: "6g",
+      totalSugars: "13g",
+      dietaryFiber: "0g",
+      sodium: "135mg",
+    },
+
+    ingredients: [
+      {
+        name: "Reconstituted Milk Powder (Skimmed Milk and Buttermilk)",
+        isAllergen: true,
+      },
+      {
+        name: "Refined Vegetable Oil (Coconut and Corn Oil)",
+        isAllergen: false,
+      },
+      {
+        name: "Refined Sugar",
+        isAllergen: false,
+      },
+      {
+        name: "Carrageenan (E407, Food Stabilizer)",
+        isAllergen: false,
+      },
+      {
+        name: "Mono- and Diglycerides (E471, Emulsifier)",
+        isAllergen: false,
+      },
+      {
+        name: "Nature-Identical Flavor",
+        isAllergen: false,
+      },
+      {
+        name: "Maltodextrin",
+        isAllergen: false,
+      },
+      {
+        name: "Vitamins A, D3, B1, B2, B3, B6, and B12",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "A lower-saturated-fat milk after comparing nutrition labels",
+      "An unsweetened milk option that matches your allergen preferences",
     ],
   },
 
