@@ -1,3 +1,7 @@
+import { readFile } from "node:fs/promises";
+
+import { z } from "zod";
+
 import { prisma } from "../src/lib/prisma.js";
 import {
   calculateConservativeCategory1NutritionScore,
@@ -44,6 +48,36 @@ type SeedProduct = {
   allergens: string[];
   alternatives: string[];
 };
+
+const seedAdvisorySchema = z.object({
+  advisoryNumber: z.string().min(1),
+  title: z.string().min(1),
+  category: z.enum(["FOOD", "DRUG", "COSMETIC"]),
+  type: z.enum([
+    "PUBLIC_HEALTH_WARNING",
+    "RECALL",
+    "QUALITY_HOLD",
+    "SAFETY_ALERT",
+    "LIFTING",
+  ]),
+  status: z.enum(["NOT_APPROVED", "CAUTION", "LIFTED"]),
+  publishedAt: z.iso.date(),
+  sourceUrl: z.url(),
+  filipinoSourceUrl: z.url().nullable(),
+  isActive: z.boolean(),
+});
+
+const seedAdvisoryCatalogSchema = z.array(seedAdvisorySchema);
+
+async function loadSeedAdvisories() {
+  const catalogUrl = new URL(
+    "./data/fda-advisories-2026-jan-aug7.json",
+    import.meta.url,
+  );
+  const contents = await readFile(catalogUrl, "utf8");
+
+  return seedAdvisoryCatalogSchema.parse(JSON.parse(contents));
+}
 
 const products: SeedProduct[] = [
   {
@@ -2195,6 +2229,8 @@ const products: SeedProduct[] = [
 ];
 
 async function seedDatabase() {
+  const advisories = await loadSeedAdvisories();
+
   console.log("");
   console.log("Seeding Codify demo products...");
   console.log("");
@@ -2347,9 +2383,44 @@ async function seedDatabase() {
 
   const productCount = await prisma.product.count();
 
+  const advisoryBatchSize = 50;
+
+  for (let index = 0; index < advisories.length; index += advisoryBatchSize) {
+    const batch = advisories.slice(index, index + advisoryBatchSize);
+
+    await prisma.$transaction(
+      batch.map((advisory) => {
+        const data = {
+          title: advisory.title,
+          category: advisory.category,
+          type: advisory.type,
+          status: advisory.status,
+          publishedAt: new Date(`${advisory.publishedAt}T00:00:00.000Z`),
+          sourceUrl: advisory.sourceUrl,
+          filipinoSourceUrl: advisory.filipinoSourceUrl,
+          isActive: advisory.isActive,
+        };
+
+        return prisma.fdaAdvisory.upsert({
+          where: {
+            advisoryNumber: advisory.advisoryNumber,
+          },
+          update: data,
+          create: {
+            advisoryNumber: advisory.advisoryNumber,
+            ...data,
+          },
+        });
+      }),
+    );
+  }
+
+  const advisoryCount = await prisma.fdaAdvisory.count();
+
   console.log("");
   console.log("Codify product seed completed.");
   console.log(`Products currently stored: ${productCount}`);
+  console.log(`FDA advisories currently stored: ${advisoryCount}`);
   console.log("");
 }
 

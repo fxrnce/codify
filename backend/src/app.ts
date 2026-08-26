@@ -7,6 +7,7 @@ import express, {
 } from "express";
 
 import { env } from "./config/env.js";
+import { advisoryRouter } from "./routes/advisory.routes.js";
 import { allergenRouter } from "./routes/allergen.routes.js";
 import { productRouter } from "./routes/product.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
@@ -54,6 +55,7 @@ app.get("/health", (_request: Request, response: Response) => {
  * Authentication information is available, but sign-in is not required.
  */
 app.use("/api", productRouter);
+app.use("/api", advisoryRouter);
 
 /*
  * Protected Clerk-authenticated routes.

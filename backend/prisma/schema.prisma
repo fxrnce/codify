@@ -17,6 +17,32 @@ enum ProductStatus {
   @@map("product_status")
 }
 
+enum AdvisoryCategory {
+  FOOD
+  DRUG
+  COSMETIC
+
+  @@map("advisory_category")
+}
+
+enum AdvisoryType {
+  PUBLIC_HEALTH_WARNING
+  RECALL
+  QUALITY_HOLD
+  SAFETY_ALERT
+  LIFTING
+
+  @@map("advisory_type")
+}
+
+enum AdvisoryStatus {
+  NOT_APPROVED
+  CAUTION
+  LIFTED
+
+  @@map("advisory_status")
+}
+
 model User {
   id          String   @id @default(uuid()) @db.Uuid
   clerkUserId String   @unique @map("clerk_user_id")
@@ -156,4 +182,24 @@ model ProductReport {
   @@index([productId])
   @@index([barcode])
   @@map("product_reports")
+}
+
+model FdaAdvisory {
+  id                 String           @id @default(uuid()) @db.Uuid
+  advisoryNumber     String           @unique @map("advisory_number")
+  title              String
+  category           AdvisoryCategory
+  type               AdvisoryType
+  status             AdvisoryStatus
+  publishedAt        DateTime         @map("published_at") @db.Date
+  sourceUrl           String           @map("source_url")
+  filipinoSourceUrl   String?          @map("filipino_source_url")
+  isActive            Boolean          @default(true) @map("is_active")
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+
+  @@index([publishedAt])
+  @@index([category, publishedAt])
+  @@index([status, publishedAt])
+  @@map("fda_advisories")
 }

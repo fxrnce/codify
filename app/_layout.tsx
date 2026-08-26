@@ -38,6 +38,7 @@ export default function RootLayout() {
               <Stack.Screen name="report-product" />
               <Stack.Screen name="reported-products" />
               <Stack.Screen name="search-product" />
+              <Stack.Screen name="fda-advisories" />
             </Stack>
           </ProductReportsProvider>
         </ScanHistoryProvider>
