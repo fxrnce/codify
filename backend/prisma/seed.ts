@@ -1298,6 +1298,159 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "uni-pak-squid-in-natural-ink-425g",
+    barcode: "4800154156884",
+    name: "Uni-Pak Squid in Natural Ink 425g",
+    brand: "Uni-Pak",
+    category: "Canned Squid",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000009631036",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 85,
+      caloriesPerServing: 50,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 342,
+    }),
+    servingSize: "85g (about 5 servings per 425g can)",
+    warningMessage:
+      "Philippine FDA registration FR-4000009631036 lists Uni-Pak Squid in Natural Ink by Slord Development Corporation as approved, active, and valid through August 5, 2027. The product, brand, manufacturer, 425g label, and barcode match the cataloged variant. One 85g serving contains 342mg sodium. Contains squid, soy, and wheat/gluten.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "9g",
+      carbohydrates: "2g",
+      totalFat: "1g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "342mg",
+    },
+
+    ingredients: [
+      { name: "Squid", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      {
+        name: "Soy Sauce (Soybean, Wheat Flour, and Salt)",
+        isAllergen: true,
+      },
+      { name: "Sugar", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Monosodium Glutamate (Flavor Enhancer)", isAllergen: false },
+    ],
+
+    allergens: ["Shellfish", "Soy", "Wheat / Gluten"],
+
+    alternatives: [
+      "A lower-sodium canned seafood product checked against your allergens",
+      "Fresh squid prepared with less added salt if suitable for you",
+    ],
+  },
+
+  {
+    slug: "mega-mackerel-in-natural-oil-155g",
+    barcode: "4806504710232",
+    name: "Mega Mackerel in Natural Oil 155g",
+    brand: "Mega",
+    category: "Canned Mackerel",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000015381871",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 55,
+      caloriesPerServing: 50,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 240,
+    }),
+    servingSize: "55g (about 3 servings per 155g can)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015381871 lists Mega Mackerel in Natural Oil by Mega Prime Foods Incorporated as approved, active, and valid through December 26, 2030. The product name, brand, company, 155g label, and barcode match the cataloged variant. One 55g serving contains 240mg sodium and 55mg cholesterol. Contains fish and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "9g",
+      carbohydrates: "0g",
+      totalFat: "1.5g",
+      saturatedFat: "1g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "240mg",
+    },
+
+    ingredients: [
+      { name: "Mackerel", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+    ],
+
+    allergens: ["Fish", "Soy"],
+
+    alternatives: [
+      "A lower-sodium canned fish after comparing nutrition labels",
+      "Fresh or frozen fish prepared with less added salt",
+    ],
+  },
+
+  {
+    slug: "kelloggs-frosties-175g",
+    barcode: "8852756303063",
+    name: "Kellogg's Frosties 175g",
+    brand: "Kellogg's",
+    category: "Breakfast Cereal",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "4000011038021",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 120,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 7,
+      sodiumMilligramsPerServing: 85,
+    }),
+    servingSize: "30g (about 6 servings per 175g box)",
+    warningMessage:
+      "Philippine FDA registration 4000011038021 lists Kellogg's Frosties Breakfast Cereal Frosted Toasted Flakes of Corn as approved, active, and valid through May 5, 2028. The FDA record explicitly includes a 175g box. One 30g serving contains 7g total sugar. The label says it may contain traces of peanuts, tree nuts, gluten, milk, and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "120",
+      protein: "2g",
+      carbohydrates: "26g",
+      totalFat: "0.5g",
+      saturatedFat: "0g",
+      totalSugars: "7g",
+      dietaryFiber: "N/A",
+      sodium: "85mg",
+    },
+
+    ingredients: [
+      { name: "Corn (81.1%)", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Antioxidant (Mixed Tocopherol)", isAllergen: false },
+      {
+        name: "Vitamins (B3, B6, B2, B1, and Folic Acid)",
+        isAllergen: false,
+      },
+      { name: "Minerals (Reduced Iron and Zinc Oxide)", isAllergen: false },
+      { name: "Natural Flavour (Steviol Glycoside)", isAllergen: false },
+    ],
+
+    allergens: ["Peanuts", "Tree Nuts", "Wheat / Gluten", "Milk", "Soy"],
+
+    alternatives: [
+      "A lower-sugar cereal checked against your allergen preferences",
+      "Plain oats topped with fresh fruit if suitable for you",
+    ],
+  },
+
+  {
     slug: "heinz-seriously-good-mayonnaise-120g",
     barcode: "8850343011322",
     name: "Heinz Seriously Good Mayonnaise 120g",
