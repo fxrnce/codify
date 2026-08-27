@@ -1398,6 +1398,182 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "nestle-gold-corn-flakes-150g",
+    barcode: "4800361002844",
+    name: "Nestlé Gold Corn Flakes 150g",
+    brand: "Nestlé Gold",
+    category: "Breakfast Cereal",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000014436411",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 114,
+      saturatedFatGramsPerServing: 0.2,
+      totalSugarsGramsPerServing: 2.9,
+      sodiumMilligramsPerServing: 134,
+    }),
+    servingSize: "30g (5 servings per 150g box)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014436411 lists Nestlé Gold Corn Flakes — Toasted Flakes of Corn Breakfast Cereal for local and export markets — as approved, active, and valid through May 9, 2028. The product description and brand match this 150g retail box. One 30g serving contains 2.9g total sugar and 134mg sodium. Contains gluten and soy; the label says it may contain milk and tree nuts.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "114",
+      protein: "2g",
+      carbohydrates: "24.4g",
+      totalFat: "0.6g",
+      saturatedFat: "0.2g",
+      totalSugars: "2.9g",
+      dietaryFiber: "1g",
+      sodium: "134mg",
+    },
+
+    ingredients: [
+      { name: "Corn Semolina (67%)", isAllergen: false },
+      { name: "Wholegrain Corn (29%)", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      {
+        name: "Minerals (Calcium Carbonate and Reduced Iron)",
+        isAllergen: false,
+      },
+      { name: "Glucose Syrup", isAllergen: false },
+      { name: "Malt Barley Extract (Gluten)", isAllergen: true },
+      { name: "Salt", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Potassium Iodate", isAllergen: false },
+      { name: "Trisodium Phosphate (INS 339(iii))", isAllergen: false },
+      { name: "Monoglycerides (INS 471)", isAllergen: false },
+      {
+        name: "Mixed Tocopherol Concentrate (Soy)",
+        isAllergen: true,
+      },
+      {
+        name: "Vitamins (B3, B5, B6, B2, and B9)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Wheat / Gluten", "Soy", "Milk", "Tree Nuts"],
+
+    alternatives: [
+      "Plain oats topped with fresh fruit if suitable for you",
+      "A lower-sodium wholegrain cereal checked against your allergens",
+    ],
+  },
+
+  {
+    slug: "nestle-koko-krunch-duo-170g",
+    barcode: "4800361346429",
+    name: "Nestlé Koko Krunch Duo 170g",
+    brand: "Nestlé Koko Krunch Duo",
+    category: "Breakfast Cereal",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012213874",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 114,
+      saturatedFatGramsPerServing: 0.3,
+      totalSugarsGramsPerServing: 8,
+      sodiumMilligramsPerServing: 50,
+    }),
+    servingSize: "30g (label lists 5 servings per 170g box)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012213874 lists Nestlé Koko Krunch Duo Chocolate and Vanilla Flavoured Wheat Curls Breakfast Cereal as approved, active, and valid through January 9, 2029. The product description and brand match this 170g retail box. One 30g serving contains 8g total sugar. Contains gluten, milk, and soy; the label says it may contain tree nuts.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "114",
+      protein: "2.7g",
+      carbohydrates: "24.9g",
+      totalFat: "0.8g",
+      saturatedFat: "0.3g",
+      totalSugars: "8g",
+      dietaryFiber: "1.7g",
+      sodium: "50mg",
+    },
+
+    ingredients: [
+      { name: "Wholegrain Wheat (Gluten, 36%)", isAllergen: true },
+      { name: "Wheat Flour (Gluten)", isAllergen: true },
+      { name: "Corn Semolina", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Malt Barley Extract (Gluten)", isAllergen: true },
+      { name: "Starch", isAllergen: false },
+      { name: "Fat-Reduced Cocoa Powder", isAllergen: false },
+      {
+        name: "Minerals (Calcium Carbonate and Reduced Iron)",
+        isAllergen: false,
+      },
+      { name: "Skimmed Milk Powder", isAllergen: true },
+      { name: "Palm Oil", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Potassium Iodate", isAllergen: false },
+      { name: "Flavourings", isAllergen: false },
+      { name: "Trisodium Phosphate (INS 339(iii))", isAllergen: false },
+      {
+        name: "Mixed Tocopherol Concentrate (Soy)",
+        isAllergen: true,
+      },
+      {
+        name: "Vitamins (B3, B5, B6, B2, and B9)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy", "Tree Nuts"],
+
+    alternatives: [
+      "A lower-sugar cereal checked against your allergen preferences",
+      "Plain oats with cocoa and fresh fruit if suitable for you",
+    ],
+  },
+
+  {
+    slug: "quaker-quick-cook-oatmeal-400g",
+    barcode: "4800274040025",
+    name: "Quaker Quick Cook Oatmeal 400g",
+    brand: "Quaker",
+    category: "Oatmeal",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000008762278",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 35,
+      caloriesPerServing: 133,
+      saturatedFatGramsPerServing: 0.6,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 2,
+    }),
+    servingSize: "35g or 4 tablespoons (about 11 servings per 400g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000008762278 lists Quaker Rolled Oats as approved, active, and valid through February 19, 2027. The brand and rolled-oats product description match this Quaker Quick Cook 400g retail variant. The ingredient list is 100% whole grain oats, with 0g total sugar and 2mg sodium per 35g serving. Contains oats and may contain traces of wheat.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "133",
+      protein: "4.3g",
+      carbohydrates: "24g",
+      totalFat: "3g",
+      saturatedFat: "0.6g",
+      totalSugars: "0g",
+      dietaryFiber: "3.4g",
+      sodium: "2mg",
+    },
+
+    ingredients: [{ name: "Whole Grain Oats", isAllergen: true }],
+
+    allergens: ["Oats", "Wheat / Gluten"],
+
+    alternatives: [
+      "Other plain unsweetened oats checked against your allergens",
+      "Fresh fruit added to plain oatmeal instead of sweetened toppings",
+    ],
+  },
+
+  {
     slug: "kelloggs-frosties-175g",
     barcode: "8852756303063",
     name: "Kellogg's Frosties 175g",
