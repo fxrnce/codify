@@ -2684,6 +2684,631 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "mang-tomas-all-around-sarsa-siga-hot-spicy-325g",
+    barcode: "4801668100288",
+    name: "Mang Tomas All-Around Sarsa Siga Hot & Spicy 325g",
+    brand: "Mang Tomas Siga",
+    category: "All-Around Sauce",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000012759350",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 32,
+      caloriesPerServing: 30,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 4,
+      sodiumMilligramsPerServing: 320,
+    }),
+    servingSize: "2 tablespoons (32g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012759350 lists Mang Tomas Siga All-Around Sarsa Hot & Spicy by Nutri-Asia, Inc. in glass-bottle packaging as valid through May 9, 2029. The 325g bottle provides 320mg sodium per 32g serving. Contains wheat/gluten and soy. Contains aspartame, a source of phenylalanine.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "30 kcal",
+      protein: "0g",
+      carbohydrates: "8g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "4g",
+      dietaryFiber: "0g",
+      sodium: "320mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Breadcrumbs (Wheat)", isAllergen: true },
+      { name: "Pork Liver Flavor", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Modified Starch", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Palm Oil", isAllergen: false },
+      { name: "Hydrolyzed Soy Protein", isAllergen: true },
+      { name: "Sodium Benzoate (Preservative)", isAllergen: false },
+      { name: "Aspartame", isAllergen: false },
+      { name: "Caramel Color", isAllergen: false },
+      { name: "BHA and TBHQ (Antioxidants)", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Soy"],
+
+    alternatives: [
+      "A lower-sodium sauce after comparing nutrition labels",
+      "A wheat- and soy-free condiment if those allergens must be avoided",
+    ],
+  },
+
+  {
+    slug: "surf-active-clean-sun-fresh-detergent-bar-120g",
+    barcode: "4800888136770",
+    name: "Surf Active Clean Sun Fresh Detergent Bar 120g",
+    brand: "Surf",
+    category: "Laundry Detergent Bar",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA HUHS Registration Not Verified",
+    registrationNumber: "No matching Philippine FDA HUHS record",
+    healthScore: null,
+    servingSize: "120g detergent bar",
+    warningMessage:
+      "The submitted package identifies UPC 4800888136770 as the 120g Surf Active Clean Sun Fresh detergent bar distributed by Unilever Philippines. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. For laundry use only. Keep out of reach of children, do not ingest, avoid eye contact and prolonged skin contact, and rinse thoroughly with water if exposed.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free laundry detergent for fragrance-sensitive users",
+      "A milder detergent used with protective gloves if skin irritation occurs",
+    ],
+  },
+
+  {
+    slug: "ariel-powder-detergent-downy-floral-passion-555g",
+    barcode: "4902430473538",
+    name: "Ariel Powder Detergent with Downy Floral Passion 555g",
+    brand: "Ariel",
+    category: "Powder Laundry Detergent",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA HUHS Registration Not Verified",
+    registrationNumber: "No matching Philippine FDA HUHS record",
+    healthScore: null,
+    servingSize: "555g package",
+    warningMessage:
+      "The photographed package and UPC 4902430473538 identify the 555g Ariel Powder Detergent with Downy Floral Passion; the PDF's typed 2kg description does not match the photographed pack. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. The label warns that it causes skin irritation and serious eye irritation. Keep out of reach of children, do not ingest, avoid breathing detergent dust, and rinse exposed eyes or skin thoroughly with water.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Linear Alkylbenzene Sulfonate", isAllergen: false },
+      {
+        name: "Mono-C12-14-Alkyl Esters Sulfonic Acids, Sodium Salts",
+        isAllergen: false,
+      },
+      { name: "Sodium Silicate", isAllergen: false },
+      { name: "Sodium Sulfate", isAllergen: false },
+      { name: "Sodium Carbonate", isAllergen: false },
+      { name: "Carboxymethyl Cellulose", isAllergen: false },
+      { name: "Amylase", isAllergen: false },
+      { name: "Lipase", isAllergen: false },
+      { name: "Protease", isAllergen: false },
+      { name: "Fragrance", isAllergen: false },
+      {
+        name: "Disodium Distyrylbiphenyl Disulfonate",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free laundry detergent for fragrance-sensitive users",
+      "A liquid detergent that produces less airborne powder during handling",
+    ],
+  },
+
+  {
+    slug: "domex-classic-multi-purpose-cleaner-250ml",
+    barcode: "4800888112958",
+    name: "Domex Classic Multi-Purpose Cleaner 250mL",
+    brand: "Domex",
+    category: "Multi-Purpose Cleaner",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA HUHS Registration Not Verified",
+    registrationNumber: "No matching Philippine FDA HUHS record",
+    healthScore: null,
+    servingSize: "250mL bottle",
+    warningMessage:
+      "The submitted 250mL bottle identifies UPC 4800888112958 and Unilever Philippines. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. DANGER: corrosive cleaner that may cause severe skin burns and eye damage. Never mix it with muriatic or hydrochloric acid, ammonia, bleach, toilet cleaner, or any other household cleaner. Use only as directed with ventilation, keep tightly closed and out of reach of children, and do not transfer it to another container.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sodium Hypochlorite", isAllergen: false },
+      { name: "Sodium Laureth Sulfate", isAllergen: false },
+      { name: "Sodium Hydroxide", isAllergen: false },
+      { name: "Cocamine Oxide", isAllergen: false },
+      { name: "Fragrance", isAllergen: false },
+      { name: "Sodium Silicate", isAllergen: false },
+      { name: "Sodium Polyacrylate", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A non-chlorine cleaner suitable for the intended surface",
+      "Soap and water for routine cleaning when disinfection is not required",
+    ],
+  },
+
+  {
+    slug: "zonrox-lemon-bleach-500ml",
+    barcode: "4800047840272",
+    name: "Zonrox Lemon Bleach 500mL",
+    brand: "Zonrox",
+    category: "Chlorine Bleach",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA HUHS Registration Not Verified",
+    registrationNumber: "No matching Philippine FDA HUHS record",
+    healthScore: null,
+    servingSize: "500mL bottle",
+    warningMessage:
+      "The submitted bottle and manufacturer information identify UPC 4800047840272 as Zonrox Lemon Bleach 500mL by Green Cross, Inc. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. DANGER: chlorine bleach. Never mix with acids, ammonia, toilet cleaners, Domex, or other household chemicals because toxic gas may form. Use only as directed in a ventilated area, avoid skin and eye contact, do not ingest, and keep out of reach of children.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sodium Hypochlorite", isAllergen: false },
+      { name: "Lemon Fragrance", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "An oxygen-based color-safe bleach for compatible colored fabrics",
+      "Soap and water for routine cleaning when chlorine disinfection is not required",
+    ],
+  },
+
+  {
+    slug: "nestle-creamy-yogurt-110g",
+    barcode: "4800361067621",
+    name: "Nestlé Creamy Yogurt 110g",
+    brand: "Nestlé",
+    category: "Plain Yogurt",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA food registration",
+    healthScore: null,
+    servingSize: "110g cup (1 serving)",
+    warningMessage:
+      "No exact Philippine FDA food registration was found for this 110g product and barcode after checking its full and shortened product names in the current FDA Verification Portal. This does not establish that the product is unsafe, but the exact variant should be verified before purchase. One 110g cup contains 63 calories, 1.5g saturated fat, 4g sugar, and 62mg sodium. Contains milk and must be kept refrigerated.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "63 kcal",
+      protein: "3g",
+      carbohydrates: "7g",
+      totalFat: "2.6g",
+      saturatedFat: "1.5g",
+      totalSugars: "4g",
+      dietaryFiber: "0g",
+      sodium: "62mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Skimmed Milk Powder", isAllergen: true },
+      { name: "Milk Fat", isAllergen: true },
+      { name: "Stabilizer", isAllergen: false },
+      {
+        name: "Lactobacillus bulgaricus and Streptococcus thermophilus (Live Yogurt Cultures)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A plain yogurt with a matching active Philippine FDA registration",
+      "A lower-saturated-fat or dairy-free yogurt that matches your dietary needs",
+    ],
+  },
+
+  {
+    slug: "magnolia-cheezee-milky-white-160g",
+    barcode: "4805358425880",
+    name: "Magnolia Cheezee Milky White 160g",
+    brand: "Magnolia",
+    category: "Processed Cheese",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000007845990",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 100,
+      saturatedFatGramsPerServing: 4.5,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 330,
+    }),
+    servingSize: "30g (about 5 servings per 160g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000007845990 lists Cheezee Milky White Pasteurized Processed Cheese Product by Magnolia, Inc. as active through September 7, 2033. One 30g serving contains 4.5g saturated fat and 330mg sodium, so compare portions if limiting either nutrient. Contains milk. The submitted photos do not show the ingredient statement, so check the physical pack before use if you have additional food allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "100 kcal",
+      protein: "4g",
+      carbohydrates: "3g",
+      totalFat: "8g",
+      saturatedFat: "4.5g",
+      totalSugars: "1g",
+      dietaryFiber: "0g",
+      sodium: "330mg",
+    },
+
+    ingredients: [],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A lower-sodium cheese after comparing nutrition labels",
+      "A reduced-saturated-fat cheese that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "anchor-rich-creamy-buttery-unsalted-200g",
+    barcode: "4806501599878",
+    name: "Anchor Rich & Creamy Buttery Unsalted 200g",
+    brand: "Anchor",
+    category: "Dairy and Vegetable Oil Spread",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA food registration",
+    healthScore: null,
+    servingSize: "1 tablespoon (15g; about 13 servings per pack)",
+    warningMessage:
+      "No exact Philippine FDA food registration was found for this 200g product and barcode after checking its brand, variant name, and food description in the current FDA Verification Portal. This does not establish that the product is unsafe, but the exact variant should be verified before purchase. One 15g serving contains 10g saturated fat. Contains milk and must be kept refrigerated.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "113 kcal",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "12g",
+      saturatedFat: "10g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "2mg",
+    },
+
+    ingredients: [
+      { name: "Blend of Vegetable Oils", isAllergen: false },
+      { name: "Dairy Fat", isAllergen: true },
+      {
+        name: "Emulsifiers (Distilled Monoglycerides and Polyglycerol Esters)",
+        isAllergen: false,
+      },
+      { name: "Preservative", isAllergen: false },
+      { name: "Citric Acid (Acidity Regulator)", isAllergen: false },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A spread with a matching active Philippine FDA registration",
+      "A lower-saturated-fat spread that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "alaska-crema-whipped-cream-250g",
+    barcode: "4800575142541",
+    name: "Alaska Créma Whipped Cream 250g",
+    brand: "Alaska Créma",
+    category: "Whipped Cream",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000008665131",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 10,
+      caloriesPerServing: 29,
+      saturatedFatGramsPerServing: 2,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 4,
+    }),
+    servingSize: "10g (about 25 portions per can)",
+    warningMessage:
+      "Philippine FDA registration FR-4000008665131 lists Alaska Créma UHT Processed Whipped Cream by Alaska Milk Corporation as active through November 27, 2028. One 10g serving contains 2g saturated fat. Contains milk. Keep refrigerated at 2–7°C and do not freeze. The can is pressurized: keep it away from heat and never pierce or burn it.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "29 kcal",
+      protein: "0.2g",
+      carbohydrates: "1g",
+      totalFat: "3g",
+      saturatedFat: "2g",
+      totalSugars: "1g",
+      dietaryFiber: "0g",
+      sodium: "4mg",
+    },
+
+    ingredients: [
+      { name: "Cream", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      {
+        name: "Propellants (Nitrous Oxide and Nitrogen)",
+        isAllergen: false,
+      },
+      {
+        name: "Mono- and Diglycerides of Fatty Acids (Emulsifier)",
+        isAllergen: false,
+      },
+      { name: "Carrageenan (Stabilizer)", isAllergen: false },
+      { name: "Natural Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A smaller portion of whipped cream when limiting saturated fat",
+      "A lower-saturated-fat topping that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "jack-n-jill-vcut-spicy-barbecue-25g",
+    barcode: "4800016622533",
+    name: "Jack 'n Jill V-Cut Spicy Barbecue Potato Chips 25g",
+    brand: "Jack 'n Jill V-Cut",
+    category: "Potato Chips",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 180,
+      saturatedFatGramsPerServing: 6,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 85,
+    }),
+    servingSize:
+      "1 cup (30g), about 1 serving per package; the package net weight is 25g",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active food registrations matching Jack 'n Jill V-Cut Potato Chips Spicy Barbecue Flavor by Universal Robina Corporation, but it does not publish enough package detail to assign one CPR confidently to barcode 4800016622533. The label's 30g serving contains 6g saturated fat. Contains soy, wheat/gluten, and mustard, and may contain milk; check the current packet if you have allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "180 kcal",
+      protein: "2g",
+      carbohydrates: "14g",
+      totalFat: "12g",
+      saturatedFat: "6g",
+      totalSugars: "Less than 1g",
+      dietaryFiber: "2g",
+      sodium: "85mg",
+    },
+
+    ingredients: [
+      { name: "Potatoes", isAllergen: false },
+      { name: "Vegetable Oil (Palm Oil)", isAllergen: false },
+      {
+        name: "Spicy Barbecue Seasoning (includes Yeast, Monosodium Glutamate, Salt, Sugar, Paprika, Maltodextrin, Hydrolyzed Corn and Soy Proteins, Wheat Rusk Powder, Flavors, Spices, Mustard Seeds, Anticaking Agents, Caramel Color, Disodium Inosinate, and Disodium Guanylate)",
+        isAllergen: true,
+      },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Cayenne Pepper", isAllergen: false },
+      { name: "Antioxidant", isAllergen: false },
+    ],
+
+    allergens: ["Soy", "Wheat / Gluten", "Mustard", "Milk"],
+
+    alternatives: [
+      "Plain potato chips with less saturated fat and a shorter ingredient list",
+      "A baked snack that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "jack-n-jill-piattos-cheese-40g",
+    barcode: "4800016644801",
+    name: "Jack 'n Jill Piattos Cheese Potato Crisps 40g",
+    brand: "Jack 'n Jill Piattos",
+    category: "Potato Crisps",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 30,
+      caloriesPerServing: 150,
+      saturatedFatGramsPerServing: 3.5,
+      totalSugarsGramsPerServing: 2,
+      sodiumMilligramsPerServing: 170,
+    }),
+    servingSize:
+      "1 cup (30g), 1 serving per container; the package net weight is 40g",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active food registrations matching Jack 'n Jill Piattos Cheese Flavored Potato Crisps by Universal Robina Corporation, but it does not publish enough package detail to assign one CPR confidently to barcode 4800016644801. The label's 30g serving contains 170mg sodium and 3.5g saturated fat. Contains milk and soy; the package may also contain wheat, shrimp, egg, and fish, so verify the current packet if you have allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "150 kcal",
+      protein: "2g",
+      carbohydrates: "19g",
+      totalFat: "7g",
+      saturatedFat: "3.5g",
+      totalSugars: "2g",
+      dietaryFiber: "1g",
+      sodium: "170mg",
+    },
+
+    ingredients: [
+      { name: "Dehydrated Potatoes", isAllergen: false },
+      { name: "Potato Starch", isAllergen: false },
+      {
+        name: "Vegetable Oil (Palm Olein and Palm Oil with TBHQ)",
+        isAllergen: false,
+      },
+      {
+        name: "Cheese Powder (includes Maltodextrin, Whey, Vegetable Oil, Cheddar Cheese, Salt, Cheese Flavor, Disodium Phosphate, Annatto and Turmeric Colors, and Silicon Dioxide)",
+        isAllergen: true,
+      },
+      { name: "Sugar", isAllergen: false },
+      { name: "Monosodium Glutamate", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Potassium Chloride", isAllergen: false },
+      { name: "Natural and Artificial Flavors", isAllergen: false },
+      { name: "Lactose", isAllergen: true },
+      {
+        name: "Disodium Inosinate and Disodium Guanylate",
+        isAllergen: false,
+      },
+      { name: "Onion and Garlic Powders", isAllergen: false },
+      { name: "Mono- and Diglycerides", isAllergen: false },
+      { name: "Citric Acid", isAllergen: false },
+    ],
+
+    allergens: [
+      "Milk",
+      "Soy",
+      "Wheat / Gluten",
+      "Crustaceans",
+      "Eggs",
+      "Fish",
+    ],
+
+    alternatives: [
+      "Plain potato crisps with less sodium and saturated fat",
+      "A baked snack that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "lays-stax-sour-cream-onion-100g",
+    barcode: "8850718804573",
+    name: "Lay's Stax Sour Cream & Onion Potato Chips 100g",
+    brand: "Lay's Stax",
+    category: "Potato Chips",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA food registration found",
+    healthScore: null,
+    servingSize: "30g (about 3 servings per 100g package)",
+    warningMessage:
+      "No matching Philippine FDA food-registration record was found for the photographed Thai Lay's Stax Sour Cream & Onion 100g variant or barcode 8850718804573. Treat its Philippine authorization as unverified until the importer or FDA supplies an exact CPR. One 30g serving contains 3.5g saturated fat and 137mg sodium. Contains wheat/gluten, milk, and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "156 kcal",
+      protein: "2.2g",
+      carbohydrates: "18.5g",
+      totalFat: "8g",
+      saturatedFat: "3.5g",
+      totalSugars: "0.9g",
+      dietaryFiber: "1.1g",
+      sodium: "137mg",
+    },
+
+    ingredients: [
+      { name: "Potatoes (approximately 53%)", isAllergen: false },
+      { name: "Vegetable Oil", isAllergen: false },
+      { name: "Wheat Starch", isAllergen: true },
+      {
+        name: "Sour Cream and Onion Seasoning (includes Full-Fat Dried Milk, Iodized Salt, Onion Powder, Whey Powder, Modified Starch, Mono- and Diglycerides, Lecithin, Monosodium Glutamate, Disodium 5'-Ribonucleotide, Citric Acid, Paprika Color, and Flavors)",
+        isAllergen: true,
+      },
+      { name: "Nitrogen (Packaging Gas)", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy"],
+
+    alternatives: [
+      "A locally FDA-registered potato snack with an identifiable CPR",
+      "A lower-sodium snack that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "doritos-nacho-cheese-65g",
+    barcode: "6924743926547",
+    name: "Doritos Nacho Cheese Tortilla Chips 65g",
+    brand: "Doritos",
+    category: "Tortilla Chips",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA food registration found",
+    healthScore: null,
+    servingSize: "30g (about 2 servings per 65g package)",
+    warningMessage:
+      "The Philippine FDA portal has active Doritos Nacho Cheese records for products branded or distributed by Lotte, but those records do not match the photographed PepsiCo imported 65g variant or barcode 6924743926547. Treat this exact package's Philippine authorization as unverified until the importer or FDA supplies a matching CPR. One 30g serving contains 192mg sodium and 3.2g saturated fat. Contains milk.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "149 kcal",
+      protein: "2.2g",
+      carbohydrates: "18.1g",
+      totalFat: "7.3g",
+      saturatedFat: "3.2g",
+      totalSugars: "0.5g",
+      dietaryFiber: "1.3g",
+      sodium: "192mg",
+    },
+
+    ingredients: [
+      { name: "Corn (68%)", isAllergen: false },
+      { name: "Palm Olein", isAllergen: false },
+      {
+        name: "Nacho Cheese Seasoning (includes Maltodextrin, Cheese Powder, Iodized Salt, Monosodium Glutamate, Disodium 5'-Ribonucleotide, Whey Protein, and Onion Powder)",
+        isAllergen: true,
+      },
+      { name: "Acidity Regulator", isAllergen: false },
+      { name: "Black Pepper", isAllergen: false },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "A locally FDA-registered corn chip with an identifiable CPR",
+      "A lower-sodium corn snack without milk ingredients",
+    ],
+  },
+
+  {
     slug: "biogesic-paracetamol-500mg-tablet",
     barcode: "DR-XY39670",
     name: "Biogesic Paracetamol 500mg Tablet",
