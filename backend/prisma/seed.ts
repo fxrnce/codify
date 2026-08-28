@@ -2424,6 +2424,266 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "gardenia-high-fiber-whole-wheat-bread-600g",
+    barcode: "4806502720301",
+    name: "Gardenia High Fiber Whole Wheat Bread 600g",
+    brand: "Gardenia",
+    category: "Whole Wheat Bread",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000011480835",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 64,
+      caloriesPerServing: 161,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 4,
+      sodiumMilligramsPerServing: 192,
+    }),
+    servingSize: "2 slices (64g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000011480835 for Gardenia High Fiber Whole Wheat Bread is valid through December 4, 2028. The submitted package is the 600g retail variant. It contains wheat and milk ingredients, so check the label if you have food allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "161 kcal",
+      protein: "7g",
+      carbohydrates: "31g",
+      totalFat: "1g",
+      saturatedFat: "1g",
+      totalSugars: "4g",
+      dietaryFiber: "5g",
+      sodium: "192mg",
+    },
+
+    ingredients: [
+      { name: "High Protein Wheat Flour", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Whole Wheat Flour", isAllergen: true },
+      { name: "Wheat Gluten", isAllergen: true },
+      { name: "Honey", isAllergen: false },
+      { name: "Refined Sugar", isAllergen: false },
+      { name: "Whey Powder", isAllergen: true },
+      { name: "Inulin Fiber", isAllergen: false },
+      { name: "Oat Fiber", isAllergen: false },
+      { name: "Baker's Yeast", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Pure Vegetable Shortening (Palm Oil)", isAllergen: false },
+      { name: "Skimmed Milk Powder", isAllergen: true },
+      { name: "Calcium Propionate", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk"],
+
+    alternatives: [
+      "A lower-sodium whole-grain bread after comparing nutrition labels",
+      "A gluten-free bread if wheat or gluten must be avoided",
+    ],
+  },
+
+  {
+    slug: "cindys-delisoft-jumbo-sandwich-loaf-785g",
+    barcode: "2077102376157",
+    name: "Cindy's Delisoft Jumbo Sandwich Loaf 785g",
+    brand: "Cindy's Bakery",
+    category: "Sandwich Bread",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000009914872",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 50,
+      caloriesPerServing: 150,
+      saturatedFatGramsPerServing: 0.5,
+      totalSugarsGramsPerServing: 5,
+      sodiumMilligramsPerServing: 220,
+    }),
+    servingSize: "2 pieces (50g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000009914872 for Delisoft Jumbo Sandwich Loaf under Cindy's Bakery is valid through December 18, 2026. The submitted package is the 785g retail variant. The ingredient and allergen panel was not included in the submitted reference, so check the physical package before use if you have allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "150 kcal",
+      protein: "4g",
+      carbohydrates: "28g",
+      totalFat: "2g",
+      saturatedFat: "0.5g",
+      totalSugars: "5g",
+      dietaryFiber: "1g",
+      sodium: "220mg",
+    },
+
+    ingredients: [],
+    allergens: [],
+
+    alternatives: [
+      "A lower-sodium sandwich bread after comparing nutrition labels",
+      "A bread with a complete allergen label that matches your dietary needs",
+    ],
+  },
+
+  {
+    slug: "lemon-square-choo-choo-cake-bites-choco-vanilla-380g",
+    barcode: "4806018403866",
+    name: "Lemon Square ChooChoo Cake Bites Choco Vanilla 380g",
+    brand: "Lemon Square",
+    category: "Filled Cake Bites",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000011136754",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 38,
+      caloriesPerServing: 180,
+      saturatedFatGramsPerServing: 4.5,
+      totalSugarsGramsPerServing: 11,
+      sodiumMilligramsPerServing: 95,
+    }),
+    servingSize: "1 cake bite (38g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000011136754 for Choo Choo Cake Bites Choco Vanilla with creamy filling is valid through May 29, 2028. This is an FDA-registered product, but its nutrition score reflects the submitted label's sugar, saturated fat, and energy values. Contains wheat, milk, egg, and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "180 kcal",
+      protein: "3g",
+      carbohydrates: "22g",
+      totalFat: "9g",
+      saturatedFat: "4.5g",
+      totalSugars: "11g",
+      dietaryFiber: "3g",
+      sodium: "95mg",
+    },
+
+    ingredients: [
+      { name: "Wheat Flour", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      { name: "Vegetable Fat (Palm Oil)", isAllergen: false },
+      { name: "Eggs", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Cocoa Powder", isAllergen: false },
+      { name: "Buttermilk", isAllergen: true },
+      { name: "Milk Powder", isAllergen: true },
+      { name: "Soy Lecithin", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Leavening Agents", isAllergen: false },
+      { name: "Vanilla Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Eggs", "Soy"],
+
+    alternatives: [
+      "Fresh fruit with no added sugar",
+      "A lower-sugar snack checked against your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "lemon-square-lava-cake-matcha-latte-380g",
+    barcode: "4806018408298",
+    name: "Lemon Square Lava Cake Matcha Latte 380g",
+    brand: "Lemon Square",
+    category: "Filled Cake Bar",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000015674360",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 38,
+      caloriesPerServing: 140,
+      saturatedFatGramsPerServing: 3,
+      totalSugarsGramsPerServing: 11,
+      sodiumMilligramsPerServing: 120,
+    }),
+    servingSize: "1 cake bar (38g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015674360 for Lava Cake Matcha Latte Flavored Cake is valid through January 14, 2031. This is an FDA-registered product, but its nutrition score reflects the submitted label's sugar, saturated fat, sodium, and energy values. Contains wheat, milk, egg, and soy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "140 kcal",
+      protein: "2g",
+      carbohydrates: "21g",
+      totalFat: "6g",
+      saturatedFat: "3g",
+      totalSugars: "11g",
+      dietaryFiber: "0g",
+      sodium: "120mg",
+    },
+
+    ingredients: [
+      { name: "Wheat Flour", isAllergen: true },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Condensed Milk", isAllergen: true },
+      { name: "Margarine (Coconut Oil and Palm Oil)", isAllergen: false },
+      { name: "Eggs", isAllergen: true },
+      { name: "Corn Syrup", isAllergen: false },
+      { name: "Vegetable Fat (Palm Oil)", isAllergen: false },
+      { name: "Soy Lecithin", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Potassium Sorbate", isAllergen: false },
+      { name: "Matcha Latte Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Eggs", "Soy"],
+
+    alternatives: [
+      "Fresh fruit with no added sugar",
+      "A lower-sugar snack checked against your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "ufc-tamis-anghang-banana-catsup-530g",
+    barcode: "014285000075",
+    name: "UFC Tamis Anghang Banana Catsup 530g",
+    brand: "UFC",
+    category: "Banana Catsup",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000014912252",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 32,
+      caloriesPerServing: 18,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 2,
+      sodiumMilligramsPerServing: 295,
+    }),
+    servingSize: "2 tablespoons (32g)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014912252 lists UFC Tamis Anghang Banana Catsup by NutriAsia, Inc. in glass-bottle packaging as valid through November 28, 2028. The submitted 530g bottle provides 295mg sodium per 32g serving. Contains wheat, milk, and soybeans.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "18 kcal",
+      protein: "0g",
+      carbohydrates: "4g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "2g",
+      dietaryFiber: "0g",
+      sodium: "295mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Banana", isAllergen: false },
+      { name: "Modified Starch (Stabilizer)", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Sodium Benzoate (Preservative)", isAllergen: false },
+      { name: "Artificial Colors", isAllergen: false },
+      { name: "Artificial Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy"],
+
+    alternatives: [
+      "A lower-sodium catsup after comparing nutrition labels",
+      "A tomato-based condiment that matches your allergen preferences",
+    ],
+  },
+
+  {
     slug: "biogesic-paracetamol-500mg-tablet",
     barcode: "DR-XY39670",
     name: "Biogesic Paracetamol 500mg Tablet",
@@ -2712,36 +2972,28 @@ async function seedDatabase() {
 
   const productCount = await prisma.product.count();
 
-  const advisoryBatchSize = 50;
+  const advisoryBatchSize = 200;
 
   for (let index = 0; index < advisories.length; index += advisoryBatchSize) {
     const batch = advisories.slice(index, index + advisoryBatchSize);
 
-    await prisma.$transaction(
-      batch.map((advisory) => {
-        const data = {
-          title: advisory.title,
-          category: advisory.category,
-          type: advisory.type,
-          status: advisory.status,
-          publishedAt: new Date(`${advisory.publishedAt}T00:00:00.000Z`),
-          sourceUrl: advisory.sourceUrl,
-          filipinoSourceUrl: advisory.filipinoSourceUrl,
-          isActive: advisory.isActive,
-        };
-
-        return prisma.fdaAdvisory.upsert({
-          where: {
-            advisoryNumber: advisory.advisoryNumber,
-          },
-          update: data,
-          create: {
-            advisoryNumber: advisory.advisoryNumber,
-            ...data,
-          },
-        });
-      }),
-    );
+    // Advisory numbers are immutable FDA records. Insert only missing rows so
+    // Render startup does not re-run hundreds of upserts in transactions that
+    // can exceed Prisma's five-second transaction timeout on a cold database.
+    await prisma.fdaAdvisory.createMany({
+      data: batch.map((advisory) => ({
+        advisoryNumber: advisory.advisoryNumber,
+        title: advisory.title,
+        category: advisory.category,
+        type: advisory.type,
+        status: advisory.status,
+        publishedAt: new Date(`${advisory.publishedAt}T00:00:00.000Z`),
+        sourceUrl: advisory.sourceUrl,
+        filipinoSourceUrl: advisory.filipinoSourceUrl,
+        isActive: advisory.isActive,
+      })),
+      skipDuplicates: true,
+    });
   }
 
   const advisoryCount = await prisma.fdaAdvisory.count();
