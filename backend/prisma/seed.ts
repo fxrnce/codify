@@ -744,6 +744,71 @@ const products: SeedProduct[] = [
   },
 
   {
+    slug: "tang-pomelo-instant-drink-mix-19g",
+    barcode: "7622210706768",
+    name: "Tang Pomelo Instant Drink Mix 19g",
+    brand: "Tang",
+    category: "Powdered Drink Mix",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory1NutritionScore({
+      servingSizeMilliliters: 250,
+      caloriesPerServing: 20,
+      totalSugarsGramsPerServing: 3,
+    }),
+    servingSize:
+      "Approx. 5g powder prepared as directed (about 4 servings per 19g pack; one pack prepares 700mL)",
+    warningMessage:
+      "The Philippine FDA portal lists two active registrations matching Tang Pomelo Flavor Instant Drink Mix by Mondelez Philippines, Inc., valid through February 8, 2028 and July 1, 2029, but it does not map either record to barcode 7622210706768. The nutrition score assumes one prepared 250mL serving. Contains aspartame and phenylalanine; people with phenylketonuria should follow the package warning.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "20",
+      protein: "0g",
+      carbohydrates: "4g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "3g",
+      dietaryFiber: "Less than 1g",
+      sodium: "25mg",
+    },
+
+    ingredients: [
+      { name: "Refined Cane Sugar", isAllergen: false },
+      { name: "Acidity Regulator (Citric Acid)", isAllergen: false },
+      { name: "Anti-Caking Agent (Calcium Phosphate)", isAllergen: false },
+      {
+        name: "Artificial Sweeteners (Aspartame and Acesulfame Potassium)",
+        isAllergen: false,
+      },
+      {
+        name: "Stabilizer (Sodium Carboxymethylcellulose)",
+        isAllergen: false,
+      },
+      {
+        name: "Natural and Nature-Identical Pomelo Flavor",
+        isAllergen: false,
+      },
+      { name: "Vitamin C, Zinc, and Vitamin D", isAllergen: false },
+      { name: "Salt", isAllergen: false },
+      { name: "Powdered Mixed Fruit Extracts", isAllergen: false },
+      { name: "Titanium Dioxide (Color)", isAllergen: false },
+      {
+        name: "Artificial Colors (Allura Red and Tartrazine)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Water with fresh pomelo or citrus slices",
+      "An unsweetened drink without artificial sweeteners",
+    ],
+  },
+
+  {
     slug: "gardenia-classic-white-bread-regular-slice-600g",
     barcode: "4806502720615",
     name: "Gardenia Classic White Bread 600g",
@@ -1763,6 +1828,333 @@ const products: SeedProduct[] = [
     alternatives: [
       "An FDA-registered corned beef with a current matching product record",
       "Fresh lean beef prepared with less added sodium",
+    ],
+  },
+
+  {
+    slug: "spam-lite-luncheon-meat-340g",
+    barcode: "037600336161",
+    name: "SPAM Lite Luncheon Meat 340g",
+    brand: "SPAM",
+    category: "Canned Luncheon Meat",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 56,
+      caloriesPerServing: 104,
+      saturatedFatGramsPerServing: 2.8,
+      totalSugarsGramsPerServing: 0.8,
+      sodiumMilligramsPerServing: 415,
+    }),
+    servingSize: "56g (6 servings per 340g / 12 oz can)",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active registrations matching SPAM Lite Luncheon Meat, including a 12 oz record valid through February 16, 2031, but it does not map a registration to barcode 037600336161. One 56g serving contains 415mg sodium, 2.8g saturated fat, and 39.5mg cholesterol. Refrigerate unused contents promptly in a separate covered container after opening.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "104 kcal",
+      protein: "7g",
+      carbohydrates: "1.7g",
+      totalFat: "7.7g",
+      saturatedFat: "2.8g",
+      totalSugars: "0.8g",
+      dietaryFiber: "0g",
+      sodium: "415mg",
+    },
+
+    ingredients: [
+      { name: "Pork with Ham", isAllergen: false },
+      { name: "Mechanically Separated Chicken", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Salt", isAllergen: false },
+      { name: "Modified Potato Starch", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Sodium Phosphates", isAllergen: false },
+      { name: "Potassium Chloride", isAllergen: false },
+      { name: "Sodium Ascorbate", isAllergen: false },
+      { name: "Sodium Nitrite", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A lower-sodium luncheon meat after comparing nutrition labels",
+      "Fresh lean pork or chicken prepared with less added sodium",
+    ],
+  },
+
+  {
+    slug: "delimondo-garlic-chili-corned-beef-175g",
+    barcode: "4800005042342",
+    name: "Delimondo Garlic and Chili Corned Beef 175g",
+    brand: "Delimondo",
+    category: "Canned Corned Beef",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000015029812",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 50,
+      caloriesPerServing: 101,
+      saturatedFatGramsPerServing: 3,
+      totalSugarsGramsPerServing: 2,
+      sodiumMilligramsPerServing: 377,
+    }),
+    servingSize: "50g (about 3 servings per 175g can)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015029812 lists Delimondo Garlic and Chili Corned Beef by Delimondo Food Specialties Inc. as active through November 27, 2030. The official Delimondo catalog confirms the 175g variant; the FDA portal does not publish retail barcodes. One 50g serving contains 377mg sodium and 3g saturated fat. The label says it is manufactured in a facility that also processes wheat, milk, soy, fish, tree nuts, celery, and eggs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "101 kcal",
+      protein: "9g",
+      carbohydrates: "2g",
+      totalFat: "7g",
+      saturatedFat: "3g",
+      totalSugars: "2g",
+      dietaryFiber: "Less than 1g",
+      sodium: "377mg",
+    },
+
+    ingredients: [
+      { name: "Cooked Beef", isAllergen: false },
+      { name: "Beef Broth", isAllergen: false },
+      { name: "Garlic", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Sodium Phosphates (Stabilizer)", isAllergen: false },
+      { name: "Chili", isAllergen: false },
+      { name: "Select Spices", isAllergen: false },
+      {
+        name: "Monosodium Glutamate (Flavor Enhancer)",
+        isAllergen: false,
+      },
+      { name: "Sodium Erythorbate (Antioxidant)", isAllergen: false },
+      { name: "Sodium Nitrite (Color Retention Agent)", isAllergen: false },
+    ],
+
+    allergens: [
+      "Wheat / Gluten",
+      "Milk",
+      "Soy",
+      "Fish",
+      "Tree Nuts",
+      "Celery",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "A lower-sodium corned beef after comparing nutrition labels",
+      "Fresh lean beef prepared with less added sodium",
+    ],
+  },
+
+  {
+    slug: "bertolli-extra-virgin-olive-oil-rich-taste-2l",
+    barcode: "041790002201",
+    name: "Bertolli Extra Virgin Olive Oil Rich Taste 2L",
+    brand: "Bertolli",
+    category: "Extra Virgin Olive Oil",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 13.7,
+      caloriesPerServing: 120,
+      saturatedFatGramsPerServing: 2.2,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 0,
+    }),
+    servingSize: "15mL (1 tablespoon; about 133 servings per 2L bottle)",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active registrations matching Bertolli Extra Virgin Olive Oil, including records valid through April 28 and July 19, 2027, but it does not map a registration to barcode 041790002201. One 15mL serving contains 120 calories and 13.7g total fat. Store tightly capped in a cool place away from light; cloudiness below 20°C is normal and clears at room temperature.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "120 kcal",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "13.7g",
+      saturatedFat: "2.2g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [{ name: "Extra Virgin Olive Oil", isAllergen: false }],
+
+    allergens: [],
+
+    alternatives: [
+      "Use a measured portion of olive oil appropriate for the meal",
+      "Another FDA-registered unsaturated cooking or dressing oil",
+    ],
+  },
+
+  {
+    slug: "anchor-protein-plus-fortified-powdered-milk-drink-280g",
+    barcode: "4806501599670",
+    name: "Anchor Protein+ High-Protein Fortified Powdered Milk Drink 280g",
+    brand: "Anchor",
+    category: "Fortified Powdered Milk Drink",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000010035715",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 35,
+      caloriesPerServing: 143,
+      saturatedFatGramsPerServing: 2,
+      totalSugarsGramsPerServing: 2,
+      sodiumMilligramsPerServing: 146,
+    }),
+    servingSize:
+      "35g powder prepared with 200mL water (about 8 servings per 280g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000010035715 lists Anchor Protein+ High-Protein Fortified Powdered Milk Drink by Fonterra Brands Phils., Inc. as active through November 16, 2027. One prepared serving provides 8g protein and contains 2g saturated fat, 2g sucrose, and 146mg sodium. Contains milk and soy. The label says it is not suitable for children aged 0–3 years and is not a breastmilk substitute or suitable for infant feeding.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "143 kcal",
+      protein: "8g",
+      carbohydrates: "20g",
+      totalFat: "3g",
+      saturatedFat: "2g",
+      totalSugars: "2g sucrose",
+      dietaryFiber: "0g",
+      sodium: "146mg",
+    },
+
+    ingredients: [
+      {
+        name: "Dairy Solids (Whey Powder, Skim Milk Powder, and Buttermilk Powder)",
+        isAllergen: true,
+      },
+      { name: "Maltodextrin", isAllergen: false },
+      { name: "Soy Protein Isolate Powder", isAllergen: true },
+      { name: "Vegetable Oil Powder (Palm Oil)", isAllergen: false },
+      { name: "Sucrose", isAllergen: false },
+      { name: "Calcium Carbonate", isAllergen: false },
+      {
+        name: "Natural, Nature-Identical, and Artificial Flavors",
+        isAllergen: false,
+      },
+      { name: "Soy Lecithin", isAllergen: true },
+      {
+        name: "Vitamins (Vitamin D3, Vitamin A Acetate, Thiamine Hydrochloride, and Riboflavin)",
+        isAllergen: false,
+      },
+      { name: "Beta Carotene", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "An FDA-registered powdered milk without soy, if soy must be avoided",
+      "A lower-saturated-fat milk option that fits the user's nutrition needs",
+    ],
+  },
+
+  {
+    slug: "lotte-xylitol-sugar-free-gum-blueberry-mint-58g",
+    barcode: "840143700401",
+    name: "Lotte Xylitol Sugar Free Gum Blueberry Mint Flavor 58g",
+    brand: "Lotte Xylitol",
+    category: "Sugar-Free Chewing Gum",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000009339422",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 3,
+      caloriesPerServing: 10,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 0,
+    }),
+    servingSize: "2 pellets (3g; about 19 servings per 58g bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000009339422 lists Lotte Xylitol Gum Blueberry Mint Flavor as active through May 19, 2027. It is sugar-free but contains aspartame and phenylalanine, so people with phenylketonuria should follow the label warning. The matched 58g product information also identifies soy and bee pollen/propolis allergens.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "10 kcal",
+      protein: "0g",
+      carbohydrates: "3g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "N/A",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      {
+        name: "Sweeteners (Xylitol 39%, Maltitol 34%, Maltitol Syrup 0.16%, and Aspartame 0.15%)",
+        isAllergen: false,
+      },
+      { name: "Gum Base", isAllergen: false },
+      { name: "Gum Arabic (Thickener)", isAllergen: false },
+      { name: "Dicalcium Phosphate (Stabilizer)", isAllergen: false },
+      {
+        name: "Glazing Agents (Beeswax, Carnauba Wax, and Shellac)",
+        isAllergen: false,
+      },
+      {
+        name: "Artificial Colors (Erythrosine / FD&C Red 3 and Brilliant Blue / FD&C Blue 1)",
+        isAllergen: false,
+      },
+      { name: "Artificial Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Soy", "Bee pollen / propolis"],
+
+    alternatives: [
+      "An FDA-registered sugar-free gum without aspartame",
+      "Routine brushing, flossing, and water for oral hygiene",
+    ],
+  },
+
+  {
+    slug: "dr-daily-vitamin-c-sodium-ascorbate-800mg-30-tablets",
+    barcode: "0612477636868",
+    name: "Dr. Daily Vitamin C Sodium Ascorbate 800mg 30 Tablets",
+    brand: "Dr. Daily",
+    category: "Food Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000014622661",
+    healthScore: null,
+    servingSize: "1 tablet (30 tablets per bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000014622661 lists Dr. Daily Vitamin C (Sodium Ascorbate) 800mg Food Supplement Tablet as active through September 2, 2027, with no approved therapeutic claims. For adults only. If pregnant, lactating, taking medication, or managing a medical condition, consult a physician before use. Do not exceed one tablet per day, and keep out of reach of children.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0.40 kcal",
+      protein: "0g",
+      carbohydrates: "Less than 0.10g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "83mg",
+    },
+
+    ingredients: [
+      { name: "Vitamin C (Sodium Ascorbate) 800mg", isAllergen: false },
+      { name: "Microcrystalline Cellulose (Bulking Agent)", isAllergen: false },
+      { name: "Starch (Bulking Agent)", isAllergen: false },
+      { name: "Magnesium Stearate (Stabiliser)", isAllergen: false },
+      { name: "Polyvinylpyrrolidone K-30", isAllergen: false },
+      { name: "Talc (Anti-Caking Agent)", isAllergen: false },
+      { name: "Silica (Anti-Caking Agent)", isAllergen: false },
+      { name: "Sodium Benzoate (Preservative)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Vitamin C-rich foods such as guava, citrus fruit, and bell peppers",
+      "A supplement and dose recommended by a physician or dietitian",
     ],
   },
 
@@ -3305,6 +3697,454 @@ const products: SeedProduct[] = [
     alternatives: [
       "A locally FDA-registered corn chip with an identifiable CPR",
       "A lower-sodium corn snack without milk ingredients",
+    ],
+  },
+
+  {
+    slug: "great-taste-white-sugar-free-23g",
+    barcode: "4800016024948",
+    name: "Great Taste White Sugar Free Coffee Mix 23g",
+    brand: "Great Taste White",
+    category: "Coffee Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 23,
+      caloriesPerServing: 70,
+      saturatedFatGramsPerServing: 4.5,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 50,
+    }),
+    servingSize:
+      "23g sachet prepared with 200mL hot water; the label also prints 11.5g/100mL and 2 servings per pack",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active registrations matching Great Taste White Coffee Mix by Universal Robina Corporation, including twin-pack records, but it does not publish enough package detail to assign one CPR confidently to barcode 4800016024948. The package's 200mL nutrition column lists 4.5g saturated fat. Contains milk; may contain wheat/gluten, soy, and sulphites. Although labeled sugar free, it contains acesulfame-K and sucralose.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "70 kcal",
+      protein: "Less than 1g",
+      carbohydrates: "4g",
+      totalFat: "6g",
+      saturatedFat: "4.5g",
+      totalSugars: "0g",
+      dietaryFiber: "Less than 1g",
+      sodium: "50mg",
+    },
+
+    ingredients: [
+      {
+        name: "Creamer (Hydrogenated Palm Fat, Glucose Syrup, Milk Protein, Dipotassium Phosphate, Sodium Polyphosphate, Mono- and Diglycerides of Fatty Acids, Diacetyl Tartaric Acid Esters of Mono- and Diglycerides, Silicon Dioxide, Artificial Flavors, and Beta Carotene)",
+        isAllergen: true,
+      },
+      { name: "Coffee", isAllergen: false },
+      {
+        name: "Thickeners (Cellulose Gum and Modified Starch)",
+        isAllergen: false,
+      },
+      { name: "Artificial Flavors", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      {
+        name: "Sweeteners (Acesulfame-K and Sucralose)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Wheat / Gluten", "Soy", "Sulphites"],
+
+    alternatives: [
+      "Black coffee without creamer when limiting saturated fat",
+      "A coffee mix that matches your milk, gluten, soy, and sulphite preferences",
+    ],
+  },
+
+  {
+    slug: "kopiko-brown-coffee-20g",
+    barcode: "8996001410547",
+    name: "Kopiko Brown Coffee Mix 20g",
+    brand: "Kopiko Brown",
+    category: "Coffee Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 20,
+      caloriesPerServing: 100,
+      saturatedFatGramsPerServing: 3.5,
+      totalSugarsGramsPerServing: 8,
+      sodiumMilligramsPerServing: 160,
+    }),
+    servingSize: "1 sachet (20g), prepared with 150mL hot water",
+    warningMessage:
+      "The Philippine FDA portal lists multiple active registrations matching Kopiko Brown Just Right Blend Coffee Mix, including records for the photographed Philippine importer Ecossential Foods Corp., but it does not publish enough package detail to assign one CPR confidently to barcode 8996001410547. One 20g sachet contains 8g sugar, 3.5g saturated fat, and 160mg sodium. Contains milk and malt/gluten.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "100 kcal",
+      protein: "1g",
+      carbohydrates: "14g",
+      totalFat: "4g",
+      saturatedFat: "3.5g",
+      totalSugars: "8g",
+      dietaryFiber: "0g",
+      sodium: "160mg",
+    },
+
+    ingredients: [
+      {
+        name: "Non-Dairy Creamer (Glucose Syrup, Fully Hydrogenated Palm Kernel Oil, Sodium Caseinate, Dipotassium Phosphate, Sodium Polyphosphate, Mono- and Diglycerides of Fatty Acids, Salt, and Silicon Dioxide)",
+        isAllergen: true,
+      },
+      { name: "Sugar", isAllergen: false },
+      { name: "Instant Coffee", isAllergen: false },
+      {
+        name: "Foaming Creamer (Glucose Syrup Solids, Fully Hydrogenated Palm Kernel Oil, Milk Solids, Dipotassium Phosphate, Sodium Stearoyl-2-Lactylate, and Silicon Dioxide)",
+        isAllergen: true,
+      },
+      { name: "Malt Extract Powder", isAllergen: true },
+      { name: "Skim Milk Powder", isAllergen: true },
+      { name: "Cellulose Gum", isAllergen: false },
+      { name: "Brown Sugar", isAllergen: false },
+      { name: "Cocoa Powder", isAllergen: false },
+      { name: "Salt", isAllergen: false },
+      { name: "Artificial Flavor", isAllergen: false },
+      { name: "Caramel Color 150d", isAllergen: false },
+      {
+        name: "Sweeteners (Acesulfame-K and Sucralose)",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Milk", "Malt / Gluten"],
+
+    alternatives: [
+      "Black coffee or coffee with less sugar and saturated fat",
+      "A coffee mix without milk or gluten ingredients",
+    ],
+  },
+
+  {
+    slug: "goya-everyday-milk-chocolate-26g",
+    barcode: "4806517043457",
+    name: "Goya Everyday Milk Chocolate Drink 26g",
+    brand: "Goya Everyday",
+    category: "Chocolate Drink Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000009074767",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 26,
+      caloriesPerServing: 101,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 15,
+      sodiumMilligramsPerServing: 70,
+    }),
+    servingSize: "1 sachet (26g), prepares about 165mL chocolate drink",
+    warningMessage:
+      "Philippine FDA registration FR-4000009074767 lists Goya Everyday Instant Powdered Milk Chocolate Drink by Delfi Foods, Inc. as active through November 25, 2027. One 26g sachet contains 15g sugar. Contains milk and may contain traces of peanuts, tree nuts, soy, and wheat/gluten.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "101 kcal",
+      protein: "3g",
+      carbohydrates: "20g",
+      totalFat: "1g",
+      saturatedFat: "1g",
+      totalSugars: "15g",
+      dietaryFiber: "3g",
+      sodium: "70mg",
+    },
+
+    ingredients: [
+      { name: "Sugar", isAllergen: false },
+      { name: "Buttermilk Powder", isAllergen: true },
+      { name: "Cocoa Powder", isAllergen: false },
+      { name: "Carrageenan (Stabilizer)", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavor", isAllergen: false },
+    ],
+
+    allergens: [
+      "Milk",
+      "Peanuts",
+      "Tree Nuts",
+      "Soy",
+      "Wheat / Gluten",
+    ],
+
+    alternatives: [
+      "An unsweetened cocoa drink when limiting added sugar",
+      "A milk-free chocolate drink mix that matches your allergen preferences",
+    ],
+  },
+
+  {
+    slug: "boss-max-3-mangosteen-coffee-12g",
+    barcode: "4806504653393",
+    name: "Boss Max 3 Creamy Coffee with Mangosteen 12g",
+    brand: "Boss Max 3",
+    category: "Coffee Mix",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000008512440",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 12,
+      caloriesPerServing: 52,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 2,
+      sodiumMilligramsPerServing: 17,
+    }),
+    servingSize: "1 sachet (12g), prepared with 150mL hot water",
+    warningMessage:
+      "Philippine FDA registration FR-4000008512440 lists Boss Max3 Creamy Coffee Drink Mix with Mangosteen Powder by Corbridge Group Phils., Inc. as active through November 2, 2028. The package states that it is not recommended for children or for pregnant or lactating women. Its creamer contains milk protein despite being described as non-dairy. Do not use this beverage as a substitute for medical treatment.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "52 kcal",
+      protein: "0g",
+      carbohydrates: "9g",
+      totalFat: "2g",
+      saturatedFat: "1g",
+      totalSugars: "2g",
+      dietaryFiber: "1g",
+      sodium: "17mg",
+    },
+
+    ingredients: [
+      {
+        name: "Non-Dairy Creamer (Glucose Syrup Solids, Hydrogenated Vegetable Fat, Dipotassium Phosphate, Sodium Tripolyphosphate, Milk Protein, Mono- and Diglycerides of Fatty Acids, Diacetyl Tartaric and Fatty Acid Esters of Glycerol, Silicon Dioxide, and Beta Carotene)",
+        isAllergen: true,
+      },
+      { name: "Mangosteen (Garcinia mangostana) Powder", isAllergen: false },
+      { name: "Steviol Glycosides (Sweetener)", isAllergen: false },
+    ],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "Plain coffee without creamer when limiting saturated fat",
+      "A milk-free coffee mix without special-use restrictions",
+    ],
+  },
+
+  {
+    slug: "similac-gain-two-milk-supplement-400g",
+    barcode: "4800221242632",
+    name: "Similac Gain Two Milk Supplement 400g",
+    brand: "Similac Gain",
+    category: "Infant Milk Supplement",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: null,
+    servingSize:
+      "3 level scoops (approximately 30.9g), prepared with 180mL cooled previously boiled drinking water",
+    warningMessage:
+      "Multiple active Philippine FDA records match Similac Gain Two for infants 6–12 months, but the FDA portal does not identify which record belongs to this exact barcode and 400g pack. Breastmilk is best for babies up to 2 years and beyond. Use this milk supplement only on a health professional's advice; introducing it before 6 months or preparing it improperly may be dangerous. It is not suitable for infants with galactosemia. Contains milk and soy. Never microwave prepared formula, discard unfinished formula within 1 hour, and refrigerate unused prepared formula for no more than 24 hours.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "150 kcal",
+      protein: "4.54g",
+      carbohydrates: "17.3g",
+      totalFat: "7.11g",
+      sodium: "73mg",
+    },
+
+    ingredients: [
+      { name: "Nonfat Milk", isAllergen: true },
+      { name: "Lactose", isAllergen: true },
+      {
+        name: "Vegetable Oils (High Oleic Sunflower Oil, Soy Oil, and Coconut Oil)",
+        isAllergen: true,
+      },
+      { name: "Buttermilk Powder", isAllergen: true },
+      { name: "Fructo-Oligosaccharides (FOS)", isAllergen: false },
+      {
+        name: "Minerals (Potassium Citrate, Calcium Carbonate, Sodium Chloride, Magnesium Chloride, Ferrous Sulfate, Zinc Sulfate, Manganese Sulfate, Calcium Chloride, Potassium Hydroxide, Potassium Phosphate, Copper Sulfate, Sodium Selenate, and Potassium Iodide)",
+        isAllergen: false,
+      },
+      {
+        name: "Oligosaccharide Blend (2'-Fucosyllactose, Lacto-N-Tetraose, 3-Fucosyllactose, 6'-Sialyllactose, and 3'-Sialyllactose)",
+        isAllergen: false,
+      },
+      {
+        name: "Arachidonic Acid from Mortierella Alpina Oil",
+        isAllergen: false,
+      },
+      {
+        name: "Vitamin Blend",
+        isAllergen: false,
+      },
+      { name: "Soy Lecithin", isAllergen: true },
+      {
+        name: "DHA from Schizochytrium sp. Microalgae Oil",
+        isAllergen: false,
+      },
+      { name: "Choline Bitartrate", isAllergen: false },
+      { name: "Myo-Inositol", isAllergen: false },
+      { name: "Nucleotides", isAllergen: false },
+      { name: "Taurine", isAllergen: false },
+      { name: "Choline Chloride", isAllergen: false },
+      { name: "Ascorbyl Palmitate", isAllergen: false },
+      { name: "Mixed Tocopherols", isAllergen: false },
+      { name: "Carotenoids (Lutein and Beta-Carotene)", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "A health-professional-recommended milk supplement appropriate for the child's exact age and medical needs",
+    ],
+  },
+
+  {
+    slug: "nestle-cerelac-mixed-vegetables-soya-120g",
+    barcode: "9556001132222",
+    name: "Nestlé Cerelac Mixed Vegetables & Soya 120g",
+    brand: "Nestlé Cerelac",
+    category: "Infant Cereal",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA food registration found",
+    healthScore: null,
+    servingSize: "50g (approximately 2 servings per 120g pack)",
+    warningMessage:
+      "No exact current match for Nestlé Cerelac Mixed Vegetables & Soya was found in the Philippine FDA verification portal; this does not by itself establish that the product is unsafe. Verify the current package and registration before use. This complementary food is intended for children from 6 months up to 2 years and is not a breastmilk substitute. Continue breastfeeding, follow age-appropriate preparation guidance, and check the package's complete ingredient and allergen statement because the available images do not show the full ingredient panel.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "205 kcal",
+      protein: "7.5g",
+      carbohydrates: "32.8g",
+      totalFat: "4.8g",
+      saturatedFat: "1g",
+      totalSugars: "7.5g",
+      dietaryFiber: "1.88g",
+      sodium: "5mg",
+    },
+
+    ingredients: [
+      { name: "Rice / Cereal Flour", isAllergen: false },
+      { name: "Soya Flour or Protein", isAllergen: true },
+      { name: "Spinach, Carrots, and Squash", isAllergen: false },
+      { name: "Skimmed Milk Powder", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      { name: "Vegetable Oils", isAllergen: false },
+      { name: "Vitamin and Mineral Premix", isAllergen: false },
+      { name: "Fish Oil (DHA)", isAllergen: true },
+      { name: "Soya Lecithin", isAllergen: true },
+      { name: "Bifidobacterium Lactis Culture", isAllergen: false },
+      { name: "Nature-Identical Vanilla Flavor", isAllergen: false },
+    ],
+
+    allergens: ["Soy", "Milk", "Fish", "Wheat / Gluten"],
+
+    alternatives: [
+      "Another age-appropriate complementary food recommended by the child's healthcare professional",
+    ],
+  },
+
+  {
+    slug: "nestle-cerelac-nutripuffs-banana-strawberry-50g",
+    barcode: "9556001233967",
+    name: "Nestlé Cerelac NutriPuffs Banana & Strawberry 50g",
+    brand: "Nestlé Cerelac NutriPuffs",
+    category: "Infant Snack",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000013790215",
+    healthScore: null,
+    servingSize: "7g (approximately 1/2 cup; 7 servings per 50g pack)",
+    warningMessage:
+      "Philippine FDA registration FR-4000013790215 for Nestlé Cerelac NutriPuffs Banana & Strawberry is active through January 7, 2030. This complementary snack is intended for children from 9 months and is not a breastmilk substitute. Only feed it to a seated, supervised child who is developmentally ready for finger foods. Contains wheat/gluten and soy, may contain milk, and should not be used for a child with cow's-milk-protein allergy unless a healthcare professional advises otherwise.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "29.6 kcal",
+      protein: "0.8g",
+      carbohydrates: "4.7g",
+      totalFat: "0.9g",
+      saturatedFat: "0.2g",
+      totalSugars: "0.6g",
+      dietaryFiber: "0.2g",
+      sodium: "1.4mg",
+    },
+
+    ingredients: [
+      { name: "Rice Flour", isAllergen: false },
+      { name: "Wheat Flour (Gluten)", isAllergen: true },
+      { name: "Soy Flour", isAllergen: true },
+      { name: "Palm Olein", isAllergen: false },
+      { name: "Sucrose", isAllergen: false },
+      { name: "Banana Flakes", isAllergen: false },
+      {
+        name: "Mineral Premix (Potassium Citrate, Calcium Phosphate, Calcium Carbonate, Magnesium Compound, and Potassium Iodide)",
+        isAllergen: false,
+      },
+      { name: "Strawberry Powder", isAllergen: false },
+      {
+        name: "Vitamin Premix",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Wheat / Gluten", "Soy", "Milk"],
+
+    alternatives: [
+      "Another age-appropriate supervised finger food that matches the child's allergen needs",
+    ],
+  },
+
+  {
+    slug: "nestle-cerelac-rice-soya-250g",
+    barcode: "9556001132291",
+    name: "Nestlé Cerelac Rice & Soya 250g",
+    brand: "Nestlé Cerelac",
+    category: "Infant Cereal",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "Multiple matching active Philippine FDA records",
+    healthScore: null,
+    servingSize: "50g (5 servings per 250g pack)",
+    warningMessage:
+      "Multiple active Philippine FDA records match Nestlé Cerelac Rice & Soya, but the FDA portal does not identify which record belongs to this exact barcode and 250g pack. This complementary food is intended for children from 6 months up to 2 years and is not a breastmilk substitute. Continue breastfeeding and follow age-appropriate preparation guidance. Contains soy, milk, and fish and may contain wheat/gluten.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "208 kcal",
+      protein: "7.5g",
+      carbohydrates: "33.8g",
+      totalFat: "4.8g",
+      saturatedFat: "0.5g",
+      totalSugars: "9g",
+      dietaryFiber: "1g",
+      sodium: "5mg",
+    },
+
+    ingredients: [
+      { name: "Rice Flour", isAllergen: false },
+      { name: "Soya Flour", isAllergen: true },
+      { name: "Sucrose", isAllergen: false },
+      { name: "Skimmed Milk Powder", isAllergen: true },
+      { name: "Vegetable Oil", isAllergen: false },
+      {
+        name: "Minerals (Calcium Carbonate, Magnesium Phosphate, Ferrous Fumarate, Sodium Chloride, Zinc Sulfate, and Potassium Iodide)",
+        isAllergen: false,
+      },
+      { name: "Soya Lecithin (Emulsifier)", isAllergen: true },
+      { name: "Potassium Phosphate (Acidity Regulator)", isAllergen: false },
+      { name: "Fish Oil (DHA)", isAllergen: true },
+      { name: "Vitamin Premix", isAllergen: false },
+      { name: "Bifidobacterium Lactis (Probiotic)", isAllergen: false },
+      { name: "Nature-Identical Flavor (Vanillin)", isAllergen: false },
+    ],
+
+    allergens: ["Soy", "Milk", "Fish", "Wheat / Gluten"],
+
+    alternatives: [
+      "Another age-appropriate complementary food recommended by the child's healthcare professional",
     ],
   },
 
