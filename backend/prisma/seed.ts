@@ -347,6 +347,236 @@ const products: SeedProduct[] = [
   },
 
   {
+    // Label data: Products 2 (6).pdf, page 1. FDA portal checked September 7, 2026.
+    slug: "dove-men-care-extra-fresh-antiperspirant-stick-40g",
+    barcode: "4800888195715",
+    name: "Dove Men+Care Extra Fresh Antiperspirant Stick 40g",
+    brand: "Dove Men+Care",
+    category: "Antiperspirant Stick",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000009072915",
+    healthScore: null,
+    servingSize: "40g stick",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000009072915 lists Dove Men+Care Antiperspirant Deodorant Stick Extra Fresh by Unilever Philippines, Inc., with the Extra Fresh stick variant and an expiry date of November 18, 2027. The portal does not list retail barcodes or pack weights; the submitted stick is labeled 40g. For external underarm use only. Apply 4-6 swipes per underarm daily as directed. Do not apply to irritated or damaged skin, discontinue use if irritation occurs, and keep out of reach of children. Contains perfume.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Aluminum Zirconium Tetrachlorohydrex GLY", isAllergen: false },
+      { name: "Stearyl Alcohol", isAllergen: false },
+      { name: "C12-15 Alkyl Benzoate", isAllergen: false },
+      { name: "Cyclopentasiloxane", isAllergen: false },
+      { name: "Isopropyl Palmitate", isAllergen: false },
+      { name: "PPG-14 Butyl Ether", isAllergen: false },
+      { name: "Hydrogenated Castor Oil", isAllergen: false },
+      { name: "PEG-8", isAllergen: false },
+      { name: "Perfume", isAllergen: false },
+      { name: "Dimethicone", isAllergen: false },
+      { name: "Silica", isAllergen: false },
+      { name: "Polyethylene", isAllergen: false },
+      { name: "Helianthus Annuus (Sunflower) Seed Oil", isAllergen: false },
+      { name: "Steareth-100", isAllergen: false },
+      { name: "BHT", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free antiperspirant if perfume must be avoided",
+      "Another FDA-notified underarm product suitable for the user's skin",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (6).pdf, page 2. Published FDA notification retrieved September 7, 2026.
+    slug: "dove-radiant-care-niacinamide-vitamin-c-e-serum-bar-90g",
+    barcode: "4800888285300",
+    name: "Dove Radiant+Care 50x Niacinamide + Vitamin C & E Serum Bar 90g",
+    brand: "Dove Radiant+Care",
+    category: "Beauty Bar",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000013870718",
+    healthScore: null,
+    servingSize: "90g bar",
+    warningMessage:
+      "Published Philippine FDA cosmetic notification NN-1000013870718 lists Dove Radiant+Care Serum Bar 50x Niacinamide + Vitamin C & E by Unilever Philippines, Inc., with an expiry date of January 15, 2028. The record matches the photographed variant and Philippine importer but does not list retail barcodes or pack weights; the package states 90g when packed. Current portal status was not rechecked. For external use only. Apply to skin and rinse off. Discontinue use if skin irritation occurs; rinse immediately with water after eye contact and consult a doctor if irritation persists. Store in a cool, dry place. Contains perfume.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/cosmetic_product_notificationview.php?ACCOUNTCODE=NN-1000013870718&export=pdf",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sodium Lauroyl Isethionate", isAllergen: false },
+      { name: "Stearic Acid", isAllergen: false },
+      { name: "Lauric Acid", isAllergen: false },
+      { name: "Sodium Palmate", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Sodium Isethionate", isAllergen: false },
+      { name: "Sodium Stearate", isAllergen: false },
+      { name: "Cocamidopropyl Betaine", isAllergen: false },
+      { name: "Perfume", isAllergen: false },
+      { name: "Sodium Palm Kernelate", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Zinc Oxide", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Niacinamide", isAllergen: false },
+      { name: "Titanium Dioxide", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Sodium Benzoate", isAllergen: false },
+      { name: "Caramel", isAllergen: false },
+      { name: "Tetrasodium Etidronate", isAllergen: false },
+      { name: "Tetrasodium EDTA", isAllergen: false },
+      { name: "Sodium Ascorbyl Phosphate", isAllergen: false },
+      { name: "Tocopheryl Acetate", isAllergen: false },
+      { name: "Alumina", isAllergen: false },
+      { name: "Helianthus Annuus Seed Oil", isAllergen: false },
+      { name: "Sh-Polypeptide-121", isAllergen: false },
+      { name: "CI 14700", isAllergen: false },
+      { name: "CI 15985", isAllergen: false },
+      { name: "CI 17200", isAllergen: false },
+      { name: "CI 61570", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free cleansing bar if perfume must be avoided",
+      "Another FDA-notified cleanser suitable for the user's skin",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (6).pdf, page 2. FDA portal checked September 7, 2026.
+    slug: "cream-silk-triple-keratin-ultimate-straight-serum-conditioner-170ml",
+    barcode: "4800888206183",
+    name: "Cream Silk Triple Keratin Ultimate Straight Serum Conditioner 170mL",
+    brand: "Cream Silk",
+    category: "Hair Conditioner",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000014323532",
+    healthScore: null,
+    servingSize: "170mL tube",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000014323532 lists Cream Silk Triple Keratin Ultimate Straight Keratin Serum Conditioner by Unilever Philippines, Inc., with an expiry date of May 10, 2028. The product name, variant, and company match the submitted 170mL tube; the portal does not list retail barcodes or pack sizes. For external hair use only. After shampooing, massage through hair, especially the ends, and rinse well after one minute. Avoid contact with eyes; if contact occurs, rinse thoroughly with water. Contains perfume.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Cetearyl Alcohol", isAllergen: false },
+      { name: "Dimethicone", isAllergen: false },
+      { name: "Behentrimonium Chloride", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Perfume", isAllergen: false },
+      { name: "Dipropylene Glycol", isAllergen: false },
+      {
+        name: "Bis-(Isostearoyl/Oleoyl Isopropyl) Dimonium Methosulfate",
+        isAllergen: false,
+      },
+      { name: "Amodimethicone", isAllergen: false },
+      { name: "Lactic Acid", isAllergen: false },
+      { name: "Sodium Benzoate", isAllergen: false },
+      { name: "Disodium EDTA", isAllergen: false },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "PEG-7 Propylheptyl Ether", isAllergen: false },
+      { name: "Cetrimonium Chloride", isAllergen: false },
+      { name: "Lysine HCl", isAllergen: false },
+      { name: "Argania Spinosa Kernel Oil", isAllergen: false },
+      { name: "Hydrolyzed Keratin", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free conditioner if perfume must be avoided",
+      "Another FDA-notified rinse-out conditioner suited to the user's hair",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (6).pdf, page 2. Exact cosmetic notification remains unverified.
+    slug: "head-shoulders-smooth-silky-anti-dandruff-shampoo-12ml",
+    barcode: "4902430698658",
+    name: "Head & Shoulders Smooth & Silky Anti-Dandruff Shampoo 12mL",
+    brand: "Head & Shoulders",
+    category: "Anti-Dandruff Shampoo",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Cosmetic Notification Not Verified",
+    registrationNumber: "Philippine FDA cosmetic notification not verified",
+    healthScore: null,
+    servingSize: "12mL sachet",
+    warningMessage:
+      "The submitted 12mL sachet identifies Head & Shoulders Smooth & Silky shampoo, made in Indonesia and imported by Procter & Gamble Philippines, Inc. An exact Philippine FDA cosmetic notification has not been verified for this variant; this does not establish that the product is unsafe or unnotified. For external hair and scalp use only. Wet hair, gently massage onto the scalp, lather, and rinse thoroughly; repeat if desired. Avoid contact with eyes and rinse well with water if contact occurs. Contains fragrance, methylchloroisothiazolinone, and methylisothiazolinone; check the ingredient list if you have known sensitivities.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sodium Laureth Sulfate", isAllergen: false },
+      { name: "Sodium Lauryl Sulfate", isAllergen: false },
+      { name: "Sodium Xylenesulfonate", isAllergen: false },
+      { name: "Cocamidopropyl Betaine", isAllergen: false },
+      { name: "Glycol Distearate", isAllergen: false },
+      { name: "Fragrance", isAllergen: false },
+      { name: "Dimethiconol", isAllergen: false },
+      { name: "Sodium Citrate", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Dimethicone", isAllergen: false },
+      { name: "Piroctone Olamine", isAllergen: false },
+      { name: "Citric Acid", isAllergen: false },
+      { name: "TEA-Dodecylbenzenesulfonate", isAllergen: false },
+      { name: "Sodium Benzoate", isAllergen: false },
+      { name: "Guar Hydroxypropyltrimonium Chloride", isAllergen: false },
+      { name: "Trideceth-10", isAllergen: false },
+      { name: "Tetrasodium EDTA", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Benzyl Alcohol", isAllergen: false },
+      { name: "Methylchloroisothiazolinone", isAllergen: false },
+      { name: "Methylisothiazolinone", isAllergen: false },
+      { name: "CI 17200", isAllergen: false },
+      { name: "CI 42090", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "An anti-dandruff shampoo with a matching Philippine FDA cosmetic notification",
+      "A shampoo without fragrance or preservatives to which the user is sensitive",
+    ],
+  },
+
+  {
     slug: "super-delights-brownie-bites-14g",
     barcode: "4800365881315",
     name: "Super Delights Brownie Bites 14g",
@@ -4145,6 +4375,229 @@ const products: SeedProduct[] = [
 
     alternatives: [
       "Another age-appropriate complementary food recommended by the child's healthcare professional",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (4).pdf, page 1. FDA record checked September 7, 2026.
+    slug: "jufran-sriracha-hot-chili-sauce-515g",
+    barcode: "4801668606957",
+    name: "Jufran Sriracha Hot Chili Sauce 515g",
+    brand: "Jufran",
+    category: "Hot Chili Sauce",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000011392884",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 6,
+      caloriesPerServing: 0,
+      saturatedFatGramsPerServing: 0,
+      // Use the label's upper bound conservatively; retain "Less than 1g" below.
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 150,
+    }),
+    servingSize: "1 teaspoon (6g); about 86 servings per 515g bottle",
+    warningMessage:
+      "Published Philippine FDA record FR-4000011392884 lists Jufran Sriracha Hot Chili Sauce by Nutri-Asia, Inc. in PET/sachet packaging with an expiry date of July 26, 2028. It does not list retail barcodes or pack weights; the submitted 515g bottle identifies the same importer and Thai origin. The live portal was unavailable on September 7, 2026, so current status could not be rechecked. One 6g serving contains 150mg sodium. Contains sulfites. Shake well before using.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/All_FoodProductsview.php?ACCOUNTCODE=FR-4000011392884&export=pdf",
+
+    nutrition: {
+      calories: "0 kcal",
+      protein: "0g",
+      carbohydrates: "Less than 1g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "Less than 1g",
+      dietaryFiber: "0g",
+      sodium: "150mg",
+    },
+
+    ingredients: [
+      { name: "Chili", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Garlic", isAllergen: false },
+      { name: "Salt", isAllergen: false },
+      { name: "Modified Tapioca Starch (Thickener)", isAllergen: false },
+      {
+        name: "Flavor Enhancers (Monosodium Glutamate, Disodium 5'-Inosinate, and Disodium 5'-Guanylate)",
+        isAllergen: false,
+      },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Paprika Extract", isAllergen: false },
+      { name: "Sodium Benzoate (Preservative)", isAllergen: false },
+      { name: "Sodium Metabisulfite (Preservative)", isAllergen: true },
+    ],
+
+    allergens: ["Sulphites"],
+
+    alternatives: [
+      "A lower-sodium chili sauce after comparing nutrition labels",
+      "A chili condiment without sulfites if those must be avoided",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (4).pdf, page 1. Only a historical FDA record was found.
+    slug: "reno-liver-spread-230g",
+    barcode: "4805885172004",
+    name: "Reno Liver Spread 230g",
+    brand: "Reno",
+    category: "Liver Spread",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Current FDA Registration Not Verified",
+    registrationNumber: "FR-4000006923167 (historical; renewal not verified)",
+    healthScore: null,
+    servingSize: "2 tablespoons (40g); about 6 servings per 230g can",
+    warningMessage:
+      "The published Philippine FDA record FR-4000006923167 matches Reno Liver Spread by Reno Foods, Inc., but lists an expiry date of October 7, 2025. A renewal could not be verified because the live portal was unavailable on September 7, 2026; this does not establish that the product is unsafe or currently unregistered. One 40g serving contains 262mg sodium and 2g saturated fat. The package declares poultry meat, wheat, and soy as allergens and says to consume completely after opening.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/FoodProduct_Highriskview.php?ACCOUNTCODE=FR-4000006923167&export=pdf",
+
+    nutrition: {
+      calories: "70 kcal",
+      protein: "3g",
+      carbohydrates: "7g",
+      totalFat: "3g",
+      saturatedFat: "2g",
+      totalSugars: "2g",
+      dietaryFiber: "2g",
+      sodium: "262mg",
+    },
+
+    ingredients: [
+      { name: "Pork Livers, Offals and Trimmings", isAllergen: false },
+      { name: "Poultry Meat", isAllergen: true },
+      { name: "Wheat", isAllergen: true },
+      { name: "Palm Oil", isAllergen: false },
+      { name: "Soy Protein", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Monosodium Glutamate (Flavor Enhancer)", isAllergen: false },
+      { name: "Sodium Nitrite (Color Retention Agent)", isAllergen: false },
+    ],
+
+    allergens: ["Poultry Meat", "Wheat / Gluten", "Soy"],
+
+    alternatives: [
+      "A liver spread with a current, verifiable Philippine FDA registration",
+      "A lower-sodium sandwich filling that matches your allergen preferences",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (4).pdf, page 2 (Australian 170g variant).
+    slug: "cadbury-dairy-milk-biscoff-170g",
+    barcode: "9300617310822",
+    name: "Cadbury Dairy Milk Biscoff 170g",
+    brand: "Cadbury Dairy Milk",
+    category: "Milk Chocolate with Biscuit Pieces",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "Philippine FDA registration not verified",
+    healthScore: null,
+    servingSize: "25g (approximately 4 squares); 6.8 servings per 170g bar",
+    warningMessage:
+      "The photographed barcode identifies an Australian-made Cadbury Dairy Milk Biscoff 170g bar. No exact Philippine FDA registration was found in indexed records, and the live portal was unavailable on September 7, 2026; Philippine authorization remains unverified. The label provides 550kJ (approximately 131 kcal), 13.2g sugar, and 4.1g saturated fat per 25g serving, and displays a 0.5-star Health Star Rating. Contains milk, wheat/gluten, and soy; may contain peanuts and tree nuts. Store in cool, dry conditions.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      // The package declares energy in kJ: 550 / 4.184, rounded to whole kcal.
+      calories: "131 kcal",
+      protein: "1.7g",
+      carbohydrates: "14.9g",
+      totalFat: "7.1g",
+      saturatedFat: "4.1g",
+      totalSugars: "13.2g",
+      dietaryFiber: "N/A",
+      sodium: "33mg",
+    },
+
+    ingredients: [
+      { name: "Full Cream Milk", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      {
+        name: "Caramelised Biscuit Pieces (Wheat Flour, Sugar, Vegetable Oils, Candy Sugar Syrup, Raising Agent 500, Cinnamon, and Salt)",
+        isAllergen: true,
+      },
+      { name: "Cocoa Butter", isAllergen: false },
+      { name: "Cocoa Mass", isAllergen: false },
+      { name: "Milk Solids", isAllergen: true },
+      { name: "Soy Lecithin (Emulsifier)", isAllergen: true },
+      { name: "Emulsifier 476", isAllergen: false },
+      { name: "Flavours", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Wheat / Gluten", "Soy", "Peanuts", "Tree Nuts"],
+
+    alternatives: [
+      "A milk chocolate bar with a matching Philippine FDA registration",
+      "A lower-sugar snack that matches your milk, wheat, soy, and nut preferences",
+    ],
+  },
+
+  {
+    // Label data: Products 2 (4).pdf, page 3. FDA record checked September 7, 2026.
+    slug: "monde-walter-no-sugar-added-wheat-bread-350g",
+    barcode: "4806533169605",
+    name: "Monde Walter No Sugar Added Wheat Bread 350g",
+    brand: "Monde Walter",
+    category: "Wheat Bread",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Food Product",
+    registrationNumber: "FR-4000014213544",
+    healthScore: calculateConservativeCategory2NutritionScore({
+      servingSizeGrams: 44,
+      caloriesPerServing: 110,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 159,
+    }),
+    servingSize: "44g; about 8 servings per 350g loaf",
+    warningMessage:
+      "The indexed Philippine FDA record FR-4000014213544 lists Monde Walter No Sugar Added Wheat Bread by Sarimonde Foods Corporation with an expiry date of April 4, 2028, matching the photographed product and manufacturer. It does not list retail barcodes or pack weights, and the live portal was unavailable on September 7, 2026. No sugar added does not mean sugar free: one 44g serving contains 1g sugar and 20g carbohydrates. Contains wheat and milk; may contain soy. Sweetened with isomaltitol and acesulfame potassium.",
+    verificationUrl:
+      "https://verification.fda.gov.ph/FoodProduct_Lowriskview.php?ACCOUNTCODE=FR-4000014213544&export=pdf",
+
+    nutrition: {
+      calories: "110 kcal",
+      protein: "5g",
+      carbohydrates: "20g",
+      totalFat: "1g",
+      saturatedFat: "1g",
+      totalSugars: "1g",
+      dietaryFiber: "2.8g",
+      sodium: "159mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Wheat Flour", isAllergen: true },
+      { name: "Whole Wheat Flour", isAllergen: true },
+      { name: "Cracked Whole Wheat", isAllergen: true },
+      {
+        name: "Vegetable Shortening (Non-Hydrogenated Palm Oil, Palm Stearin, Palm Olein, Palm Kernel Oil, Coconut Oil, and Mixed Tocopherol Concentrate as Antioxidant)",
+        isAllergen: false,
+      },
+      { name: "Yeast", isAllergen: false },
+      { name: "Citrus Fiber", isAllergen: false },
+      { name: "Isomaltitol", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Milk Permeate Powder", isAllergen: true },
+      { name: "Calcium Propionate (Preservative)", isAllergen: false },
+      { name: "Lactic Acid (Acidity Regulator)", isAllergen: false },
+      { name: "Sodium Stearoyl-2-Lactylate (Emulsifier)", isAllergen: false },
+      { name: "Fumaric Acid (Acidity Regulator)", isAllergen: false },
+      { name: "Acesulfame Potassium (Sweetener)", isAllergen: false },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy"],
+
+    alternatives: [
+      "A whole-grain bread without added sweeteners after checking its label",
+      "A bread that matches your wheat, milk, and soy preferences",
     ],
   },
 
