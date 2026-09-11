@@ -80,6 +80,628 @@ async function loadSeedAdvisories() {
 }
 
 const products: SeedProduct[] = [
+  // Package data: six user-supplied front/back photos. Reviewed September 10, 2026.
+  // No readable CPR or exact FDA search match was confirmed for these packages.
+  // Sweet and Spicy calories, sugar, and sodium are too blurred to transcribe.
+  {
+    slug: "mccormick-taco-seasoning-mix-40g",
+    barcode: "052100079301",
+    name: "McCormick Taco Seasoning Mix 40g",
+    brand: "McCormick",
+    category: "Seasoning Mix",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "8g dry mix (5 servings per 40g pack)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. Contains milk, soybean, and wheat. Nutrition values apply to the dry seasoning mix, not the prepared taco recipe. The label lists 621mg sodium per 8g serving.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "23",
+      protein: "Less than 1g",
+      carbohydrates: "4g",
+      totalFat: "Less than 1g",
+      saturatedFat: "0g",
+      totalSugars: "2g",
+      dietaryFiber: "1g",
+      sodium: "621mg",
+    },
+
+    ingredients: [
+      { name: "Spices (including Red Pepper)", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Corn Maltodextrin", isAllergen: false },
+      { name: "Onion", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Potato Starch", isAllergen: false },
+      { name: "Garlic", isAllergen: false },
+      { name: "Tomato Powder", isAllergen: false },
+      { name: "Whey (Milk)", isAllergen: true },
+      { name: "Soy Sauce Powder (Soybean, Wheat)", isAllergen: true },
+      { name: "Citric Acid (Acidulant)", isAllergen: false },
+      { name: "Calcium Stearate (Anti-Caking Agent)", isAllergen: false },
+      { name: "Soybean Oil", isAllergen: true },
+      { name: "Extractives of Paprika", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Soybean", "Wheat"],
+    alternatives: [],
+  },
+  {
+    slug: "ufc-oppa-mixes-soy-garlic-80g",
+    barcode: "4801668609187",
+    name: "UFC OPPA! Mixes Soy Garlic All Purpose Korean Style Meat Sauce 80g",
+    brand: "UFC",
+    category: "Sauce",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. The label declares soybean, wheat, corn, and oyster allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Each 20g serving contains 7g total sugar, including 4g added sugar, and 320mg sodium.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "35",
+      protein: "0g",
+      carbohydrates: "8g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "7g",
+      dietaryFiber: "0g",
+      sodium: "320mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Mirin (Glucose Syrup, Cane Alcohol, Glutinous Rice, Rice, Water)", isAllergen: false },
+      { name: "Garlic", isAllergen: false },
+      { name: "Fermented Soybean Extract", isAllergen: true },
+      { name: "Oyster Sauce", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Starch (Thickener)", isAllergen: false },
+      { name: "Monosodium Glutamate, Disodium Inosinate, and Disodium Guanylate (Flavor Enhancers)", isAllergen: false },
+      { name: "Potassium Sorbate (Preservative)", isAllergen: false },
+      { name: "Citric Acid (Acidulant)", isAllergen: false },
+    ],
+
+    allergens: ["Soybean", "Wheat", "Corn", "Oyster"],
+    alternatives: [],
+  },
+  {
+    slug: "ufc-oppa-mixes-sweet-and-spicy-80g",
+    barcode: "4801668609552",
+    name: "UFC OPPA! Mixes Sweet and Spicy All Purpose Korean Style Meat Sauce 80g",
+    brand: "UFC",
+    category: "Sauce",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. The label declares soybean, wheat, corn, and sesame allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Calories, total sugar, and sodium could not be read reliably from the supplied photo and remain unavailable; a clearer nutrition-label photo is needed.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "Less than 1g",
+      carbohydrates: "12g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "N/A",
+      dietaryFiber: "0g",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Gochujang Paste (Corn Syrup, Wheat Flour, Water, Hot Pepper Powder, Soybean Powder, Wheat, Rice Powder, Distilled Alcohol, Koji)", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Honey", isAllergen: false },
+      { name: "Fermented Soybean Extract", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Natural and Artificial Flavors", isAllergen: false },
+      { name: "Sesame Seeds", isAllergen: true },
+      { name: "Modified Starch (Stabilizer)", isAllergen: false },
+      { name: "Potassium Sorbate (Preservative)", isAllergen: false },
+      { name: "Monosodium Glutamate (Flavor Enhancer)", isAllergen: false },
+      { name: "Citric Acid (Acidulant)", isAllergen: false },
+      { name: "Disodium Inosinate and Disodium Guanylate (Flavor Enhancers)", isAllergen: false },
+    ],
+
+    allergens: ["Soybean", "Wheat", "Corn", "Sesame"],
+    alternatives: [],
+  },
+  // Package data: Products 2 (8).pdf. Reviewed September 9, 2026.
+  // FDA verification remains pending after portal gateway timeouts.
+  // Published Gatorade/C2 records do not identify these exact packages;
+  // do not substitute no-sugar Gatorade or C2 Solo registrations.
+  {
+    slug: "gatorade-blue-bolt-350ml",
+    barcode: "4803925350054",
+    name: "Gatorade Blue Bolt Sports Drink 350mL",
+    brand: "Gatorade",
+    category: "Sports Drink",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "350mL (1 bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 350mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 21g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "88",
+      protein: "0g",
+      carbohydrates: "21g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "21g",
+      dietaryFiber: "0g",
+      sodium: "158mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate)", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Monopotassium Phosphate", isAllergen: false },
+      { name: "Gum Arabic (Emulsifier)", isAllergen: false },
+      { name: "Nature-Identical Flavor", isAllergen: false },
+      { name: "Sucrose Acetate Isobutyrate (Stabilizer)", isAllergen: false },
+      { name: "Brilliant Blue (Artificial Color)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar electrolyte drink after comparing labels",
+    ],
+  },
+
+  {
+    slug: "gatorade-blue-bolt-500ml",
+    barcode: "4803925061141",
+    name: "Gatorade Blue Bolt Sports Drink 500mL",
+    brand: "Gatorade",
+    category: "Sports Drink",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "200mL (2.5 servings per 500mL bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 500mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 30g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "0g",
+      carbohydrates: "12g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "12g",
+      dietaryFiber: "0g",
+      sodium: "90mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate)", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Monopotassium Phosphate", isAllergen: false },
+      { name: "Gum Arabic (Emulsifier)", isAllergen: false },
+      { name: "Nature-Identical Flavor", isAllergen: false },
+      { name: "Sucrose Acetate Isobutyrate (Stabilizer)", isAllergen: false },
+      { name: "Brilliant Blue (Artificial Color)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar electrolyte drink after comparing labels",
+    ],
+  },
+
+  {
+    slug: "gatorade-blue-bolt-900ml",
+    barcode: "4803925241161",
+    name: "Gatorade Blue Bolt Sports Drink 900mL",
+    brand: "Gatorade",
+    category: "Sports Drink",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "200mL (4.5 servings per 900mL bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 900mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 54g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "0g",
+      carbohydrates: "12g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "12g",
+      dietaryFiber: "0g",
+      sodium: "90mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate)", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Monopotassium Phosphate", isAllergen: false },
+      { name: "Gum Arabic (Emulsifier)", isAllergen: false },
+      { name: "Nature-Identical Flavor", isAllergen: false },
+      { name: "Sucrose Acetate Isobutyrate (Stabilizer)", isAllergen: false },
+      { name: "Brilliant Blue (Artificial Color)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar electrolyte drink after comparing labels",
+    ],
+  },
+
+  {
+    slug: "gatorade-blue-bolt-1-5l",
+    barcode: "4803925241130",
+    name: "Gatorade Blue Bolt Sports Drink 1.5L",
+    brand: "Gatorade",
+    category: "Sports Drink",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "200mL (7.5 servings per 1.5L bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 1.5L bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 90g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "0g",
+      carbohydrates: "12g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "12g",
+      dietaryFiber: "0g",
+      sodium: "90mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Dextrose", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate)", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Monopotassium Phosphate", isAllergen: false },
+      { name: "Gum Arabic (Emulsifier)", isAllergen: false },
+      { name: "Nature-Identical Flavor", isAllergen: false },
+      { name: "Sucrose Acetate Isobutyrate (Stabilizer)", isAllergen: false },
+      { name: "Brilliant Blue (Artificial Color)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar electrolyte drink after comparing labels",
+    ],
+  },
+
+  {
+    slug: "c2-apple-green-tea-335ml",
+    barcode: "4800016052040",
+    name: "C2 Cool & Clean Apple Green Tea 335mL",
+    brand: "C2",
+    category: "Apple-Flavored Green Tea",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 glass (200mL); label states about 2 servings per 335mL bottle",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 335mL bottle contains approximately 28.5g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "70",
+      protein: "0g",
+      carbohydrates: "18g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "17g",
+      dietaryFiber: "0g",
+      sodium: "55mg",
+    },
+
+    ingredients: [
+      { name: "Purified Water", isAllergen: false },
+      { name: "Fresh Brew from Green Tea Leaves", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate, Malic Acid)", isAllergen: false },
+      { name: "Ascorbic Acid (Antioxidant)", isAllergen: false },
+      { name: "Artificial Flavor", isAllergen: false },
+      { name: "Caramel Color", isAllergen: false },
+      { name: "Sucralose (Sweetener)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Unsweetened green tea",
+      "Plain drinking water",
+    ],
+  },
+
+  {
+    slug: "c2-apple-green-tea-455ml",
+    barcode: "4800016052132",
+    name: "C2 Cool & Clean Apple Green Tea 455mL",
+    brand: "C2",
+    category: "Apple-Flavored Green Tea",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 glass (200mL); label states about 2.5 servings per 455mL bottle",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 455mL bottle contains approximately 38.7g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "70",
+      protein: "0g",
+      carbohydrates: "18g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "17g",
+      dietaryFiber: "0g",
+      sodium: "55mg",
+    },
+
+    ingredients: [
+      { name: "Purified Water", isAllergen: false },
+      { name: "Fresh Brew from Green Tea Leaves", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate, Malic Acid)", isAllergen: false },
+      { name: "Ascorbic Acid (Antioxidant)", isAllergen: false },
+      { name: "Artificial Flavor", isAllergen: false },
+      { name: "Caramel Color", isAllergen: false },
+      { name: "Sucralose (Sweetener)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Unsweetened green tea",
+      "Plain drinking water",
+    ],
+  },
+
+  {
+    slug: "c2-apple-green-tea-1l",
+    barcode: "4800016052774",
+    name: "C2 Cool & Clean Apple Green Tea 1L",
+    brand: "C2",
+    category: "Apple-Flavored Green Tea",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 glass (200mL); label states 5 servings per 1L bottle",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 1L bottle contains approximately 85g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "70",
+      protein: "0g",
+      carbohydrates: "18g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "17g",
+      dietaryFiber: "0g",
+      sodium: "55mg",
+    },
+
+    ingredients: [
+      { name: "Purified Water", isAllergen: false },
+      { name: "Fresh Brew from Green Tea Leaves", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Sodium Citrate, Malic Acid)", isAllergen: false },
+      { name: "Ascorbic Acid (Antioxidant)", isAllergen: false },
+      { name: "Artificial Flavor", isAllergen: false },
+      { name: "Caramel Color", isAllergen: false },
+      { name: "Sucralose (Sweetener)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Unsweetened green tea",
+      "Plain drinking water",
+    ],
+  },
+
+  {
+    slug: "sola-iced-tea-peach-473ml",
+    barcode: "4806506050114",
+    name: "Sola Iced Tea Peach 473mL",
+    brand: "Sola",
+    category: "Peach-Flavored Iced Tea",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "240mL (about 2 servings per 473mL bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed glass bottle is peach flavored. Each 240mL serving contains 100 calories and 24g total sugar; the full 473mL bottle contains approximately 47g total sugar. The photos show a printed registration number, but it is partly obscured and its current validity has not been confirmed.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "100",
+      protein: "0g",
+      carbohydrates: "24g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "24g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Black Tea", isAllergen: false },
+      { name: "Natural Peach Flavor", isAllergen: false },
+      { name: "Citric Acid (Acidity Regulator)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Unsweetened iced tea",
+      "Plain drinking water",
+    ],
+  },
+
+  {
+    slug: "sola-iced-tea-lemon-can-250ml",
+    barcode: "4806506050107",
+    name: "Sola Iced Tea Lemon 250mL Can",
+    brand: "Sola",
+    category: "Lemon-Flavored Iced Tea",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "250mL (1 can)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed can is lemon flavored and contains 101 calories and 25g total sugar. Shake well and serve chilled. Store in a cool, dry place away from direct sunlight; after opening, transfer any remaining drink to a sealed container and refrigerate.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "101",
+      protein: "0g",
+      carbohydrates: "25g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "25g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Black Tea", isAllergen: false },
+      { name: "Natural Lemon Flavor", isAllergen: false },
+      { name: "Citric Acid (Acidity Regulator)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Unsweetened iced tea",
+      "Plain drinking water",
+    ],
+  },
+
+  {
+    slug: "mogu-mogu-yogurt-nata-de-coco-320ml",
+    barcode: "8850389109229",
+    name: "Mogu Mogu Yogurt Flavored Drink with Nata de Coco 320mL",
+    brand: "Mogu Mogu",
+    category: "Yogurt-Flavored Drink with Nata de Coco",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "100mL (label: 1/3 bottle, about 3 servings per 320mL bottle)",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The Sappe product label identifies a yogurt-flavored drink made in Thailand. Per 100mL, it lists 50 calories, 13g sugar, and 25mg sodium; a full 320mL bottle contains approximately 160 calories and 41.6g sugar. Milk content cannot be determined from the yogurt flavor name alone. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "50",
+      protein: "0g",
+      carbohydrates: "13g",
+      totalFat: "0g",
+      saturatedFat: "Not a significant source (label)",
+      totalSugars: "13g",
+      dietaryFiber: "Not a significant source (label)",
+      sodium: "25mg",
+    },
+
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar drink with a complete ingredient and allergen label",
+    ],
+  },
+
+  {
+    slug: "mogu-mogu-coconut-nata-de-coco-1l",
+    barcode: "8850389106990",
+    name: "Mogu Mogu Coconut Flavored Drink with Nata de Coco 1L",
+    brand: "Mogu Mogu",
+    category: "Coconut-Flavored Drink with Nata de Coco",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "FDA Verification Pending",
+    registrationNumber: "Exact registration not verified",
+    healthScore: null,
+    servingSize: "1 glass (200mL); 5 servings per 1L bottle",
+    warningMessage:
+      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The Sappe product label identifies a coconut-flavored drink made in Thailand. Each 200mL serving contains 90 calories, 22g sugar, 45mg sodium, and less than 1g dietary fiber. The full 1L bottle contains 110g total sugar. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "90",
+      protein: "0g",
+      carbohydrates: "22g",
+      totalFat: "0g",
+      saturatedFat: "Not a significant source (label)",
+      totalSugars: "22g",
+      dietaryFiber: "Less than 1g",
+      sodium: "45mg",
+    },
+
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "An unsweetened coconut drink with a complete ingredient label",
+    ],
+  },
+
   {
     slug: "green-cross-total-defense-hand-spray-40ml",
     barcode: "4800047865152",
@@ -742,6 +1364,128 @@ const products: SeedProduct[] = [
     alternatives: [
       "Safe drinking water from a tested source",
       "Filtered water in a reusable bottle",
+    ],
+  },
+
+  // Package data: Products 2 (7).pdf. FDA portal checked September 8, 2026.
+  {
+    slug: "wilkins-distilled-water-500ml",
+    barcode: "4800602020934",
+    name: "Wilkins Distilled Water 500mL",
+    brand: "Wilkins",
+    category: "Distilled Drinking Water",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000008213343",
+    healthScore: 100,
+    servingSize: "240mL (about 2 servings per 500mL bottle)",
+    warningMessage:
+      "The package CPR number FR-4000008213343 matches the Philippine FDA record for Wilkins Distilled Drinking Water, valid through January 27, 2030. The current record names Coca-Cola Europacific Aboitiz Philippines, Inc.; the photographed bottle names Coca-Cola Beverages Philippines, Inc. The label lists zero calories, fat, carbohydrates, sodium, and protein per 240mL serving.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [{ name: "Distilled Water", isAllergen: false }],
+
+    allergens: [],
+
+    alternatives: [
+      "Safe drinking water from a tested source",
+      "Filtered water in a reusable bottle",
+    ],
+  },
+
+  // Products 2 (7).pdf shows the nutrition table and barcode, but omits
+  // the ingredient/importer panel needed to resolve multiple FDA records.
+  {
+    slug: "pocari-sweat-ion-supply-drink-350ml",
+    barcode: "8997035600010",
+    name: "Pocari Sweat Ion Supply Drink 350mL",
+    brand: "Pocari Sweat",
+    category: "Electrolyte Drink",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact FDA Registration Unverified",
+    registrationNumber: "Not verified for this exact bottle",
+    healthScore: null,
+    servingSize: "100mL (nutrition table basis); 350mL bottle",
+    warningMessage:
+      "The Philippine FDA portal lists several Pocari Sweat Ion Supply Drink registrations, but the submitted photos do not show the importer or CPR number needed to identify the registration for this exact bottle. This does not establish that the product is unregistered. Nutrition values follow the table's explicit 100mL basis: its separate 350mL serving-size heading conflicts with the stated 3.5 servings. A full 350mL bottle therefore provides approximately 84 calories, 20g total sugar, and 172mg sodium. The ingredient and allergen panels are not shown; an empty allergen list does not confirm that the product is allergen-free.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "24",
+      protein: "0g",
+      carbohydrates: "6.2g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "5.7g",
+      dietaryFiber: "0g",
+      sodium: "49mg",
+    },
+
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "A lower-sugar electrolyte drink after comparing labels",
+    ],
+  },
+
+  {
+    slug: "del-monte-fiber-enriched-pineapple-juice-220ml",
+    barcode: "4800024562616",
+    name: "Del Monte Fiber Enriched 100% Pineapple Juice 220mL",
+    brand: "Del Monte",
+    category: "Fiber-Enriched Pineapple Juice",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000012372160",
+    healthScore: calculateConservativeCategory1NutritionScore({
+      servingSizeMilliliters: 220,
+      caloriesPerServing: 120,
+      totalSugarsGramsPerServing: 22,
+    }),
+    servingSize: "1 can (220mL)",
+    warningMessage:
+      "Philippine FDA registration FR-4000012372160 lists Del Monte 100% Pineapple Juice - Fiber Enriched by Del Monte Philippines, Inc., valid through March 6, 2029. The product, variant, and company match the photographed 220mL can; the portal does not list retail barcodes or pack sizes. Although labeled no sugar added, one can contains 22g total sugar and 120 calories, alongside 4g dietary fiber. The nutrition score is a conservative estimate that does not credit the fruit or added fiber.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "120",
+      protein: "Less than 1g",
+      carbohydrates: "29g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "22g",
+      dietaryFiber: "4g",
+      sodium: "16mg",
+    },
+
+    ingredients: [
+      { name: "Pineapple Juice", isAllergen: false },
+      {
+        name: "Fiber Source (Acacia Gum, Soluble Corn Fiber)",
+        isAllergen: false,
+      },
+      { name: "Vitamin C (Ascorbic Acid)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Whole pineapple with drinking water",
+      "A smaller serving of pineapple juice",
     ],
   },
 
@@ -3042,6 +3786,46 @@ const products: SeedProduct[] = [
     alternatives: [
       "A lower-saturated-fat milk after comparing nutrition labels",
       "An unsweetened milk option that matches your allergen preferences",
+    ],
+  },
+
+  // Package data: Products 2 (7).pdf. FDA portal checked September 8, 2026.
+  {
+    slug: "selecta-adult-active-vanilla-1l",
+    barcode: "4800110098210",
+    name: "Selecta Adult Active Vanilla Nutritional Supplement Drink 1L",
+    brand: "Selecta",
+    category: "Adult Nutritional Supplement Drink",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered",
+    registrationNumber: "FR-4000011217178",
+    healthScore: null,
+    servingSize: "245mL (about 4 servings per 1L carton)",
+    warningMessage:
+      "Philippine FDA registration FR-4000011217178 lists Selecta Adult Active Adult Nutritional Supplement Drink - Vanilla Flavor by RFM Corporation, valid through September 19, 2028. The name, flavor, and manufacturer match the photographed 1L carton; the portal does not list retail barcodes or pack sizes. One 245mL serving contains 150 calories, 8g protein, 4g saturated fat, 5g total sugar, and 240mg sodium. RFM's official product listing identifies it as a milk drink. The submitted photos omit the ingredient and allergen panels, so the full formula and any additional allergens remain unverified. No health score is assigned to this adult nutritional supplement.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "150",
+      protein: "8g",
+      carbohydrates: "8g",
+      totalFat: "9g",
+      saturatedFat: "4g",
+      totalSugars: "5g",
+      dietaryFiber: "0g",
+      sodium: "240mg",
+    },
+
+    // RFM Foods identifies this exact product as a milk drink:
+    // https://shopee.ph/Selecta-Adult-Active-Nutritional-Supplement-Milk-Drink-1L-i.269960745.28715879733
+    // Do not copy the different Selecta Fortified Milk ingredient formula.
+    ingredients: [],
+
+    allergens: ["Milk"],
+
+    alternatives: [
+      "An adult nutritional drink with a complete ingredient and allergen label",
+      "A milk or non-dairy drink that matches your nutritional and allergen needs",
     ],
   },
 
