@@ -81,7 +81,7 @@ async function loadSeedAdvisories() {
 
 const products: SeedProduct[] = [
   // Package data: six user-supplied front/back photos. Reviewed September 10, 2026.
-  // No readable CPR or exact FDA search match was confirmed for these packages.
+  // FDA product-name references checked via the current portal API on September 11, 2026.
   // Sweet and Spicy calories, sugar, and sodium are too blurred to transcribe.
   {
     slug: "mccormick-taco-seasoning-mix-40g",
@@ -89,13 +89,13 @@ const products: SeedProduct[] = [
     name: "McCormick Taco Seasoning Mix 40g",
     brand: "McCormick",
     category: "Seasoning Mix",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000009056295",
     healthScore: null,
     servingSize: "8g dry mix (5 servings per 40g pack)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. Contains milk, soybean, and wheat. Nutrition values apply to the dry seasoning mix, not the prepared taco recipe. The label lists 621mg sodium per 8g serving.",
+      "Philippine FDA product registration FR-4000009056295 lists McCORMICK TACO SEASONING MIX, valid through 31 March 2027. This is a product-name match; the portal does not specify individual package sizes. Contains milk, soybean, and wheat. Nutrition values apply to the dry seasoning mix, not the prepared taco recipe. The label lists 621mg sodium per 8g serving.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -135,13 +135,13 @@ const products: SeedProduct[] = [
     name: "UFC OPPA! Mixes Soy Garlic All Purpose Korean Style Meat Sauce 80g",
     brand: "UFC",
     category: "Sauce",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012924055",
     healthScore: null,
     servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. The label declares soybean, wheat, corn, and oyster allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Each 20g serving contains 7g total sugar, including 4g added sugar, and 320mg sodium.",
+      "Philippine FDA product registration FR-4000012924055 lists UFC OPPA! MIXES SOY GARLIC ALL PURPOSE KOREAN STYLE MEAT SAUCE, valid through 25 July 2029. This is a product-name match; the portal does not specify individual package sizes. The label declares soybean, wheat, corn, and oyster allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Each 20g serving contains 7g total sugar, including 4g added sugar, and 320mg sodium.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -179,13 +179,13 @@ const products: SeedProduct[] = [
     name: "UFC OPPA! Mixes Sweet and Spicy All Purpose Korean Style Meat Sauce 80g",
     brand: "UFC",
     category: "Sauce",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012923153",
     healthScore: null,
     servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been confirmed from the supplied label and search results. This does not establish that the product is unregistered. The label declares soybean, wheat, corn, and sesame allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Calories, total sugar, and sodium could not be read reliably from the supplied photo and remain unavailable; a clearer nutrition-label photo is needed.",
+      "Philippine FDA product registration FR-4000012923153 lists UFC OPPA! MIXES SWEET AND SPICY ALL PURPOSE KOREAN STYLE MEAT SAUCE, valid through 05 June 2029. This is a product-name match; the portal does not specify individual package sizes. The label declares soybean, wheat, corn, and sesame allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Calories, total sugar, and sodium could not be read reliably from the supplied photo and remain unavailable; a clearer nutrition-label photo is needed.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -220,22 +220,23 @@ const products: SeedProduct[] = [
     alternatives: [],
   },
   // Package data: Products 2 (8).pdf. Reviewed September 9, 2026.
-  // FDA verification remains pending after portal gateway timeouts.
-  // Published Gatorade/C2 records do not identify these exact packages;
-  // do not substitute no-sugar Gatorade or C2 Solo registrations.
+  // Gatorade/C2/Mogu Mogu references checked in the new FDA portal September 11, 2026.
+  // Gatorade uses the newest listed issuance among the supplied BLUE BOLT FLAVOR records;
+  // C2 uses the newest listed issuance among the supplied COOL & CLEAN records.
+  // Package sizes come from the labels; the FDA search records do not list individual sizes.
   {
     slug: "gatorade-blue-bolt-350ml",
     barcode: "4803925350054",
     name: "Gatorade Blue Bolt Sports Drink 350mL",
     brand: "Gatorade",
     category: "Sports Drink",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012331192",
     healthScore: null,
     servingSize: "350mL (1 bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 350mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 21g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+      "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 350mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 21g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -276,13 +277,13 @@ const products: SeedProduct[] = [
     name: "Gatorade Blue Bolt Sports Drink 500mL",
     brand: "Gatorade",
     category: "Sports Drink",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012331192",
     healthScore: null,
     servingSize: "200mL (2.5 servings per 500mL bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 500mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 30g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+      "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 500mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 30g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -323,13 +324,13 @@ const products: SeedProduct[] = [
     name: "Gatorade Blue Bolt Sports Drink 900mL",
     brand: "Gatorade",
     category: "Sports Drink",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012331192",
     healthScore: null,
     servingSize: "200mL (4.5 servings per 900mL bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 900mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 54g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+      "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 900mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 54g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -370,13 +371,13 @@ const products: SeedProduct[] = [
     name: "Gatorade Blue Bolt Sports Drink 1.5L",
     brand: "Gatorade",
     category: "Sports Drink",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012331192",
     healthScore: null,
     servingSize: "200mL (7.5 servings per 1.5L bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed 1.5L bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 90g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
+      "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 1.5L bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 90g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -417,13 +418,13 @@ const products: SeedProduct[] = [
     name: "C2 Cool & Clean Apple Green Tea 335mL",
     brand: "C2",
     category: "Apple-Flavored Green Tea",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011017606",
     healthScore: null,
     servingSize: "1 glass (200mL); label states about 2 servings per 335mL bottle",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 335mL bottle contains approximately 28.5g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+      "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 335mL bottle contains approximately 28.5g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -462,13 +463,13 @@ const products: SeedProduct[] = [
     name: "C2 Cool & Clean Apple Green Tea 455mL",
     brand: "C2",
     category: "Apple-Flavored Green Tea",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011017606",
     healthScore: null,
     servingSize: "1 glass (200mL); label states about 2.5 servings per 455mL bottle",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 455mL bottle contains approximately 38.7g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+      "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 455mL bottle contains approximately 38.7g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -507,13 +508,13 @@ const products: SeedProduct[] = [
     name: "C2 Cool & Clean Apple Green Tea 1L",
     brand: "C2",
     category: "Apple-Flavored Green Tea",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011017606",
     healthScore: null,
     servingSize: "1 glass (200mL); label states 5 servings per 1L bottle",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 1L bottle contains approximately 85g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
+      "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 1L bottle contains approximately 85g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -552,13 +553,13 @@ const products: SeedProduct[] = [
     name: "Sola Iced Tea Peach 473mL",
     brand: "Sola",
     category: "Peach-Flavored Iced Tea",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015281764",
     healthScore: null,
     servingSize: "240mL (about 2 servings per 473mL bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed glass bottle is peach flavored. Each 240mL serving contains 100 calories and 24g total sugar; the full 473mL bottle contains approximately 47g total sugar. The photos show a printed registration number, but it is partly obscured and its current validity has not been confirmed.",
+      "Philippine FDA product registration FR-4000015281764 lists SOLA ICED TEA (PEACH FLAVOR) under THE FIRST ENTERPRISES, INC., valid through 28 October 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed glass bottle is peach flavored. Each 240mL serving contains 100 calories and 24g total sugar; the full 473mL bottle contains approximately 47g total sugar.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -594,13 +595,13 @@ const products: SeedProduct[] = [
     name: "Sola Iced Tea Lemon 250mL Can",
     brand: "Sola",
     category: "Lemon-Flavored Iced Tea",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015269203",
     healthScore: null,
     servingSize: "250mL (1 can)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The photographed can is lemon flavored and contains 101 calories and 25g total sugar. Shake well and serve chilled. Store in a cool, dry place away from direct sunlight; after opening, transfer any remaining drink to a sealed container and refrigerate.",
+      "Philippine FDA product registration FR-4000015269203 lists SOLA ICED TEA (LEMON FLAVOR) under THE FIRST ENTERPRISES, INC., valid through 18 November 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed can is lemon flavored and contains 101 calories and 25g total sugar. Shake well and serve chilled. Store in a cool, dry place away from direct sunlight; after opening, transfer any remaining drink to a sealed container and refrigerate.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -636,13 +637,13 @@ const products: SeedProduct[] = [
     name: "Mogu Mogu Yogurt Flavored Drink with Nata de Coco 320mL",
     brand: "Mogu Mogu",
     category: "Yogurt-Flavored Drink with Nata de Coco",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000009035450",
     healthScore: null,
     servingSize: "100mL (label: 1/3 bottle, about 3 servings per 320mL bottle)",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The Sappe product label identifies a yogurt-flavored drink made in Thailand. Per 100mL, it lists 50 calories, 13g sugar, and 25mg sodium; a full 320mL bottle contains approximately 160 calories and 41.6g sugar. Milk content cannot be determined from the yogurt flavor name alone. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
+      "Philippine FDA product registration FR-4000009035450 lists MOGU MOGU YOGURT FLAVORED DRINK WITH NATA DE COCO, valid through 06 February 2027. This is a product-name match; the portal does not specify individual package sizes. The Sappe product label identifies a yogurt-flavored drink made in Thailand. Per 100mL, it lists 50 calories, 13g sugar, and 25mg sodium; a full 320mL bottle contains approximately 160 calories and 41.6g sugar. Milk content cannot be determined from the yogurt flavor name alone. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -672,13 +673,13 @@ const products: SeedProduct[] = [
     name: "Mogu Mogu Coconut Flavored Drink with Nata de Coco 1L",
     brand: "Mogu Mogu",
     category: "Coconut-Flavored Drink with Nata de Coco",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "FDA Verification Pending",
-    registrationNumber: "Exact registration not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010851054",
     healthScore: null,
     servingSize: "1 glass (200mL); 5 servings per 1L bottle",
     warningMessage:
-      "An exact Philippine FDA registration for this package has not been verified; the portal was unavailable during review. This does not establish that the product is unregistered. The Sappe product label identifies a coconut-flavored drink made in Thailand. Each 200mL serving contains 90 calories, 22g sugar, 45mg sodium, and less than 1g dietary fiber. The full 1L bottle contains 110g total sugar. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
+      "Philippine FDA product registration FR-4000010851054 lists MOGU MOGU COCONUT FLAVORED DRINK WITH NATA DE COCO, valid through 01 March 2030. This is a product-name match; the portal does not specify individual package sizes. The Sappe product label identifies a coconut-flavored drink made in Thailand. Each 200mL serving contains 90 calories, 22g sugar, 45mg sodium, and less than 1g dietary fiber. The full 1L bottle contains 110g total sugar. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -1140,19 +1141,19 @@ const products: SeedProduct[] = [
   },
 
   {
-    // Label data: Products 2 (6).pdf, page 2. Exact cosmetic notification remains unverified.
+    // Label data: Products 2 (6).pdf, page 2. FDA product-name notification checked September 11, 2026.
     slug: "head-shoulders-smooth-silky-anti-dandruff-shampoo-12ml",
     barcode: "4902430698658",
     name: "Head & Shoulders Smooth & Silky Anti-Dandruff Shampoo 12mL",
     brand: "Head & Shoulders",
     category: "Anti-Dandruff Shampoo",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact Cosmetic Notification Not Verified",
-    registrationNumber: "Philippine FDA cosmetic notification not verified",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Notified Product Name",
+    registrationNumber: "NN-1000014487810",
     healthScore: null,
     servingSize: "12mL sachet",
     warningMessage:
-      "The submitted 12mL sachet identifies Head & Shoulders Smooth & Silky shampoo, made in Indonesia and imported by Procter & Gamble Philippines, Inc. An exact Philippine FDA cosmetic notification has not been verified for this variant; this does not establish that the product is unsafe or unnotified. For external hair and scalp use only. Wet hair, gently massage onto the scalp, lather, and rinse thoroughly; repeat if desired. Avoid contact with eyes and rinse well with water if contact occurs. Contains fragrance, methylchloroisothiazolinone, and methylisothiazolinone; check the ingredient list if you have known sensitivities.",
+      "Philippine FDA cosmetic notification NN-1000014487810 lists HEAD & SHOULDERS ANTI-DANDRUFF SHAMPOO SMOOTH & SILKY, valid through 05 May 2027. This is a product-name match; the portal does not specify individual package sizes. The submitted 12mL sachet identifies Head & Shoulders Smooth & Silky shampoo, made in Indonesia and imported by Procter & Gamble Philippines, Inc. For external hair and scalp use only. Wet hair, gently massage onto the scalp, lather, and rinse thoroughly; repeat if desired. Avoid contact with eyes and rinse well with water if contact occurs. Contains fragrance, methylchloroisothiazolinone, and methylisothiazolinone; check the ingredient list if you have known sensitivities.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -1404,21 +1405,22 @@ const products: SeedProduct[] = [
     ],
   },
 
-  // Products 2 (7).pdf shows the nutrition table and barcode, but omits
-  // the ingredient/importer panel needed to resolve multiple FDA records.
+  // Products 2 (7).pdf shows a PET bottle, nutrition, and barcode; ingredient/importer panel absent.
+  // FDA checked September 12, 2026: FR-4000012826276 lists Ion Supply Drink in PET.
+  // FR-4000012736069 is Drink Mix in aluminum sachets and is not used for this bottle.
   {
     slug: "pocari-sweat-ion-supply-drink-350ml",
     barcode: "8997035600010",
     name: "Pocari Sweat Ion Supply Drink 350mL",
     brand: "Pocari Sweat",
     category: "Electrolyte Drink",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact FDA Registration Unverified",
-    registrationNumber: "Not verified for this exact bottle",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000012826276",
     healthScore: null,
     servingSize: "100mL (nutrition table basis); 350mL bottle",
     warningMessage:
-      "The Philippine FDA portal lists several Pocari Sweat Ion Supply Drink registrations, but the submitted photos do not show the importer or CPR number needed to identify the registration for this exact bottle. This does not establish that the product is unregistered. Nutrition values follow the table's explicit 100mL basis: its separate 350mL serving-size heading conflicts with the stated 3.5 servings. A full 350mL bottle therefore provides approximately 84 calories, 20g total sugar, and 172mg sodium. The ingredient and allergen panels are not shown; an empty allergen list does not confirm that the product is allergen-free.",
+      "Philippine FDA product registration FR-4000012826276 lists POCARI SWEAT ION SUPPLY DRINK under OTSUKA-SOLAR PHILIPPINES INCORPORATED, valid through 04 September 2029. The published record lists PET bottles; the exact bottle size is not specified. Nutrition values follow the table's explicit 100mL basis: its separate 350mL serving-size heading conflicts with the stated 3.5 servings. A full 350mL bottle therefore provides approximately 84 calories, 20g total sugar, and 172mg sodium. The ingredient and allergen panels are not shown; an empty allergen list does not confirm that the product is allergen-free.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -1496,8 +1498,8 @@ const products: SeedProduct[] = [
     brand: "Coca-Cola",
     category: "Carbonated Soft Drink",
     status: "CAUTION",
-    fdaStatusLabel: "FDA Registered",
-    registrationNumber: "FR-4000008139975",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000008153458",
     healthScore: calculateConservativeCategory1NutritionScore({
       servingSizeMilliliters: 320,
       caloriesPerServing: 134,
@@ -1505,7 +1507,7 @@ const products: SeedProduct[] = [
     }),
     servingSize: "320mL (1 can)",
     warningMessage:
-      "Philippine FDA registration FR-4000008139975 covers Coca-Cola in cans and is valid through May 10, 2027. One 320mL can contains 33.5g total sugar and 134 calories, so enjoy it in moderation.",
+      "Philippine FDA product registration FR-4000008153458 lists COCA-COLA ORIGINAL TASTE CARBONATED COLA DRINK, valid through 12 June 2031. This is a product-name match; the portal does not specify individual package sizes. One 320mL can contains 33.5g total sugar and 134 calories, so enjoy it in moderation.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -4315,13 +4317,13 @@ const products: SeedProduct[] = [
     name: "Nestlé Creamy Yogurt 110g",
     brand: "Nestlé",
     category: "Plain Yogurt",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact Variant Not Verified",
-    registrationNumber: "No matching Philippine FDA food registration",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010260517",
     healthScore: null,
     servingSize: "110g cup (1 serving)",
     warningMessage:
-      "No exact Philippine FDA food registration was found for this 110g product and barcode after checking its full and shortened product names in the current FDA Verification Portal. This does not establish that the product is unsafe, but the exact variant should be verified before purchase. One 110g cup contains 63 calories, 1.5g saturated fat, 4g sugar, and 62mg sodium. Contains milk and must be kept refrigerated.",
+      "Philippine FDA product registration FR-4000010260517 lists NESTLE CREAMY YOGURT under FRONERI PHILIPPINES, INC, valid through 27 November 2030. This is a product-name match; the portal does not specify individual package sizes. One 110g cup contains 63 calories, 1.5g saturated fat, 4g sugar, and 62mg sodium. Contains milk and must be kept refrigerated.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -4402,13 +4404,13 @@ const products: SeedProduct[] = [
     name: "Anchor Rich & Creamy Buttery Unsalted 200g",
     brand: "Anchor",
     category: "Dairy and Vegetable Oil Spread",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact Variant Not Verified",
-    registrationNumber: "No matching Philippine FDA food registration",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011722267",
     healthScore: null,
     servingSize: "1 tablespoon (15g; about 13 servings per pack)",
     warningMessage:
-      "No exact Philippine FDA food registration was found for this 200g product and barcode after checking its brand, variant name, and food description in the current FDA Verification Portal. This does not establish that the product is unsafe, but the exact variant should be verified before purchase. One 15g serving contains 10g saturated fat. Contains milk and must be kept refrigerated.",
+      "Philippine FDA product registration FR-4000011722267 lists ANCHOR BUTTERY (VEGETABLE OIL & DAIRY FAT BLEND SPREAD) - UNSALTED under FONTERRA BRANDS PHILS., INC., valid through 10 October 2028. This is a product-name match; the portal does not specify individual package sizes. One 15g serving contains 10g saturated fat. Contains milk and must be kept refrigerated.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -4630,13 +4632,13 @@ const products: SeedProduct[] = [
     name: "Lay's Stax Sour Cream & Onion Potato Chips 100g",
     brand: "Lay's Stax",
     category: "Potato Chips",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact Variant Not Verified",
-    registrationNumber: "No matching Philippine FDA food registration found",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015763792",
     healthScore: null,
     servingSize: "30g (about 3 servings per 100g package)",
     warningMessage:
-      "No matching Philippine FDA food-registration record was found for the photographed Thai Lay's Stax Sour Cream & Onion 100g variant or barcode 8850718804573. Treat its Philippine authorization as unverified until the importer or FDA supplies an exact CPR. One 30g serving contains 3.5g saturated fat and 137mg sodium. Contains wheat/gluten, milk, and soy.",
+      "Philippine FDA product registration FR-4000015763792 lists LAY'S STAX POTATO CHIPS SOUR CREAM & ONION FLAVORED, valid through 12 February 2029. This is a product-name match; the portal does not specify individual package sizes. One 30g serving contains 3.5g saturated fat and 137mg sodium. Contains wheat/gluten, milk, and soy.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -4675,13 +4677,13 @@ const products: SeedProduct[] = [
     name: "Doritos Nacho Cheese Tortilla Chips 65g",
     brand: "Doritos",
     category: "Tortilla Chips",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Exact Variant Not Verified",
-    registrationNumber: "No matching Philippine FDA food registration found",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015981518",
     healthScore: null,
     servingSize: "30g (about 2 servings per 65g package)",
     warningMessage:
-      "The Philippine FDA portal has active Doritos Nacho Cheese records for products branded or distributed by Lotte, but those records do not match the photographed PepsiCo imported 65g variant or barcode 6924743926547. Treat this exact package's Philippine authorization as unverified until the importer or FDA supplies a matching CPR. One 30g serving contains 192mg sodium and 3.2g saturated fat. Contains milk.",
+      "Philippine FDA product registration FR-4000015981518 lists DORITOS NACHO CHEESE FLAVORED TORTILLA CHIPS under BENBY ENTERPRISES, INCORPORATED, valid through 30 May 2029. This is a product-name match; the portal does not specify individual package sizes. One 30g serving contains 192mg sodium and 3.2g saturated fat. Contains milk.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -5223,21 +5225,21 @@ const products: SeedProduct[] = [
   },
 
   {
-    // Label data: Products 2 (4).pdf, page 1. Only a historical FDA record was found.
+    // Label data: Products 2 (4).pdf, page 1. Current FDA renewal checked September 12, 2026.
     slug: "reno-liver-spread-230g",
     barcode: "4805885172004",
     name: "Reno Liver Spread 230g",
     brand: "Reno",
     category: "Liver Spread",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Current FDA Registration Not Verified",
-    registrationNumber: "FR-4000006923167 (historical; renewal not verified)",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011823898",
     healthScore: null,
     servingSize: "2 tablespoons (40g); about 6 servings per 230g can",
     warningMessage:
-      "The published Philippine FDA record FR-4000006923167 matches Reno Liver Spread by Reno Foods, Inc., but lists an expiry date of October 7, 2025. A renewal could not be verified because the live portal was unavailable on September 7, 2026; this does not establish that the product is unsafe or currently unregistered. One 40g serving contains 262mg sodium and 2g saturated fat. The package declares poultry meat, wheat, and soy as allergens and says to consume completely after opening.",
+      "Philippine FDA product registration FR-4000011823898 lists RENO BRAND® LIVER SPREAD under RENO FOODS, INC., valid through 31 October 2030. This is a product-name match; the portal does not specify individual package sizes. One 40g serving contains 262mg sodium and 2g saturated fat. The package declares poultry meat, wheat, and soy as allergens and says to consume completely after opening.",
     verificationUrl:
-      "https://verification.fda.gov.ph/FoodProduct_Highriskview.php?ACCOUNTCODE=FR-4000006923167&export=pdf",
+      "https://verification.fda.gov.ph/",
 
     nutrition: {
       calories: "70 kcal",
