@@ -10,7 +10,10 @@ import { prisma } from "../lib/prisma.js";
 
 export const advisoryRouter = Router();
 
-const UPDATED_THROUGH = "2026-08-07";
+async function getUpdatedThrough() {
+  const latest = await prisma.fdaAdvisory.aggregate({ _max: { publishedAt: true } });
+  return latest._max.publishedAt?.toISOString().slice(0, 10) ?? "";
+}
 
 const advisoryQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
@@ -130,10 +133,8 @@ advisoryRouter.get(
     };
 
     try {
-      // The advisory catalog changes only when a new dataset is seeded, so the
-      // list and count do not need transactional consistency. Keeping these
-      // reads sequential also avoids holding a transaction connection while a
-      // free hosted database is waking up or its small pool is briefly busy.
+      // Keep short reads so a hosted database waking from sleep does not hold
+      // a transaction connection for the entire listing request.
       const advisories = await prisma.fdaAdvisory.findMany({
         where,
         orderBy: [
@@ -152,7 +153,7 @@ advisoryRouter.get(
 
       response.status(200).json({
         success: true,
-        updatedThrough: UPDATED_THROUGH,
+        updatedThrough: await getUpdatedThrough(),
         advisories: advisories.map(serializeAdvisory),
         pagination: {
           page,
@@ -200,7 +201,7 @@ advisoryRouter.get(
 
       response.status(200).json({
         success: true,
-        updatedThrough: UPDATED_THROUGH,
+        updatedThrough: await getUpdatedThrough(),
         advisory: serializeAdvisory(advisory),
       });
     } catch (error) {

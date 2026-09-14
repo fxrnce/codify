@@ -1,4 +1,5 @@
 import { useAuth } from "@clerk/expo";
+import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -6,6 +7,7 @@ import HistoryIcon from "@/assets/icons/history.svg";
 import HomeIcon from "@/assets/icons/home.svg";
 import ProfileIcon from "@/assets/icons/profile.svg";
 import ScannerIcon from "@/assets/icons/scanner.svg";
+import { useAdminAccess } from "@/contexts/AdminAccessContext";
 
 type TabIconProps = {
   focused: boolean;
@@ -30,6 +32,7 @@ function TabIcon({ focused, Icon }: TabIconProps) {
 
 export default function TabLayout() {
   const { isSignedIn, isLoaded } = useAuth();
+  const { isAdmin } = useAdminAccess();
 
   if (!isLoaded) {
     return <View style={styles.loadingScreen} />;
@@ -109,6 +112,23 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="admin"
+        options={{
+          title: "Admin",
+          href: isAdmin ? undefined : null,
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconBox, focused && styles.adminIconBox]}>
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={22}
+                color={focused ? "#FFFFFF" : "#90A1B9"}
+              />
+            </View>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
@@ -148,5 +168,8 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
 
     elevation: 8,
+  },
+  adminIconBox: {
+    backgroundColor: "#B4233A",
   },
 });

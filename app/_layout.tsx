@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import { AllergenProvider } from "@/contexts/AllergenContext";
+import { AdminAccessProvider } from "@/contexts/AdminAccessContext";
 import { ProductReportsProvider } from "@/contexts/ProductReportsContext";
 import { ScanHistoryProvider } from "@/contexts/ScanHistoryContext";
 
@@ -18,31 +19,34 @@ if (!publishableKey) {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <AllergenProvider>
-        <ScanHistoryProvider>
-          <ProductReportsProvider>
-            <StatusBar style="light" />
+      <AdminAccessProvider>
+        <AllergenProvider>
+          <ScanHistoryProvider>
+            <ProductReportsProvider>
+              <StatusBar style="light" />
 
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen name="onboarding" />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
+                <Stack.Screen name="index" />
+                <Stack.Screen name="onboarding" />
 
-              <Stack.Screen name="auth" />
+                <Stack.Screen name="auth" />
 
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="product-result/[barcode]" />
-              <Stack.Screen name="report-product" />
-              <Stack.Screen name="reported-products" />
-              <Stack.Screen name="search-product" />
-              <Stack.Screen name="fda-advisories" />
-            </Stack>
-          </ProductReportsProvider>
-        </ScanHistoryProvider>
-      </AllergenProvider>
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="product-result/[barcode]" />
+                <Stack.Screen name="report-product" />
+                <Stack.Screen name="reported-products" />
+                <Stack.Screen name="search-product" />
+                <Stack.Screen name="fda-advisories" />
+                <Stack.Screen name="admin" />
+              </Stack>
+            </ProductReportsProvider>
+          </ScanHistoryProvider>
+        </AllergenProvider>
+      </AdminAccessProvider>
     </ClerkProvider>
   );
 }

@@ -109,7 +109,7 @@ export default function ReportedProductsScreen() {
   const clearReports = () => {
     Alert.alert(
       "Clear Reports",
-      "Are you sure you want to remove all submitted product reports?",
+      "Clear your report history? Submitted reports will remain available to administrators for review.",
       [
         {
           text: "Cancel",
@@ -251,6 +251,24 @@ export default function ReportedProductsScreen() {
                   <Text style={styles.notesText}>{report.notes}</Text>
                 </View>
               )}
+              <View style={styles.notesBox}>
+                <Text style={styles.notesLabel}>
+                  {report.pendingSync
+                    ? "Waiting to send"
+                    : (report.status ?? "PENDING").replace(/_/g, " ")}
+                </Text>
+                <Text style={styles.notesText}>
+                  {report.resolutionNote ||
+                    (report.pendingSync
+                      ? "Your report is saved on this device and will be sent when a connection is available."
+                      : "Your report is awaiting an administrator's response.")}
+                </Text>
+                {report.reviewedAt && (
+                  <Text style={styles.notesText}>
+                    Reviewed {formatReportTime(report.reviewedAt)}
+                  </Text>
+                )}
+              </View>
             </Pressable>
           ))}
         </ScrollView>

@@ -43,6 +43,7 @@ userRouter.get(
         user: {
           id: databaseUser.id,
           clerkUserId: databaseUser.clerkUserId,
+          role: databaseUser.role,
           sessionId: auth.sessionId,
           createdAt: databaseUser.createdAt,
           updatedAt: databaseUser.updatedAt,

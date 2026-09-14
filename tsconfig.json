@@ -7,5 +7,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["backend", "backend/**/*", "node_modules"]
+  "exclude": ["backend", "backend/**/*", "admin", "admin/**/*", "node_modules"]
 }

@@ -43,15 +43,33 @@ enum AdvisoryStatus {
   @@map("advisory_status")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+
+  @@map("user_role")
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  REJECTED
+
+  @@map("report_status")
+}
+
 model User {
   id          String   @id @default(uuid()) @db.Uuid
   clerkUserId String   @unique @map("clerk_user_id")
   allergenIds String[] @default([]) @map("allergen_ids")
+  role        UserRole @default(USER)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   scans   Scan[]
   reports ProductReport[]
+  adminActions AdminAuditLog[]
 
   @@map("users")
 }
@@ -70,6 +88,7 @@ model Product {
   servingSize        String        @map("serving_size")
   warningMessage     String        @map("warning_message")
   imageUrl           String?       @map("image_url")
+  isArchived         Boolean       @default(false) @map("is_archived")
   verificationUrl    String?       @map("verification_url")
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
@@ -174,14 +193,36 @@ model ProductReport {
   reason      String
   notes       String   @default("")
   submittedAt DateTime @default(now()) @map("submitted_at")
+  status ReportStatus @default(PENDING)
+  resolutionNote String @default("") @map("resolution_note")
+  reviewedAt DateTime? @map("reviewed_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  hiddenByReporter Boolean @default(false) @map("hidden_by_reporter")
+  clientReportId String? @map("client_report_id")
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   @@index([userId, submittedAt])
+  @@unique([userId, clientReportId])
   @@index([productId])
   @@index([barcode])
   @@map("product_reports")
+}
+
+model AdminAuditLog {
+  id String @id @default(uuid()) @db.Uuid
+  actorId String @map("actor_id") @db.Uuid
+  entityType String @map("entity_type")
+  entityId String @map("entity_id") @db.Uuid
+  action String
+  before Json?
+  after Json
+  createdAt DateTime @default(now()) @map("created_at")
+  actor User @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([entityType, entityId, createdAt])
+  @@map("admin_audit_logs")
 }
 
 model FdaAdvisory {

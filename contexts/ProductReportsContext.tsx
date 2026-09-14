@@ -36,11 +36,16 @@ export type ProductReport = {
   notes: string;
   submittedAt: string;
   pendingSync?: boolean;
+  clientReportId?: string | null;
+  status?: "PENDING" | "UNDER_REVIEW" | "RESOLVED" | "REJECTED";
+  resolutionNote?: string;
+  reviewedAt?: string | null;
+  updatedAt?: string;
 };
 
 export type ProductReportDraft = Omit<
   ProductReport,
-  "id" | "pendingSync" | "submittedAt"
+  "id" | "pendingSync" | "submittedAt" | "status" | "resolutionNote" | "reviewedAt" | "updatedAt"
 >;
 
 type ProductReportApiResponse = {
@@ -84,8 +89,8 @@ function normalizeBarcode(value: string) {
   return /^\d{8,14}$/.test(cleanedBarcode) ? cleanedBarcode : "";
 }
 
-function getReportKey(report: Pick<ProductReport, "barcode">) {
-  return normalizeBarcode(report.barcode) || "no-barcode";
+function getReportKey(report: Pick<ProductReport, "id" | "clientReportId">) {
+  return report.clientReportId || report.id;
 }
 
 function needsBackendSync(report: ProductReport) {
@@ -168,6 +173,7 @@ async function postReportToBackend(
       category: draft.category,
       reason: draft.reason,
       notes: draft.notes,
+      clientReportId: draft.clientReportId,
     }),
   });
 
@@ -352,7 +358,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
           try {
             const synchronizedReport = await postReportToBackend(
               token,
-              cachedReport,
+              { ...cachedReport, clientReportId: cachedReport.clientReportId || cachedReport.id },
             );
 
             synchronizedReports = mergeLatestReport(
@@ -415,6 +421,8 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
         barcode: normalizeBarcode(draft.barcode),
         submittedAt: new Date().toISOString(),
         pendingSync: true,
+        clientReportId: `report-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        status: "PENDING",
       };
 
       await replaceReports(
@@ -443,7 +451,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
           throw new Error("Clerk did not return a session token.");
         }
 
-        const savedReport = await postReportToBackend(token, draft);
+        const savedReport = await postReportToBackend(token, localReport);
 
         await replaceReports(
           currentStorageKey,

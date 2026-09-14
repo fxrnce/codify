@@ -57,7 +57,7 @@ async function runDatabaseTask(scriptName, label) {
 
 async function start() {
   await runDatabaseTask("prisma:migrate:deploy", "Database migration");
-  await runDatabaseTask("prisma:seed", "Product catalog seed");
+  // Catalog changes are managed by admins. Seeding is an explicit maintenance task.
 
   const server = spawn(process.execPath, ["dist/server.js"], {
     env: process.env,

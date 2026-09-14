@@ -10,7 +10,8 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { productCodeSchema } from "../lib/product-code.js";
 
-export const reportRouter = Router();
+export function createReportRouter(db = prisma, authenticate = getAuth) {
+const reportRouter = Router();
 
 const REPORT_REASONS = [
   "No FDA record found",
@@ -27,6 +28,7 @@ const reportBodySchema = z.object({
   category: z.string().trim().min(1).max(120),
   reason: z.enum(REPORT_REASONS),
   notes: z.string().trim().max(2000).default(""),
+  clientReportId: z.string().trim().min(1).max(128).optional(),
 });
 
 type DatabaseProductReport = {
@@ -38,13 +40,18 @@ type DatabaseProductReport = {
   reason: string;
   notes: string;
   submittedAt: Date;
+  status: string;
+  resolutionNote: string;
+  reviewedAt: Date | null;
+  updatedAt: Date;
+  clientReportId: string | null;
 };
 
 function getAuthenticatedClerkUserId(
   request: Request,
   response: Response,
 ): string | null {
-  const auth = getAuth(request);
+  const auth = authenticate(request);
 
   if (!auth.isAuthenticated || !auth.userId) {
     response.status(401).json({
@@ -59,7 +66,7 @@ function getAuthenticatedClerkUserId(
 }
 
 async function getOrCreateDatabaseUser(clerkUserId: string) {
-  return prisma.user.upsert({
+  return db.user.upsert({
     where: {
       clerkUserId,
     },
@@ -82,6 +89,11 @@ function mapReportToApi(report: DatabaseProductReport) {
     reason: report.reason,
     notes: report.notes,
     submittedAt: report.submittedAt.toISOString(),
+    status: report.status,
+    resolutionNote: report.resolutionNote,
+    reviewedAt: report.reviewedAt?.toISOString() ?? null,
+    updatedAt: report.updatedAt.toISOString(),
+    clientReportId: report.clientReportId,
   };
 }
 
@@ -97,9 +109,10 @@ reportRouter.get(
     try {
       const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
 
-      const databaseReports = await prisma.productReport.findMany({
+      const databaseReports = await db.productReport.findMany({
         where: {
           userId: databaseUser.id,
+          hiddenByReporter: false,
         },
 
         orderBy: {
@@ -107,19 +120,7 @@ reportRouter.get(
         },
       });
 
-      const encounteredBarcodes = new Set<string>();
-      const reports = [];
-
-      for (const report of databaseReports) {
-        const reportKey = report.barcode ?? "no-barcode";
-
-        if (encounteredBarcodes.has(reportKey)) {
-          continue;
-        }
-
-        encounteredBarcodes.add(reportKey);
-        reports.push(mapReportToApi(report));
-      }
+      const reports = databaseReports.map(mapReportToApi);
 
       response.status(200).json({
         success: true,
@@ -156,7 +157,7 @@ reportRouter.post(
       const barcode = parsedBody.data.barcode ?? null;
 
       const product = barcode
-        ? await prisma.product.findUnique({
+        ? await db.product.findUnique({
             where: {
               barcode,
             },
@@ -167,8 +168,7 @@ reportRouter.post(
           })
         : null;
 
-      const createdReport = await prisma.productReport.create({
-        data: {
+      const data = {
           userId: databaseUser.id,
           productId: product?.id ?? null,
           barcode,
@@ -177,8 +177,15 @@ reportRouter.post(
           category: parsedBody.data.category,
           reason: parsedBody.data.reason,
           notes: parsedBody.data.notes,
-        },
-      });
+          clientReportId: parsedBody.data.clientReportId,
+      };
+      // Retrying a queued report must not create another report in the admin inbox.
+      const createdReport = data.clientReportId
+        ? await db.productReport.upsert({
+            where: { userId_clientReportId: { userId: databaseUser.id, clientReportId: data.clientReportId } },
+            update: {}, create: data,
+          })
+        : await db.productReport.create({ data });
 
       response.status(201).json({
         success: true,
@@ -203,10 +210,12 @@ reportRouter.delete(
     try {
       const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
 
-      const deleteResult = await prisma.productReport.deleteMany({
+      // Clearing personal history must not remove a report from the admin inbox.
+      const deleteResult = await db.productReport.updateMany({
         where: {
           userId: databaseUser.id,
         },
+        data: { hiddenByReporter: true },
       });
 
       response.status(200).json({
@@ -219,3 +228,7 @@ reportRouter.delete(
     }
   },
 );
+
+return reportRouter;
+}
+export const reportRouter = createReportRouter();

@@ -13,6 +13,7 @@ import { productRouter } from "./routes/product.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
 import { scanRouter } from "./routes/scan.routes.js";
 import { userRouter } from "./routes/user.routes.js";
+import { adminRouter } from "./routes/admin.routes.js";
 
 export const app = express();
 
@@ -64,6 +65,7 @@ app.use("/api", allergenRouter);
 app.use("/api", userRouter);
 app.use("/api", scanRouter);
 app.use("/api", reportRouter);
+app.use("/api/admin", adminRouter);
 
 app.use((_request: Request, response: Response) => {
   response.status(404).json({

@@ -58,6 +58,8 @@ jobs:
         working-directory: backend
     env:
       DATABASE_URL: postgresql://codify:codify@localhost:5432/codify
+      CLERK_PUBLISHABLE_KEY: pk_test_Y2kuZXhhbXBsZS5jb20k
+      CLERK_SECRET_KEY: sk_test_ci_placeholder
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -88,3 +90,6 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Admin authorization and report workflow tests
+        run: npm run test:admin

@@ -48,6 +48,7 @@ productRouter.get(
   async (_request: Request, response: Response, next: NextFunction) => {
     try {
       const products = await prisma.product.findMany({
+        where: { isArchived: false },
         orderBy: [
           {
             name: "asc",
@@ -175,7 +176,7 @@ productRouter.get(
         });
       }
 
-      if (!product) {
+      if (!product || product.isArchived) {
         response.status(404).json({
           success: false,
           message: "Product not found",
