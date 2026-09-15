@@ -22,6 +22,13 @@ export type CachedAdvisoryFilters = {
   limit?: number;
 };
 
+export type OfflineCacheStatus = {
+  productsUpdatedAt: string | null;
+  advisoriesUpdatedAt: string | null;
+  advisoriesUpdatedThrough: string | null;
+  lastSyncedAt: string | null;
+};
+
 let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 function equivalentBarcode(barcode: string) {
@@ -262,7 +269,45 @@ export async function replaceCachedAdvisories(
         updatedThrough,
       );
     }
+    await transaction.runAsync(
+      "INSERT OR REPLACE INTO cache_metadata (key, value) VALUES (?, ?)",
+      "advisoriesUpdatedAt",
+      new Date().toISOString(),
+    );
   });
+}
+
+export async function getOfflineCacheStatus(): Promise<OfflineCacheStatus> {
+  const database = await getDatabase();
+  const rows = await database.getAllAsync<{ key: string; value: string }>(
+    `SELECT key, value FROM cache_metadata
+     WHERE key IN (?, ?, ?)`,
+    "productsUpdatedAt",
+    "advisoriesUpdatedAt",
+    "advisoriesUpdatedThrough",
+  );
+  const metadata = new Map(rows.map((row) => [row.key, row.value]));
+  const productsUpdatedAt = metadata.get("productsUpdatedAt") ?? null;
+  const advisoriesUpdatedAt = metadata.get("advisoriesUpdatedAt") ?? null;
+  const validTimestamps = [productsUpdatedAt, advisoriesUpdatedAt].filter(
+    (value): value is string =>
+      typeof value === "string" && !Number.isNaN(new Date(value).getTime()),
+  );
+  const lastSyncedAt =
+    validTimestamps.length > 0
+      ? validTimestamps.sort(
+          (first, second) =>
+            new Date(second).getTime() - new Date(first).getTime(),
+        )[0]
+      : null;
+
+  return {
+    productsUpdatedAt,
+    advisoriesUpdatedAt,
+    advisoriesUpdatedThrough:
+      metadata.get("advisoriesUpdatedThrough") ?? null,
+    lastSyncedAt,
+  };
 }
 
 export async function getCachedAdvisory(advisoryNumber: string) {

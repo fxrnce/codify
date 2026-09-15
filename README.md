@@ -87,6 +87,12 @@ and synchronize after connectivity returns. Administrator writes always require
 an online connection so authorization, conflict checks, and audit logging remain
 server controlled.
 
+The app checks the Codify backend health endpoint before starting online work.
+Its home screen shows the current connection and last catalog update, while a
+compact banner appears throughout the app during offline use or synchronization.
+Tap the home status card to check the connection again after restarting the
+backend.
+
 ## Quality checks
 
 ```powershell

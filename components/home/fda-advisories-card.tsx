@@ -14,11 +14,13 @@ import {
   formatAdvisoryDate,
   getAdvisoryAppearance,
 } from "@/components/advisories/advisory-appearance";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { fetchFdaAdvisories } from "@/services/fda-advisories";
 import type { FdaAdvisory } from "@/types/fda-advisory";
 
 export default function FdaAdvisoriesCard() {
   const router = useRouter();
+  const { isBackendReachable } = useNetworkStatus();
   const [advisories, setAdvisories] = useState<FdaAdvisory[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +38,7 @@ export default function FdaAdvisoriesCard() {
             limit: 2,
           },
           controller.signal,
+          isBackendReachable,
         );
 
         if (isMountedRef.current) {
@@ -43,7 +46,11 @@ export default function FdaAdvisoriesCard() {
           setTotal(result.pagination.total);
         }
       } catch (error) {
-        if (isMountedRef.current && !(error instanceof Error && error.name === "AbortError")) {
+        if (
+          isBackendReachable &&
+          isMountedRef.current &&
+          !(error instanceof Error && error.name === "AbortError")
+        ) {
           console.log("Failed to load latest FDA advisories:", error);
         }
       } finally {
@@ -59,7 +66,7 @@ export default function FdaAdvisoriesCard() {
       isMountedRef.current = false;
       controller.abort();
     };
-  }, []);
+  }, [isBackendReachable]);
 
   const viewAll = () => {
     router.push("/fda-advisories" as never);

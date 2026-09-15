@@ -11,6 +11,8 @@ import {
   useState,
 } from "react";
 
+import { useNetworkStatus } from "@/contexts/NetworkContext";
+
 const ALLERGEN_STORAGE_KEY_PREFIX = "codify_allergen_preferences_user";
 const ALLERGEN_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -155,6 +157,7 @@ async function updateBackendPreferences(token: string, allergenIds: string[]) {
 
 export function AllergenProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
+  const { isBackendReachable } = useNetworkStatus();
 
   const [selectedAllergens, setSelectedAllergens] = useState<string[]>([]);
 
@@ -185,6 +188,7 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
           const currentAuth = authRef.current;
 
           if (
+            !isBackendReachable ||
             !currentAuth.isLoaded ||
             !currentAuth.isSignedIn ||
             currentAuth.userId !== syncUserId ||
@@ -220,10 +224,12 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
           }
         })
         .catch((error) => {
-          console.log("Failed to sync allergen preferences:", error);
+          if (isBackendReachable) {
+            console.log("Failed to sync allergen preferences:", error);
+          }
         });
     },
-    [],
+    [isBackendReachable],
   );
 
   const refreshPreferences = useCallback(async () => {
@@ -248,7 +254,12 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
     selectedAllergensRef.current = cachedPreferences.allergenIds;
     setSelectedAllergens(cachedPreferences.allergenIds);
 
-    if (!currentAuth.isSignedIn || !refreshUserId || !API_URL) {
+    if (
+      !isBackendReachable ||
+      !currentAuth.isSignedIn ||
+      !refreshUserId ||
+      !API_URL
+    ) {
       return;
     }
 
@@ -308,9 +319,11 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
         pendingSync: false,
       });
     } catch (error) {
-      console.log("Failed to load allergen preferences from backend:", error);
+      if (isBackendReachable) {
+        console.log("Failed to load allergen preferences from backend:", error);
+      }
     }
-  }, [queuePreferencesSync]);
+  }, [isBackendReachable, queuePreferencesSync]);
 
   useEffect(() => {
     void refreshPreferences();
@@ -340,7 +353,12 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
             pendingSync: shouldSync,
           });
 
-          if (shouldSync && currentAuth.userId && API_URL) {
+          if (
+            shouldSync &&
+            isBackendReachable &&
+            currentAuth.userId &&
+            API_URL
+          ) {
             queuePreferencesSync(
               currentAuth.userId,
               currentStorageKey,
@@ -352,7 +370,7 @@ export function AllergenProvider({ children }: { children: ReactNode }) {
           console.log("Failed to cache allergen preferences:", error);
         });
     },
-    [queuePreferencesSync],
+    [isBackendReachable, queuePreferencesSync],
   );
 
   const isAllergenSelected = useCallback(

@@ -4,8 +4,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
+import ConnectionStatusBanner from "@/components/common/ConnectionStatusBanner";
 import { AllergenProvider } from "@/contexts/AllergenContext";
 import { AdminAccessProvider } from "@/contexts/AdminAccessContext";
+import { NetworkProvider, useNetworkStatus } from "@/contexts/NetworkContext";
 import { ProductReportsProvider } from "@/contexts/ProductReportsContext";
 import { ScanHistoryProvider } from "@/contexts/ScanHistoryContext";
 import { refreshFdaAdvisoryCache } from "@/services/fda-advisories";
@@ -20,22 +22,42 @@ if (!publishableKey) {
 }
 
 function OfflineCatalogSync() {
-  useEffect(() => {
-    const syncCatalogs = async () => {
-      const results = await Promise.allSettled([
-        refreshProductCatalog(),
-        refreshFdaAdvisoryCache(),
-      ]);
+  const {
+    isBackendReachable,
+    refreshLastCatalogSync,
+    setSyncing,
+  } = useNetworkStatus();
 
-      for (const result of results) {
-        if (result.status === "rejected") {
-          console.log("Offline catalog background sync unavailable:", result.reason);
+  useEffect(() => {
+    if (!isBackendReachable) return;
+
+    let active = true;
+    const syncCatalogs = async () => {
+      setSyncing(true);
+      try {
+        const results = await Promise.allSettled([
+          refreshProductCatalog(),
+          refreshFdaAdvisoryCache(),
+        ]);
+
+        if (
+          active &&
+          results.some((result) => result.status === "fulfilled")
+        ) {
+          await refreshLastCatalogSync();
         }
+      } finally {
+        if (active) setSyncing(false);
       }
     };
 
     void syncCatalogs();
-  }, []);
+
+    return () => {
+      active = false;
+      setSyncing(false);
+    };
+  }, [isBackendReachable, refreshLastCatalogSync, setSyncing]);
 
   return null;
 }
@@ -43,35 +65,38 @@ function OfflineCatalogSync() {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <OfflineCatalogSync />
-      <AdminAccessProvider>
-        <AllergenProvider>
-          <ScanHistoryProvider>
-            <ProductReportsProvider>
-              <StatusBar style="light" />
+      <NetworkProvider>
+        <OfflineCatalogSync />
+        <AdminAccessProvider>
+          <AllergenProvider>
+            <ScanHistoryProvider>
+              <ProductReportsProvider>
+                <StatusBar style="light" />
 
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                }}
-              >
-                <Stack.Screen name="index" />
-                <Stack.Screen name="onboarding" />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                  }}
+                >
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="onboarding" />
 
-                <Stack.Screen name="auth" />
+                  <Stack.Screen name="auth" />
 
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="product-result/[barcode]" />
-                <Stack.Screen name="report-product" />
-                <Stack.Screen name="reported-products" />
-                <Stack.Screen name="search-product" />
-                <Stack.Screen name="fda-advisories" />
-                <Stack.Screen name="admin" />
-              </Stack>
-            </ProductReportsProvider>
-          </ScanHistoryProvider>
-        </AllergenProvider>
-      </AdminAccessProvider>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="product-result/[barcode]" />
+                  <Stack.Screen name="report-product" />
+                  <Stack.Screen name="reported-products" />
+                  <Stack.Screen name="search-product" />
+                  <Stack.Screen name="fda-advisories" />
+                  <Stack.Screen name="admin" />
+                </Stack>
+                <ConnectionStatusBanner />
+              </ProductReportsProvider>
+            </ScanHistoryProvider>
+          </AllergenProvider>
+        </AdminAccessProvider>
+      </NetworkProvider>
     </ClerkProvider>
   );
 }

@@ -16,6 +16,7 @@ import {
   type ProductStatus,
   demoProducts,
 } from "@/constants/MockData";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import {
   loadCachedProductCatalog,
   refreshProductCatalog,
@@ -63,6 +64,7 @@ function isMedicineRegistrationNumber(value: string) {
 
 export default function SearchProductScreen() {
   const router = useRouter();
+  const { isBackendReachable, lastCatalogSyncAt } = useNetworkStatus();
 
   const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState<DemoProduct[]>(demoProducts);
@@ -79,6 +81,12 @@ export default function SearchProductScreen() {
       if (isMounted && cachedProducts.length > 0) {
         setProducts(cachedProducts);
       }
+
+      if (!isBackendReachable) {
+        if (isMounted) setIsUsingOfflineCatalog(true);
+        return;
+      }
+
       try {
         const backendProducts = await refreshProductCatalog(controller.signal);
 
@@ -89,7 +97,6 @@ export default function SearchProductScreen() {
       } catch (error) {
         if (!(error instanceof Error && error.name === "AbortError")) {
           setIsUsingOfflineCatalog(true);
-          console.log("Using the offline product catalog:", error);
         }
       }
     };
@@ -100,7 +107,19 @@ export default function SearchProductScreen() {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [isBackendReachable]);
+
+  const lastSyncLabel = useMemo(() => {
+    if (!lastCatalogSyncAt) return "";
+    const date = new Date(lastCatalogSyncAt);
+    if (Number.isNaN(date.getTime())) return "";
+    return ` Last updated ${date.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    })}.`;
+  }, [lastCatalogSyncAt]);
 
   const filteredProducts = useMemo(() => {
     const normalizedSearchText = searchText.trim().toLowerCase();
@@ -229,7 +248,7 @@ export default function SearchProductScreen() {
 
           <Text style={styles.infoText}>
             {isUsingOfflineCatalog
-              ? "Offline catalog active. Saved products remain searchable on this device."
+              ? `Offline catalog active. Saved products remain searchable on this device.${lastSyncLabel}`
               : "Online catalog synced. Searches are filtered instantly and saved for offline use."}
           </Text>
         </View>

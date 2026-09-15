@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import type { DemoProduct, ProductStatus } from "@/constants/MockData";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 
 const LEGACY_SCAN_HISTORY_STORAGE_KEY = "codify_scan_history";
 const SCAN_HISTORY_STORAGE_KEY_PREFIX = "codify_scan_history_user";
@@ -237,6 +238,7 @@ async function postScanToBackend(token: string, scan: ScanHistoryItem) {
 
 export function ScanHistoryProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
+  const { isBackendReachable } = useNetworkStatus();
 
   const [scanHistory, setScanHistory] = useState<ScanHistoryItem[]>([]);
 
@@ -336,6 +338,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
       setScanHistory(cachedHistory);
 
       if (
+        !isBackendReachable ||
         !currentAuth.isSignedIn ||
         !currentAuth.userId ||
         !API_URL
@@ -466,7 +469,9 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
 
         await replaceScanHistory(currentStorageKey, synchronizedHistory);
       } catch (error) {
-        console.log("Failed to load scan history from backend:", error);
+        if (isBackendReachable) {
+          console.log("Failed to load scan history from backend:", error);
+        }
       }
     })();
 
@@ -481,7 +486,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
         refreshUserKeyRef.current = null;
       }
     }
-  }, [replaceScanHistory]);
+  }, [isBackendReachable, replaceScanHistory]);
 
   useEffect(() => {
     scanHistoryRef.current = [];
@@ -503,6 +508,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
             const currentAuth = authRef.current;
 
             if (
+              !isBackendReachable ||
               !currentAuth.isLoaded ||
               !currentAuth.isSignedIn ||
               currentAuth.userId !== scanUserId ||
@@ -548,10 +554,12 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
           mergeLatestScan(savedScan, scanHistoryRef.current),
         );
       } catch (error) {
-        console.log("Failed to save scan to backend:", error);
+        if (isBackendReachable) {
+          console.log("Failed to save scan to backend:", error);
+        }
       }
     },
-    [replaceScanHistory],
+    [isBackendReachable, replaceScanHistory],
   );
 
   const addLocalScan = useCallback(
@@ -670,7 +678,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
       return true;
     }
 
-    if (!API_URL) {
+    if (!API_URL || !isBackendReachable) {
       await replaceScanHistory(currentStorageKey, previousHistory);
       return false;
     }
@@ -727,7 +735,7 @@ export function ScanHistoryProvider({ children }: { children: ReactNode }) {
 
       return false;
     }
-  }, [replaceScanHistory]);
+  }, [isBackendReachable, replaceScanHistory]);
 
   const value = useMemo(
     () => ({

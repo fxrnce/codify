@@ -11,6 +11,8 @@ import {
   useState,
 } from "react";
 
+import { useNetworkStatus } from "@/contexts/NetworkContext";
+
 const LEGACY_REPORTS_STORAGE_KEY = "codify_product_reports";
 const REPORTS_STORAGE_KEY_PREFIX = "codify_product_reports_user";
 
@@ -192,6 +194,7 @@ async function postReportToBackend(
 
 export function ProductReportsProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
+  const { isBackendReachable } = useNetworkStatus();
 
   const [reports, setReports] = useState<ProductReport[]>([]);
 
@@ -288,6 +291,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
       await replaceReports(currentStorageKey, cachedReports);
 
       if (
+        !isBackendReachable ||
         !currentAuth.isSignedIn ||
         !currentAuth.userId ||
         !API_URL
@@ -384,7 +388,9 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
 
         await replaceReports(currentStorageKey, synchronizedReports);
       } catch (error) {
-        console.log("Failed to load product reports from backend:", error);
+        if (isBackendReachable) {
+          console.log("Failed to load product reports from backend:", error);
+        }
       }
     })();
 
@@ -399,7 +405,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
         refreshUserKeyRef.current = null;
       }
     }
-  }, [replaceReports]);
+  }, [isBackendReachable, replaceReports]);
 
   useEffect(() => {
     reportsRef.current = [];
@@ -431,6 +437,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
       );
 
       if (
+        !isBackendReachable ||
         !currentAuth.isLoaded ||
         !currentAuth.isSignedIn ||
         !currentAuth.userId ||
@@ -463,7 +470,9 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
           savedToBackend: true,
         };
       } catch (error) {
-        console.log("Failed to submit product report to backend:", error);
+        if (isBackendReachable) {
+          console.log("Failed to submit product report to backend:", error);
+        }
 
         return {
           report: localReport,
@@ -471,7 +480,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
         };
       }
     },
-    [replaceReports],
+    [isBackendReachable, replaceReports],
   );
 
   const clearReports = useCallback(async () => {
@@ -501,7 +510,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
       return true;
     }
 
-    if (!API_URL) {
+    if (!API_URL || !isBackendReachable) {
       await replaceReports(currentStorageKey, previousReports);
       return false;
     }
@@ -541,7 +550,7 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
       await replaceReports(currentStorageKey, previousReports);
       return false;
     }
-  }, [replaceReports]);
+  }, [isBackendReachable, replaceReports]);
 
   const value = useMemo(
     () => ({

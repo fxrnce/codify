@@ -17,6 +17,7 @@ import {
   formatAdvisoryDate,
   getAdvisoryAppearance,
 } from "@/components/advisories/advisory-appearance";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { fetchFdaAdvisories } from "@/services/fda-advisories";
 import type {
   FdaAdvisory,
@@ -43,6 +44,7 @@ const statusFilters: { label: string; value: StatusFilter }[] = [
 
 export default function AdvisoryListScreen() {
   const router = useRouter();
+  const { isBackendReachable } = useNetworkStatus();
   const [searchText, setSearchText] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [category, setCategory] = useState<CategoryFilter>("ALL");
@@ -89,13 +91,17 @@ export default function AdvisoryListScreen() {
       }
 
       try {
-        const result = await fetchFdaAdvisories({
-          query: debouncedQuery || undefined,
-          category: category === "ALL" ? undefined : category,
-          status: status === "ALL" ? undefined : status,
-          page: nextPage,
-          limit: 20,
-        });
+        const result = await fetchFdaAdvisories(
+          {
+            query: debouncedQuery || undefined,
+            category: category === "ALL" ? undefined : category,
+            status: status === "ALL" ? undefined : status,
+            page: nextPage,
+            limit: 20,
+          },
+          undefined,
+          isBackendReachable,
+        );
 
         if (!isMountedRef.current || requestId !== requestIdRef.current) {
           return;
@@ -132,7 +138,7 @@ export default function AdvisoryListScreen() {
         }
       }
     },
-    [category, debouncedQuery, status],
+    [category, debouncedQuery, isBackendReachable, status],
   );
 
   useEffect(() => {

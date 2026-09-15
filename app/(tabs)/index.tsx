@@ -6,6 +6,7 @@ import Header from "@/components/home/Header";
 import RecentScans from "@/components/home/RecentScans";
 import ScanProductCard from "@/components/home/ScanProductCard";
 import StatusGuide from "@/components/home/StatusGuide";
+import SyncStatusCard from "@/components/home/SyncStatusCard";
 import TipCard from "@/components/home/TipCard";
 
 export default function HomeScreen() {
@@ -23,6 +24,8 @@ export default function HomeScreen() {
         }}
       >
         <Header />
+
+        <SyncStatusCard />
 
         <ScanProductCard />
 

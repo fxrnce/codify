@@ -8,11 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppState } from "react-native";
 
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import {
   authenticatedRequest,
-  checkApiReachability,
   type AdminRole,
   type GetToken,
 } from "@/services/admin-api";
@@ -31,10 +30,10 @@ const AdminAccessContext = createContext<AdminAccess | undefined>(undefined);
 
 export function AdminAccessProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
+  const { isBackendReachable } = useNetworkStatus();
   const getTokenRef = useRef(getToken);
   const [role, setRole] = useState<AdminRole | null>(null);
   const [isChecking, setIsChecking] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -46,30 +45,17 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  useEffect(() => {
-    let active = true;
-    const checkConnection = async () => {
-      const reachable = await checkApiReachability();
-      if (active) setIsOnline(reachable);
-    };
-
-    void checkConnection();
-    const interval = setInterval(() => void checkConnection(), 20_000);
-    const subscription = AppState.addEventListener("change", (state) => {
-      if (state === "active") void checkConnection();
-    });
-
-    return () => {
-      active = false;
-      clearInterval(interval);
-      subscription.remove();
-    };
-  }, []);
-
   const refresh = useCallback(async () => {
     if (!isLoaded || !isSignedIn || !userId) {
       setRole(null);
       setError("");
+      return;
+    }
+
+    if (!isBackendReachable) {
+      setRole(null);
+      setIsChecking(false);
+      setError("Administrator tools require an online connection.");
       return;
     }
 
@@ -82,7 +68,6 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
         "/api/me",
       );
       setRole(response.user.role);
-      setIsOnline(true);
     } catch (caughtError) {
       // Fail closed: a failed check must not leave a stale admin state active.
       setRole(null);
@@ -94,7 +79,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsChecking(false);
     }
-  }, [getStableToken, isLoaded, isSignedIn, userId]);
+  }, [getStableToken, isBackendReachable, isLoaded, isSignedIn, userId]);
 
   useEffect(() => {
     void refresh();
@@ -106,7 +91,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
         role,
         isAdmin: role === "ADMIN",
         isChecking,
-        isOnline,
+        isOnline: isBackendReachable,
         error,
         getToken: getStableToken,
         refresh,

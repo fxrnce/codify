@@ -76,8 +76,17 @@ export async function refreshProductCatalog(signal?: AbortSignal) {
 export async function loadProduct(
   barcode: string,
   signal?: AbortSignal,
+  allowNetwork = true,
 ): Promise<ProductLoadResult> {
   const cachedProduct = await getCachedProduct(barcode);
+
+  if (!allowNetwork) {
+    if (cachedProduct) {
+      return { product: cachedProduct, source: "offline" };
+    }
+    throw new Error("This product has not been saved for offline use yet.");
+  }
+
   try {
     const response = await fetch(
       `${apiUrl()}/api/products/${encodeURIComponent(barcode)}`,

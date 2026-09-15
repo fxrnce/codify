@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as WebBrowser from "expo-web-browser";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,6 +17,7 @@ import {
   formatAdvisoryDate,
   getAdvisoryAppearance,
 } from "@/components/advisories/advisory-appearance";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { fetchFdaAdvisory } from "@/services/fda-advisories";
 import type { FdaAdvisory } from "@/types/fda-advisory";
 
@@ -55,6 +56,7 @@ function getSafetyCopy(advisory: FdaAdvisory) {
 
 export default function AdvisoryDetailScreen() {
   const router = useRouter();
+  const { isBackendReachable } = useNetworkStatus();
   const params = useLocalSearchParams<{
     advisoryNumber?: string | string[];
   }>();
@@ -67,7 +69,7 @@ export default function AdvisoryDetailScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isUsingOfflineData, setIsUsingOfflineData] = useState(false);
 
-  const loadAdvisory = async (signal?: AbortSignal) => {
+  const loadAdvisory = useCallback(async (signal?: AbortSignal) => {
     if (!advisoryNumber) {
       setErrorMessage("FDA advisory number is missing.");
       setIsLoading(false);
@@ -78,7 +80,11 @@ export default function AdvisoryDetailScreen() {
     setErrorMessage(null);
 
     try {
-      const result = await fetchFdaAdvisory(advisoryNumber, signal);
+      const result = await fetchFdaAdvisory(
+        advisoryNumber,
+        signal,
+        isBackendReachable,
+      );
       setAdvisory(result.advisory);
       setUpdatedThrough(result.updatedThrough);
       setIsUsingOfflineData(result.source === "offline");
@@ -97,7 +103,7 @@ export default function AdvisoryDetailScreen() {
         setIsLoading(false);
       }
     }
-  };
+  }, [advisoryNumber, isBackendReachable]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -106,9 +112,7 @@ export default function AdvisoryDetailScreen() {
     return () => {
       controller.abort();
     };
-    // The route parameter is the only value that should trigger a reload.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [advisoryNumber]);
+  }, [loadAdvisory]);
 
   const appearance = useMemo(
     () => getAdvisoryAppearance(advisory?.status ?? "NOT_APPROVED"),

@@ -71,6 +71,7 @@ async function parseResponse<T extends { message?: string }>(
 export async function fetchFdaAdvisories(
   filters: AdvisorySearchFilters = {},
   signal?: AbortSignal,
+  allowNetwork = true,
 ) {
   const parameters = new URLSearchParams();
   const query = filters.query?.trim();
@@ -89,6 +90,14 @@ export async function fetchFdaAdvisories(
 
   parameters.set("page", String(filters.page ?? 1));
   parameters.set("limit", String(filters.limit ?? 20));
+
+  if (!allowNetwork) {
+    const cached = await queryCachedAdvisories(filters);
+    if (cached.pagination.total > 0) {
+      return { ...cached, source: "offline" as const };
+    }
+    throw new Error("FDA advisories have not been saved for offline use yet.");
+  }
 
   try {
     const response = await fetch(
@@ -129,8 +138,22 @@ export async function fetchFdaAdvisories(
 export async function fetchFdaAdvisory(
   advisoryNumber: string,
   signal?: AbortSignal,
+  allowNetwork = true,
 ) {
   const cached = await getCachedAdvisory(advisoryNumber);
+
+  if (!allowNetwork) {
+    if (cached) {
+      const metadata = await queryCachedAdvisories({ limit: 1 });
+      return {
+        advisory: cached,
+        updatedThrough: metadata.updatedThrough,
+        source: "offline" as const,
+      };
+    }
+    throw new Error("This FDA advisory has not been saved for offline use yet.");
+  }
+
   try {
     const response = await fetch(
       `${getApiUrl()}/api/advisories/${encodeURIComponent(advisoryNumber)}`,

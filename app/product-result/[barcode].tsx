@@ -18,6 +18,7 @@ import {
 
 import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
+import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
 import { loadProduct as loadProductWithCache } from "@/services/products";
 
@@ -218,6 +219,7 @@ export default function ProductResultScreen() {
   const params = useLocalSearchParams<{ barcode: string; from?: string }>();
 
   const { selectedAllergens } = useAllergenAlerts();
+  const { isBackendReachable } = useNetworkStatus();
   const { addScanToHistory, addUnknownScanToHistory } = useScanHistory();
 
   const isNavigatingRef = useRef(false);
@@ -315,7 +317,11 @@ export default function ProductResultScreen() {
       }
 
       try {
-        const result = await loadProductWithCache(barcode, controller.signal);
+        const result = await loadProductWithCache(
+          barcode,
+          controller.signal,
+          isBackendReachable,
+        );
         if (result.notFound || !result.product) {
           setProductLoadState("not-found");
           return;
@@ -345,7 +351,7 @@ export default function ProductResultScreen() {
     return () => {
       controller.abort();
     };
-  }, [barcode, reloadKey]);
+  }, [barcode, isBackendReachable, reloadKey]);
 
   useEffect(() => {
     if (
