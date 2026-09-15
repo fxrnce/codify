@@ -91,5 +91,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Admin authorization and report workflow tests
-        run: npm run test:admin
+      - name: Route integration tests
+        run: npm run test

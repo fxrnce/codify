@@ -12,8 +12,6 @@ import {
   productCodeSchema,
 } from "../lib/product-code.js";
 
-export const productRouter = Router();
-
 const barcodeParamsSchema = z.object({
   barcode: productCodeSchema,
 });
@@ -37,250 +35,259 @@ const productStatusLabels = {
   UNVERIFIED: "Unverified",
 } as const;
 
-/*
- * Load the product catalog once.
- *
- * The mobile Search Product screen filters this list locally, so typing does
- * not create a new network request for every letter.
- */
-productRouter.get(
-  "/products",
-  async (_request: Request, response: Response, next: NextFunction) => {
-    try {
-      const products = await prisma.product.findMany({
-        where: { isArchived: false },
-        orderBy: [
-          {
-            name: "asc",
-          },
-          {
-            brand: "asc",
-          },
-        ],
+// Dependency injection permits route tests without a live database.
+export function createProductRouter(db = prisma) {
+  const productRouter = Router();
 
-        select: {
-          slug: true,
-          barcode: true,
-          name: true,
-          brand: true,
-          category: true,
-          status: true,
-          fdaStatusLabel: true,
-          registrationNumber: true,
-          healthScore: true,
-          servingSize: true,
-          warningMessage: true,
-          imageUrl: true,
-          verificationUrl: true,
-
-          nutrition: true,
-
-          ingredients: {
-            orderBy: {
-              position: "asc",
+  /*
+   * Load the product catalog once.
+   *
+   * The mobile Search Product screen filters this list locally, so typing does
+   * not create a new network request for every letter.
+   */
+  productRouter.get(
+    "/products",
+    async (_request: Request, response: Response, next: NextFunction) => {
+      try {
+        const products = await db.product.findMany({
+          where: { isArchived: false },
+          orderBy: [
+            {
+              name: "asc",
             },
-
-            select: {
-              name: true,
-              isAllergen: true,
+            {
+              brand: "asc",
             },
-          },
+          ],
 
-          allergens: {
-            orderBy: {
-              position: "asc",
-            },
+          select: {
+            slug: true,
+            barcode: true,
+            name: true,
+            brand: true,
+            category: true,
+            status: true,
+            fdaStatusLabel: true,
+            registrationNumber: true,
+            healthScore: true,
+            servingSize: true,
+            warningMessage: true,
+            imageUrl: true,
+            verificationUrl: true,
 
-            select: {
-              name: true,
-            },
-          },
+            nutrition: true,
 
-          alternatives: {
-            orderBy: {
-              position: "asc",
-            },
-
-            select: {
-              name: true,
-            },
-          },
-        },
-      });
-
-      response.status(200).json({
-        success: true,
-        count: products.length,
-
-        products: products.map((product) => ({
-          id: product.slug,
-          barcode: product.barcode,
-          name: product.name,
-          brand: product.brand,
-          category: product.category,
-          status: productStatusLabels[product.status],
-          fdaStatusLabel: product.fdaStatusLabel,
-          registrationNumber: product.registrationNumber,
-          healthScore: product.healthScore,
-          servingSize: product.servingSize,
-          warningMessage: product.warningMessage,
-          imageUrl: product.imageUrl,
-          verificationUrl: product.verificationUrl,
-          nutrition: product.nutrition
-            ? {
-                calories: product.nutrition.calories,
-                protein: product.nutrition.protein,
-                carbohydrates: product.nutrition.carbohydrates,
-                totalFat: product.nutrition.totalFat,
-                saturatedFat: product.nutrition.saturatedFat,
-                totalSugars: product.nutrition.totalSugars,
-                dietaryFiber: product.nutrition.dietaryFiber,
-                sodium: product.nutrition.sodium,
-              }
-            : {
-                calories: "N/A",
-                protein: "N/A",
-                carbohydrates: "N/A",
-                totalFat: "N/A",
-                saturatedFat: "N/A",
-                totalSugars: "N/A",
-                dietaryFiber: "N/A",
-                sodium: "N/A",
+            ingredients: {
+              orderBy: {
+                position: "asc",
               },
-          ingredients: product.ingredients,
-          allergens: product.allergens.map((allergen) => allergen.name),
-          alternatives: product.alternatives.map(
-            (alternative) => alternative.name,
-          ),
-        })),
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
 
-productRouter.get(
-  "/products/:barcode",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const parsedParams = barcodeParamsSchema.safeParse(request.params);
+              select: {
+                name: true,
+                isAllergen: true,
+              },
+            },
 
-    if (!parsedParams.success) {
-      response.status(400).json({
-        success: false,
-        message: INVALID_PRODUCT_CODE_MESSAGE,
-      });
+            allergens: {
+              orderBy: {
+                position: "asc",
+              },
 
-      return;
-    }
+              select: {
+                name: true,
+              },
+            },
 
-    try {
-      const productInclude = {
-        nutrition: true,
+            alternatives: {
+              orderBy: {
+                position: "asc",
+              },
 
-        ingredients: {
-          orderBy: {
-            position: "asc" as const,
+              select: {
+                name: true,
+              },
+            },
           },
-        },
-
-        allergens: {
-          orderBy: {
-            position: "asc" as const,
-          },
-        },
-
-        alternatives: {
-          orderBy: {
-            position: "asc" as const,
-          },
-        },
-      };
-
-      let product = await prisma.product.findUnique({
-        where: {
-          barcode: parsedParams.data.barcode,
-        },
-        include: productInclude,
-      });
-
-      const equivalentBarcode = getEquivalentUpcEanBarcode(
-        parsedParams.data.barcode,
-      );
-
-      if (!product && equivalentBarcode) {
-        product = await prisma.product.findUnique({
-          where: {
-            barcode: equivalentBarcode,
-          },
-          include: productInclude,
         });
-      }
 
-      if (!product || product.isArchived) {
-        response.status(404).json({
+        response.status(200).json({
+          success: true,
+          count: products.length,
+
+          products: products.map((product) => ({
+            id: product.slug,
+            barcode: product.barcode,
+            name: product.name,
+            brand: product.brand,
+            category: product.category,
+            status: productStatusLabels[product.status],
+            fdaStatusLabel: product.fdaStatusLabel,
+            registrationNumber: product.registrationNumber,
+            healthScore: product.healthScore,
+            servingSize: product.servingSize,
+            warningMessage: product.warningMessage,
+            imageUrl: product.imageUrl,
+            verificationUrl: product.verificationUrl,
+            nutrition: product.nutrition
+              ? {
+                  calories: product.nutrition.calories,
+                  protein: product.nutrition.protein,
+                  carbohydrates: product.nutrition.carbohydrates,
+                  totalFat: product.nutrition.totalFat,
+                  saturatedFat: product.nutrition.saturatedFat,
+                  totalSugars: product.nutrition.totalSugars,
+                  dietaryFiber: product.nutrition.dietaryFiber,
+                  sodium: product.nutrition.sodium,
+                }
+              : {
+                  calories: "N/A",
+                  protein: "N/A",
+                  carbohydrates: "N/A",
+                  totalFat: "N/A",
+                  saturatedFat: "N/A",
+                  totalSugars: "N/A",
+                  dietaryFiber: "N/A",
+                  sodium: "N/A",
+                },
+            ingredients: product.ingredients,
+            allergens: product.allergens.map((allergen) => allergen.name),
+            alternatives: product.alternatives.map(
+              (alternative) => alternative.name,
+            ),
+          })),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  productRouter.get(
+    "/products/:barcode",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const parsedParams = barcodeParamsSchema.safeParse(request.params);
+
+      if (!parsedParams.success) {
+        response.status(400).json({
           success: false,
-          message: "Product not found",
-          barcode: parsedParams.data.barcode,
+          message: INVALID_PRODUCT_CODE_MESSAGE,
         });
 
         return;
       }
 
-      response.status(200).json({
-        success: true,
+      try {
+        const productInclude = {
+          nutrition: true,
 
-        product: {
-          id: product.slug,
-          barcode: product.barcode,
-          name: product.name,
-          brand: product.brand,
-          category: product.category,
-          status: productStatusLabels[product.status],
-          fdaStatusLabel: product.fdaStatusLabel,
-          registrationNumber: product.registrationNumber,
-          healthScore: product.healthScore,
-          servingSize: product.servingSize,
-          warningMessage: product.warningMessage,
-          imageUrl: product.imageUrl,
-          verificationUrl: product.verificationUrl,
+          ingredients: {
+            orderBy: {
+              position: "asc" as const,
+            },
+          },
 
-          nutrition: product.nutrition
-            ? {
-                calories: product.nutrition.calories,
-                protein: product.nutrition.protein,
-                carbohydrates: product.nutrition.carbohydrates,
-                totalFat: product.nutrition.totalFat,
-                saturatedFat: product.nutrition.saturatedFat,
-                totalSugars: product.nutrition.totalSugars,
-                dietaryFiber: product.nutrition.dietaryFiber,
-                sodium: product.nutrition.sodium,
-              }
-            : {
-                calories: "N/A",
-                protein: "N/A",
-                carbohydrates: "N/A",
-                totalFat: "N/A",
-                saturatedFat: "N/A",
-                totalSugars: "N/A",
-                dietaryFiber: "N/A",
-                sodium: "N/A",
-              },
+          allergens: {
+            orderBy: {
+              position: "asc" as const,
+            },
+          },
 
-          ingredients: product.ingredients.map((ingredient) => ({
-            name: ingredient.name,
-            isAllergen: ingredient.isAllergen,
-          })),
+          alternatives: {
+            orderBy: {
+              position: "asc" as const,
+            },
+          },
+        };
 
-          allergens: product.allergens.map((allergen) => allergen.name),
+        let product = await db.product.findUnique({
+          where: {
+            barcode: parsedParams.data.barcode,
+          },
+          include: productInclude,
+        });
 
-          alternatives: product.alternatives.map(
-            (alternative) => alternative.name,
-          ),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+        const equivalentBarcode = getEquivalentUpcEanBarcode(
+          parsedParams.data.barcode,
+        );
+
+        if (!product && equivalentBarcode) {
+          product = await db.product.findUnique({
+            where: {
+              barcode: equivalentBarcode,
+            },
+            include: productInclude,
+          });
+        }
+
+        if (!product || product.isArchived) {
+          response.status(404).json({
+            success: false,
+            message: "Product not found",
+            barcode: parsedParams.data.barcode,
+          });
+
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+
+          product: {
+            id: product.slug,
+            barcode: product.barcode,
+            name: product.name,
+            brand: product.brand,
+            category: product.category,
+            status: productStatusLabels[product.status],
+            fdaStatusLabel: product.fdaStatusLabel,
+            registrationNumber: product.registrationNumber,
+            healthScore: product.healthScore,
+            servingSize: product.servingSize,
+            warningMessage: product.warningMessage,
+            imageUrl: product.imageUrl,
+            verificationUrl: product.verificationUrl,
+
+            nutrition: product.nutrition
+              ? {
+                  calories: product.nutrition.calories,
+                  protein: product.nutrition.protein,
+                  carbohydrates: product.nutrition.carbohydrates,
+                  totalFat: product.nutrition.totalFat,
+                  saturatedFat: product.nutrition.saturatedFat,
+                  totalSugars: product.nutrition.totalSugars,
+                  dietaryFiber: product.nutrition.dietaryFiber,
+                  sodium: product.nutrition.sodium,
+                }
+              : {
+                  calories: "N/A",
+                  protein: "N/A",
+                  carbohydrates: "N/A",
+                  totalFat: "N/A",
+                  saturatedFat: "N/A",
+                  totalSugars: "N/A",
+                  dietaryFiber: "N/A",
+                  sodium: "N/A",
+                },
+
+            ingredients: product.ingredients.map((ingredient) => ({
+              name: ingredient.name,
+              isAllergen: ingredient.isAllergen,
+            })),
+
+            allergens: product.allergens.map((allergen) => allergen.name),
+
+            alternatives: product.alternatives.map(
+              (alternative) => alternative.name,
+            ),
+          },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return productRouter;
+}
+
+export const productRouter = createProductRouter();

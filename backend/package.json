@@ -22,7 +22,8 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "db:test": "tsx src/scripts/test-database.ts",
     "admin:set": "tsx src/scripts/set-admin.ts",
-    "test:admin": "tsx --test tests/admin.test.ts"
+    "test:admin": "tsx --test tests/admin.test.ts",
+    "test": "tsx --test tests/admin.test.ts tests/product.test.ts tests/allergen.test.ts tests/scan.test.ts tests/advisory.test.ts tests/user.test.ts"
   },
   "engines": {
     "node": ">=24 <25"

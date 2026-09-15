@@ -8,49 +8,56 @@ import {
 
 import { prisma } from "../lib/prisma.js";
 
-export const userRouter = Router();
+// Dependency injection permits route tests without a live database or Clerk session.
+export function createUserRouter(db = prisma, authenticate = getAuth) {
+  const userRouter = Router();
 
-userRouter.get(
-  "/me",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const auth = getAuth(request);
+  userRouter.get(
+    "/me",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const auth = authenticate(request);
 
-    if (!auth.isAuthenticated || !auth.userId) {
-      response.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
+      if (!auth.isAuthenticated || !auth.userId) {
+        response.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
 
-      return;
-    }
+        return;
+      }
 
-    try {
-      const databaseUser = await prisma.user.upsert({
-        where: {
-          clerkUserId: auth.userId,
-        },
+      try {
+        const databaseUser = await db.user.upsert({
+          where: {
+            clerkUserId: auth.userId,
+          },
 
-        update: {},
+          update: {},
 
-        create: {
-          clerkUserId: auth.userId,
-        },
-      });
+          create: {
+            clerkUserId: auth.userId,
+          },
+        });
 
-      response.status(200).json({
-        success: true,
-        message: "Authenticated Clerk session",
-        user: {
-          id: databaseUser.id,
-          clerkUserId: databaseUser.clerkUserId,
-          role: databaseUser.role,
-          sessionId: auth.sessionId,
-          createdAt: databaseUser.createdAt,
-          updatedAt: databaseUser.updatedAt,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+        response.status(200).json({
+          success: true,
+          message: "Authenticated Clerk session",
+          user: {
+            id: databaseUser.id,
+            clerkUserId: databaseUser.clerkUserId,
+            role: databaseUser.role,
+            sessionId: auth.sessionId,
+            createdAt: databaseUser.createdAt,
+            updatedAt: databaseUser.updatedAt,
+          },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return userRouter;
+}
+
+export const userRouter = createUserRouter();

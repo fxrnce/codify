@@ -9,8 +9,6 @@ import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
 
-export const allergenRouter = Router();
-
 const allergenIdSchema = z
   .string()
   .trim()
@@ -30,8 +28,9 @@ const allergenPreferencesBodySchema = z
 function getAuthenticatedClerkUserId(
   request: Request,
   response: Response,
+  authenticate: typeof getAuth,
 ): string | null {
-  const auth = getAuth(request);
+  const auth = authenticate(request);
 
   if (!auth.isAuthenticated || !auth.userId) {
     response.status(401).json({
@@ -45,81 +44,98 @@ function getAuthenticatedClerkUserId(
   return auth.userId;
 }
 
-allergenRouter.get(
-  "/allergen-preferences",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const clerkUserId = getAuthenticatedClerkUserId(request, response);
+// Dependency injection permits route tests without a live database or Clerk session.
+export function createAllergenRouter(db = prisma, authenticate = getAuth) {
+  const allergenRouter = Router();
 
-    if (!clerkUserId) {
-      return;
-    }
+  allergenRouter.get(
+    "/allergen-preferences",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const clerkUserId = getAuthenticatedClerkUserId(
+        request,
+        response,
+        authenticate,
+      );
 
-    try {
-      const databaseUser = await prisma.user.upsert({
-        where: {
-          clerkUserId,
-        },
+      if (!clerkUserId) {
+        return;
+      }
 
-        update: {},
+      try {
+        const databaseUser = await db.user.upsert({
+          where: {
+            clerkUserId,
+          },
 
-        create: {
-          clerkUserId,
-        },
-      });
+          update: {},
 
-      response.status(200).json({
-        success: true,
-        allergenIds: databaseUser.allergenIds,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+          create: {
+            clerkUserId,
+          },
+        });
 
-allergenRouter.put(
-  "/allergen-preferences",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const clerkUserId = getAuthenticatedClerkUserId(request, response);
+        response.status(200).json({
+          success: true,
+          allergenIds: databaseUser.allergenIds,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
-    if (!clerkUserId) {
-      return;
-    }
+  allergenRouter.put(
+    "/allergen-preferences",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const clerkUserId = getAuthenticatedClerkUserId(
+        request,
+        response,
+        authenticate,
+      );
 
-    const parsedBody = allergenPreferencesBodySchema.safeParse(request.body);
+      if (!clerkUserId) {
+        return;
+      }
 
-    if (!parsedBody.success) {
-      response.status(400).json({
-        success: false,
-        message: "Invalid allergen preferences.",
-      });
+      const parsedBody = allergenPreferencesBodySchema.safeParse(request.body);
 
-      return;
-    }
+      if (!parsedBody.success) {
+        response.status(400).json({
+          success: false,
+          message: "Invalid allergen preferences.",
+        });
 
-    try {
-      const databaseUser = await prisma.user.upsert({
-        where: {
-          clerkUserId,
-        },
+        return;
+      }
 
-        update: {
-          allergenIds: parsedBody.data.allergenIds,
-        },
+      try {
+        const databaseUser = await db.user.upsert({
+          where: {
+            clerkUserId,
+          },
 
-        create: {
-          clerkUserId,
-          allergenIds: parsedBody.data.allergenIds,
-        },
-      });
+          update: {
+            allergenIds: parsedBody.data.allergenIds,
+          },
 
-      response.status(200).json({
-        success: true,
-        message: "Allergen preferences updated successfully",
-        allergenIds: databaseUser.allergenIds,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+          create: {
+            clerkUserId,
+            allergenIds: parsedBody.data.allergenIds,
+          },
+        });
+
+        response.status(200).json({
+          success: true,
+          message: "Allergen preferences updated successfully",
+          allergenIds: databaseUser.allergenIds,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return allergenRouter;
+}
+
+export const allergenRouter = createAllergenRouter();

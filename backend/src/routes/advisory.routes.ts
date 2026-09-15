@@ -8,13 +8,6 @@ import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
 
-export const advisoryRouter = Router();
-
-async function getUpdatedThrough() {
-  const latest = await prisma.fdaAdvisory.aggregate({ _max: { publishedAt: true } });
-  return latest._max.publishedAt?.toISOString().slice(0, 10) ?? "";
-}
-
 const advisoryQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
   category: z.enum(["FOOD", "DRUG", "COSMETIC"]).optional(),
@@ -92,120 +85,134 @@ function serializeAdvisory(advisory: AdvisoryRow) {
   };
 }
 
-advisoryRouter.get(
-  "/advisories",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const parsedQuery = advisoryQuerySchema.safeParse(request.query);
+// Dependency injection permits route tests without a live database.
+export function createAdvisoryRouter(db = prisma) {
+  const advisoryRouter = Router();
 
-    if (!parsedQuery.success) {
-      response.status(400).json({
-        success: false,
-        message: "Invalid FDA advisory search filters.",
-        errors: parsedQuery.error.flatten().fieldErrors,
-      });
+  async function getUpdatedThrough() {
+    const latest = await db.fdaAdvisory.aggregate({ _max: { publishedAt: true } });
+    return latest._max.publishedAt?.toISOString().slice(0, 10) ?? "";
+  }
 
-      return;
-    }
+  advisoryRouter.get(
+    "/advisories",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const parsedQuery = advisoryQuerySchema.safeParse(request.query);
 
-    const { q, category, status, page, limit } = parsedQuery.data;
-    const searchTerm = q?.trim();
-    const where = {
-      ...(category ? { category } : {}),
-      ...(status ? { status } : {}),
-      ...(searchTerm
-        ? {
-            OR: [
-              {
-                advisoryNumber: {
-                  contains: searchTerm,
-                  mode: "insensitive" as const,
-                },
-              },
-              {
-                title: {
-                  contains: searchTerm,
-                  mode: "insensitive" as const,
-                },
-              },
-            ],
-          }
-        : {}),
-    };
-
-    try {
-      // Keep short reads so a hosted database waking from sleep does not hold
-      // a transaction connection for the entire listing request.
-      const advisories = await prisma.fdaAdvisory.findMany({
-        where,
-        orderBy: [
-          {
-            publishedAt: "desc",
-          },
-          {
-            advisoryNumber: "desc",
-          },
-        ],
-        skip: (page - 1) * limit,
-        take: limit,
-        select: advisorySelect,
-      });
-      const total = await prisma.fdaAdvisory.count({ where });
-
-      response.status(200).json({
-        success: true,
-        updatedThrough: await getUpdatedThrough(),
-        advisories: advisories.map(serializeAdvisory),
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-advisoryRouter.get(
-  "/advisories/:advisoryNumber",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const parsedParams = advisoryParamsSchema.safeParse(request.params);
-
-    if (!parsedParams.success) {
-      response.status(400).json({
-        success: false,
-        message: "Invalid FDA advisory number.",
-      });
-
-      return;
-    }
-
-    try {
-      const advisory = await prisma.fdaAdvisory.findUnique({
-        where: {
-          advisoryNumber: parsedParams.data.advisoryNumber,
-        },
-        select: advisorySelect,
-      });
-
-      if (!advisory) {
-        response.status(404).json({
+      if (!parsedQuery.success) {
+        response.status(400).json({
           success: false,
-          message: "FDA advisory not found.",
+          message: "Invalid FDA advisory search filters.",
+          errors: parsedQuery.error.flatten().fieldErrors,
         });
 
         return;
       }
 
-      response.status(200).json({
-        success: true,
-        updatedThrough: await getUpdatedThrough(),
-        advisory: serializeAdvisory(advisory),
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+      const { q, category, status, page, limit } = parsedQuery.data;
+      const searchTerm = q?.trim();
+      const where = {
+        ...(category ? { category } : {}),
+        ...(status ? { status } : {}),
+        ...(searchTerm
+          ? {
+              OR: [
+                {
+                  advisoryNumber: {
+                    contains: searchTerm,
+                    mode: "insensitive" as const,
+                  },
+                },
+                {
+                  title: {
+                    contains: searchTerm,
+                    mode: "insensitive" as const,
+                  },
+                },
+              ],
+            }
+          : {}),
+      };
+
+      try {
+        // Keep short reads so a hosted database waking from sleep does not hold
+        // a transaction connection for the entire listing request.
+        const advisories = await db.fdaAdvisory.findMany({
+          where,
+          orderBy: [
+            {
+              publishedAt: "desc",
+            },
+            {
+              advisoryNumber: "desc",
+            },
+          ],
+          skip: (page - 1) * limit,
+          take: limit,
+          select: advisorySelect,
+        });
+        const total = await db.fdaAdvisory.count({ where });
+
+        response.status(200).json({
+          success: true,
+          updatedThrough: await getUpdatedThrough(),
+          advisories: advisories.map(serializeAdvisory),
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  advisoryRouter.get(
+    "/advisories/:advisoryNumber",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const parsedParams = advisoryParamsSchema.safeParse(request.params);
+
+      if (!parsedParams.success) {
+        response.status(400).json({
+          success: false,
+          message: "Invalid FDA advisory number.",
+        });
+
+        return;
+      }
+
+      try {
+        const advisory = await db.fdaAdvisory.findUnique({
+          where: {
+            advisoryNumber: parsedParams.data.advisoryNumber,
+          },
+          select: advisorySelect,
+        });
+
+        if (!advisory) {
+          response.status(404).json({
+            success: false,
+            message: "FDA advisory not found.",
+          });
+
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          updatedThrough: await getUpdatedThrough(),
+          advisory: serializeAdvisory(advisory),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return advisoryRouter;
+}
+
+export const advisoryRouter = createAdvisoryRouter();

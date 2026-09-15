@@ -15,8 +15,6 @@ import {
   productCodeSchema,
 } from "../lib/product-code.js";
 
-export const scanRouter = Router();
-
 type DatabaseProductStatus =
   | "APPROVED"
   | "CAUTION"
@@ -55,8 +53,9 @@ const scanBodySchema = z
 function getAuthenticatedClerkUserId(
   request: Request,
   response: Response,
+  authenticate: typeof getAuth,
 ): string | null {
-  const auth = getAuth(request);
+  const auth = authenticate(request);
 
   if (!auth.isAuthenticated || !auth.userId) {
     response.status(401).json({
@@ -68,20 +67,6 @@ function getAuthenticatedClerkUserId(
   }
 
   return auth.userId;
-}
-
-async function getOrCreateDatabaseUser(clerkUserId: string) {
-  return prisma.user.upsert({
-    where: {
-      clerkUserId,
-    },
-
-    update: {},
-
-    create: {
-      clerkUserId,
-    },
-  });
 }
 
 function getProductStatusLabel(status: DatabaseProductStatus) {
@@ -128,168 +113,203 @@ function mapScanToHistoryItem(scan: ScanWithProduct) {
   };
 }
 
-scanRouter.get(
-  "/scans",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const clerkUserId = getAuthenticatedClerkUserId(request, response);
+// Dependency injection permits route tests without a live database or Clerk session.
+export function createScanRouter(db = prisma, authenticate = getAuth) {
+  const scanRouter = Router();
 
-    if (!clerkUserId) {
-      return;
-    }
+  async function getOrCreateDatabaseUser(clerkUserId: string) {
+    return db.user.upsert({
+      where: {
+        clerkUserId,
+      },
 
-    try {
-      const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
+      update: {},
 
-      const databaseScans = await prisma.scan.findMany({
-        where: {
-          userId: databaseUser.id,
-        },
+      create: {
+        clerkUserId,
+      },
+    });
+  }
 
-        orderBy: {
-          scannedAt: "desc",
-        },
+  scanRouter.get(
+    "/scans",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const clerkUserId = getAuthenticatedClerkUserId(
+        request,
+        response,
+        authenticate,
+      );
 
-        include: {
-          product: {
-            select: {
-              name: true,
-              brand: true,
-              category: true,
-              status: true,
-              fdaStatusLabel: true,
-            },
-          },
-        },
-      });
-
-      const encounteredBarcodes = new Set<string>();
-      const scanHistory = [];
-
-      for (const scan of databaseScans) {
-        if (encounteredBarcodes.has(scan.barcode)) {
-          continue;
-        }
-
-        encounteredBarcodes.add(scan.barcode);
-        scanHistory.push(mapScanToHistoryItem(scan));
+      if (!clerkUserId) {
+        return;
       }
 
-      response.status(200).json({
-        success: true,
-        scans: scanHistory,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+      try {
+        const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
 
-scanRouter.post(
-  "/scans",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const clerkUserId = getAuthenticatedClerkUserId(request, response);
-
-    if (!clerkUserId) {
-      return;
-    }
-
-    const parsedBody = scanBodySchema.safeParse(request.body);
-
-    if (!parsedBody.success) {
-      response.status(400).json({
-        success: false,
-        message: INVALID_PRODUCT_CODE_MESSAGE,
-      });
-
-      return;
-    }
-
-    try {
-      const barcode = parsedBody.data.barcode;
-      const clientScanId = parsedBody.data.clientScanId ?? randomUUID();
-      const scannedAt = parsedBody.data.scannedAt
-        ? new Date(parsedBody.data.scannedAt)
-        : new Date();
-
-      const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
-
-      const product = await prisma.product.findUnique({
-        where: {
-          barcode,
-        },
-
-        select: {
-          id: true,
-        },
-      });
-
-      const savedScan = await prisma.scan.upsert({
-        where: {
-          userId_clientScanId: {
+        const databaseScans = await db.scan.findMany({
+          where: {
             userId: databaseUser.id,
-            clientScanId,
           },
-        },
 
-        update: {},
+          orderBy: {
+            scannedAt: "desc",
+          },
 
-        create: {
-          userId: databaseUser.id,
-          productId: product?.id ?? null,
-          clientScanId,
-          barcode,
-          scannedAt,
-        },
-
-        include: {
-          product: {
-            select: {
-              name: true,
-              brand: true,
-              category: true,
-              status: true,
-              fdaStatusLabel: true,
+          include: {
+            product: {
+              select: {
+                name: true,
+                brand: true,
+                category: true,
+                status: true,
+                fdaStatusLabel: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      response.status(201).json({
-        success: true,
-        message: "Scan saved successfully",
-        scan: mapScanToHistoryItem(savedScan),
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+        const encounteredBarcodes = new Set<string>();
+        const scanHistory = [];
 
-scanRouter.delete(
-  "/scans",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const clerkUserId = getAuthenticatedClerkUserId(request, response);
+        for (const scan of databaseScans) {
+          if (encounteredBarcodes.has(scan.barcode)) {
+            continue;
+          }
 
-    if (!clerkUserId) {
-      return;
-    }
+          encounteredBarcodes.add(scan.barcode);
+          scanHistory.push(mapScanToHistoryItem(scan));
+        }
 
-    try {
-      const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
+        response.status(200).json({
+          success: true,
+          scans: scanHistory,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
-      const deleteResult = await prisma.scan.deleteMany({
-        where: {
-          userId: databaseUser.id,
-        },
-      });
+  scanRouter.post(
+    "/scans",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const clerkUserId = getAuthenticatedClerkUserId(
+        request,
+        response,
+        authenticate,
+      );
 
-      response.status(200).json({
-        success: true,
-        message: "Scan history cleared successfully",
-        deletedCount: deleteResult.count,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+      if (!clerkUserId) {
+        return;
+      }
+
+      const parsedBody = scanBodySchema.safeParse(request.body);
+
+      if (!parsedBody.success) {
+        response.status(400).json({
+          success: false,
+          message: INVALID_PRODUCT_CODE_MESSAGE,
+        });
+
+        return;
+      }
+
+      try {
+        const barcode = parsedBody.data.barcode;
+        const clientScanId = parsedBody.data.clientScanId ?? randomUUID();
+        const scannedAt = parsedBody.data.scannedAt
+          ? new Date(parsedBody.data.scannedAt)
+          : new Date();
+
+        const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
+
+        const product = await db.product.findUnique({
+          where: {
+            barcode,
+          },
+
+          select: {
+            id: true,
+          },
+        });
+
+        const savedScan = await db.scan.upsert({
+          where: {
+            userId_clientScanId: {
+              userId: databaseUser.id,
+              clientScanId,
+            },
+          },
+
+          update: {},
+
+          create: {
+            userId: databaseUser.id,
+            productId: product?.id ?? null,
+            clientScanId,
+            barcode,
+            scannedAt,
+          },
+
+          include: {
+            product: {
+              select: {
+                name: true,
+                brand: true,
+                category: true,
+                status: true,
+                fdaStatusLabel: true,
+              },
+            },
+          },
+        });
+
+        response.status(201).json({
+          success: true,
+          message: "Scan saved successfully",
+          scan: mapScanToHistoryItem(savedScan),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  scanRouter.delete(
+    "/scans",
+    async (request: Request, response: Response, next: NextFunction) => {
+      const clerkUserId = getAuthenticatedClerkUserId(
+        request,
+        response,
+        authenticate,
+      );
+
+      if (!clerkUserId) {
+        return;
+      }
+
+      try {
+        const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
+
+        const deleteResult = await db.scan.deleteMany({
+          where: {
+            userId: databaseUser.id,
+          },
+        });
+
+        response.status(200).json({
+          success: true,
+          message: "Scan history cleared successfully",
+          deletedCount: deleteResult.count,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return scanRouter;
+}
+
+export const scanRouter = createScanRouter();
