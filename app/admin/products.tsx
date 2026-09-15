@@ -1,8 +1,8 @@
-import { useAuth } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -28,15 +28,54 @@ import {
 
 export default function AdminProductsScreen() {
   const router = useRouter();
-  const { getToken } = useAuth();
-  const { isOnline } = useAdminAccess();
+  const { getToken, isOnline } = useAdminAccess();
   const [products, setProducts] = useState<AdminProductSummary[]>([]);
   const [pagination, setPagination] = useState<AdminPage | null>(null);
   const [search, setSearch] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  const deleteProduct = useCallback(
+    (product: AdminProductSummary) => {
+      if (!isOnline) return;
+      Alert.alert(
+        "Delete Product",
+        `Permanently delete "${product.name}" from the catalog? Existing scan and report history will remain, but this cannot be undone.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              setDeletingId(product.id);
+              try {
+                await adminRequest(getToken, `/products/${product.id}`, {
+                  method: "DELETE",
+                  body: JSON.stringify({ updatedAt: product.updatedAt }),
+                });
+                setProducts((current) =>
+                  current.filter((item) => item.id !== product.id),
+                );
+              } catch (caughtError) {
+                Alert.alert(
+                  "Unable to Delete",
+                  caughtError instanceof Error
+                    ? caughtError.message
+                    : "Unable to delete this product.",
+                );
+              } finally {
+                setDeletingId(null);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [getToken, isOnline],
+  );
 
   const load = useCallback(
     async (page = 1, replace = true) => {
@@ -170,6 +209,20 @@ export default function AdminProductsScreen() {
                   {item.brand} · {item.barcode}
                 </Text>
               </View>
+              <Pressable
+                accessibilityLabel={`Delete ${item.name}`}
+                disabled={deletingId === item.id || !isOnline}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  deleteProduct(item);
+                }}
+                style={{
+                  padding: 6,
+                  opacity: deletingId === item.id || !isOnline ? 0.4 : 1,
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color={adminColors.danger} />
+              </Pressable>
               <Ionicons name="chevron-forward" size={18} color="#98A2B3" />
             </View>
             <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>

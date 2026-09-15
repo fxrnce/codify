@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/expo";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
@@ -10,9 +9,10 @@ import {
   LoadState,
   adminColors,
   adminStyles,
+  fieldErrorMap,
 } from "@/components/admin/admin-common";
 import { useAdminAccess } from "@/contexts/AdminAccessContext";
-import { adminRequest, type AdminProduct } from "@/services/admin-api";
+import { AdminApiError, adminRequest, type AdminProduct } from "@/services/admin-api";
 
 const nutritionKeys = [
   "calories",
@@ -63,8 +63,7 @@ const fromLines = (value: string) =>
 export default function AdminProductEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { getToken } = useAuth();
-  const { isOnline } = useAdminAccess();
+  const { getToken, isOnline } = useAdminAccess();
   const isNew = id === "new";
   const [draft, setDraft] = useState<ProductDraft>(emptyProduct);
   const [updatedAt, setUpdatedAt] = useState("");
@@ -74,7 +73,9 @@ export default function AdminProductEditorScreen() {
   const [baseline, setBaseline] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const snapshot = useMemo(
     () =>
@@ -159,7 +160,7 @@ export default function AdminProductEditorScreen() {
   }, [load]);
 
   const save = async () => {
-    if (saving || !isOnline) return;
+    if (saving || deleting || !isOnline) return;
     const product = {
       ...draft,
       ingredients: fromLines(ingredientLines).map((line) => ({
@@ -172,6 +173,7 @@ export default function AdminProductEditorScreen() {
 
     setSaving(true);
     setError("");
+    setFieldErrors({});
     try {
       await adminRequest(getToken, isNew ? "/products" : `/products/${id}`, {
         method: isNew ? "POST" : "PUT",
@@ -183,20 +185,66 @@ export default function AdminProductEditorScreen() {
       );
       router.back();
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Unable to save this product.",
-      );
+      if (caughtError instanceof AdminApiError && caughtError.fieldErrors?.length) {
+        setFieldErrors(fieldErrorMap(caughtError.fieldErrors));
+        setError("Check the highlighted fields below.");
+      } else {
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : "Unable to save this product.",
+        );
+      }
     } finally {
       setSaving(false);
     }
   };
 
+  const remove = () => {
+    if (isNew || saving || deleting || !isOnline) return;
+    Alert.alert(
+      "Delete Product",
+      `Permanently delete "${draft.name}" from the catalog? Existing scan and report history will remain, but this cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            setError("");
+            try {
+              await adminRequest(getToken, `/products/${id}`, {
+                method: "DELETE",
+                body: JSON.stringify({ updatedAt }),
+              });
+              router.back();
+            } catch (caughtError) {
+              setError(
+                caughtError instanceof Error
+                  ? caughtError.message
+                  : "Unable to delete this product.",
+              );
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   const set = <Key extends keyof ProductDraft>(
     key: Key,
     value: ProductDraft[Key],
-  ) => setDraft((current) => ({ ...current, [key]: value }));
+  ) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setFieldErrors((current) => {
+      if (!current[key as string]) return current;
+      const { [key as string]: _removed, ...rest } = current;
+      return rest;
+    });
+  };
 
   return (
     <AdminGate>
@@ -212,12 +260,12 @@ export default function AdminProductEditorScreen() {
         ) : (
           <>
             <Text style={adminStyles.sectionTitle}>PRODUCT IDENTITY</Text>
-            <AdminTextField label="Product name, including size" value={draft.name} onChangeText={(value) => set("name", value)} editable={!saving && isOnline} />
-            <AdminTextField label="Brand" value={draft.brand} onChangeText={(value) => set("brand", value)} editable={!saving && isOnline} />
-            <AdminTextField label="Barcode or QR value" value={draft.barcode} onChangeText={(value) => set("barcode", value)} editable={!saving && isOnline} autoCapitalize="none" />
-            <AdminTextField label="Catalog ID (lowercase-with-hyphens)" value={draft.slug} onChangeText={(value) => set("slug", value)} editable={isNew && !saving && isOnline} autoCapitalize="none" />
-            <AdminTextField label="Category" value={draft.category} onChangeText={(value) => set("category", value)} editable={!saving && isOnline} />
-            <AdminTextField label="Serving size" value={draft.servingSize} onChangeText={(value) => set("servingSize", value)} editable={!saving && isOnline} />
+            <AdminTextField label="Product name, including size" placeholder="Coca-Cola Original Taste 320 mL" value={draft.name} onChangeText={(value) => set("name", value)} editable={!saving && isOnline} error={fieldErrors.name} />
+            <AdminTextField label="Brand" placeholder="Coca-Cola" value={draft.brand} onChangeText={(value) => set("brand", value)} editable={!saving && isOnline} error={fieldErrors.brand} />
+            <AdminTextField label="Barcode or QR value" placeholder="Enter the code printed on the package" value={draft.barcode} onChangeText={(value) => set("barcode", value)} editable={!saving && isOnline} autoCapitalize="none" error={fieldErrors.barcode} />
+            <AdminTextField label="Catalog ID (lowercase-with-hyphens)" placeholder="coca-cola-original-320ml" value={draft.slug} onChangeText={(value) => set("slug", value)} editable={isNew && !saving && isOnline} autoCapitalize="none" error={fieldErrors.slug} />
+            <AdminTextField label="Category" placeholder="Carbonated Drink" value={draft.category} onChangeText={(value) => set("category", value)} editable={!saving && isOnline} error={fieldErrors.category} />
+            <AdminTextField label="Serving size" placeholder="320 mL" value={draft.servingSize} onChangeText={(value) => set("servingSize", value)} editable={!saving && isOnline} error={fieldErrors.servingSize} />
 
             <Text style={adminStyles.sectionTitle}>FDA STATUS</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
@@ -240,12 +288,14 @@ export default function AdminProductEditorScreen() {
                 </Pressable>
               ))}
             </View>
-            <AdminTextField label="FDA status label" value={draft.fdaStatusLabel} onChangeText={(value) => set("fdaStatusLabel", value)} editable={!saving && isOnline} />
-            <AdminTextField label="Registration or notification number" value={draft.registrationNumber} onChangeText={(value) => set("registrationNumber", value)} editable={!saving && isOnline} autoCapitalize="characters" />
-            <AdminTextField label="Verification source URL" value={draft.verificationUrl ?? ""} onChangeText={(value) => set("verificationUrl", value || null)} editable={!saving && isOnline} keyboardType="url" autoCapitalize="none" />
-            <AdminTextField label="Product guidance" value={draft.warningMessage} onChangeText={(value) => set("warningMessage", value)} editable={!saving && isOnline} multiline maxLength={8000} />
+            {fieldErrors.status && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.status}</Text>}
+            <AdminTextField label="FDA status label" value={draft.fdaStatusLabel} onChangeText={(value) => set("fdaStatusLabel", value)} editable={!saving && isOnline} error={fieldErrors.fdaStatusLabel} />
+            <AdminTextField label="Registration or notification number" placeholder="FR-4000000000000 or Not verified" value={draft.registrationNumber} onChangeText={(value) => set("registrationNumber", value)} editable={!saving && isOnline} autoCapitalize="characters" error={fieldErrors.registrationNumber} />
+            <AdminTextField label="Verification source URL" placeholder="https://verification.fda.gov.ph/" value={draft.verificationUrl ?? ""} onChangeText={(value) => set("verificationUrl", value || null)} editable={!saving && isOnline} keyboardType="url" autoCapitalize="none" error={fieldErrors.verificationUrl} />
+            <AdminTextField label="Product guidance" value={draft.warningMessage} onChangeText={(value) => set("warningMessage", value)} editable={!saving && isOnline} multiline maxLength={8000} error={fieldErrors.warningMessage} />
 
             <Text style={adminStyles.sectionTitle}>NUTRITION PER SERVING</Text>
+            {fieldErrors.nutrition && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.nutrition}</Text>}
             {nutritionKeys.map((key) => (
               <AdminTextField
                 key={key}
@@ -260,18 +310,20 @@ export default function AdminProductEditorScreen() {
             <AdminTextField
               label="Reviewed health score (0–100, optional)"
               value={draft.healthScore?.toString() ?? ""}
-              onChangeText={(value) =>
-                set("healthScore", value ? Number(value) : null)
-              }
+              onChangeText={(value) => {
+                const digitsOnly = value.replace(/[^0-9]/g, "");
+                set("healthScore", digitsOnly ? Number(digitsOnly) : null);
+              }}
               editable={!saving && isOnline}
               keyboardType="number-pad"
+              error={fieldErrors.healthScore}
             />
 
             <Text style={adminStyles.sectionTitle}>INGREDIENTS AND ALLERGENS</Text>
-            <AdminTextField label="Ingredients — one per line; prefix an allergenic ingredient with *" value={ingredientLines} onChangeText={setIngredientLines} editable={!saving && isOnline} multiline />
-            <AdminTextField label="Declared allergens — one per line" value={allergenLines} onChangeText={setAllergenLines} editable={!saving && isOnline} multiline />
-            <AdminTextField label="Alternatives — one per line" value={alternativeLines} onChangeText={setAlternativeLines} editable={!saving && isOnline} multiline />
-            <AdminTextField label="Product image URL (optional)" value={draft.imageUrl ?? ""} onChangeText={(value) => set("imageUrl", value || null)} editable={!saving && isOnline} keyboardType="url" autoCapitalize="none" />
+            <AdminTextField label="Ingredients — one per line; prefix an allergenic ingredient with *" value={ingredientLines} onChangeText={(value) => { setIngredientLines(value); setFieldErrors((current) => { const { ingredients: _removed, ...rest } = current; return rest; }); }} editable={!saving && isOnline} multiline error={fieldErrors.ingredients} />
+            <AdminTextField label="Declared allergens — one per line" value={allergenLines} onChangeText={(value) => { setAllergenLines(value); setFieldErrors((current) => { const { allergens: _removed, ...rest } = current; return rest; }); }} editable={!saving && isOnline} multiline error={fieldErrors.allergens} />
+            <AdminTextField label="Alternatives — one per line" value={alternativeLines} onChangeText={(value) => { setAlternativeLines(value); setFieldErrors((current) => { const { alternatives: _removed, ...rest } = current; return rest; }); }} editable={!saving && isOnline} multiline error={fieldErrors.alternatives} />
+            <AdminTextField label="Product image URL (optional)" value={draft.imageUrl ?? ""} onChangeText={(value) => set("imageUrl", value || null)} editable={!saving && isOnline} keyboardType="url" autoCapitalize="none" error={fieldErrors.imageUrl} />
 
             <Pressable
               disabled={saving || !isOnline}
@@ -302,10 +354,10 @@ export default function AdminProductEditorScreen() {
               </Pressable>
             )}
             <Pressable
-              disabled={!dirty || saving || !isOnline}
+              disabled={!dirty || saving || deleting || !isOnline}
               style={[
                 adminStyles.primaryButton,
-                (!dirty || saving || !isOnline) && adminStyles.disabled,
+                (!dirty || saving || deleting || !isOnline) && adminStyles.disabled,
               ]}
               onPress={() => void save()}
             >
@@ -313,6 +365,21 @@ export default function AdminProductEditorScreen() {
                 {saving ? "Saving…" : isNew ? "Add Product" : "Save Product"}
               </Text>
             </Pressable>
+            {!isNew && (
+              <Pressable
+                disabled={saving || deleting || !isOnline}
+                style={[
+                  adminStyles.secondaryButton,
+                  { borderColor: adminColors.danger },
+                  (saving || deleting || !isOnline) && adminStyles.disabled,
+                ]}
+                onPress={remove}
+              >
+                <Text style={{ color: adminColors.danger, fontWeight: "700" }}>
+                  {deleting ? "Deleting…" : "Delete Product"}
+                </Text>
+              </Pressable>
+            )}
           </>
         )}
       </ScrollView>

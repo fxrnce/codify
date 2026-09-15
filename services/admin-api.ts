@@ -29,6 +29,7 @@ export type AdminProductSummary = {
   category: string;
   status: string;
   isArchived: boolean;
+  updatedAt: string;
 };
 
 export type AdminProduct = AdminProductSummary & {
@@ -40,7 +41,6 @@ export type AdminProduct = AdminProductSummary & {
   warningMessage: string;
   imageUrl: string | null;
   verificationUrl: string | null;
-  updatedAt: string;
   nutrition: Record<
     | "calories"
     | "protein"
@@ -78,7 +78,19 @@ export type AdminPage = {
   totalPages: number;
 };
 
-type GetToken = (options?: { skipCache?: boolean }) => Promise<string | null>;
+export type GetToken = (options?: { skipCache?: boolean }) => Promise<string | null>;
+
+export type AdminFieldError = { path: string; message: string };
+
+export class AdminApiError extends Error {
+  fieldErrors?: AdminFieldError[];
+
+  constructor(message: string, fieldErrors?: AdminFieldError[]) {
+    super(message);
+    this.name = "AdminApiError";
+    this.fieldErrors = fieldErrors;
+  }
+}
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
 
@@ -121,9 +133,13 @@ async function request<T>(
   });
   const body = (await response.json().catch(() => ({}))) as T & {
     message?: string;
+    errors?: AdminFieldError[];
   };
   if (!response.ok) {
-    throw new Error(body.message || `Request failed (${response.status}).`);
+    throw new AdminApiError(
+      body.message || `Request failed (${response.status}).`,
+      body.errors,
+    );
   }
   return body;
 }

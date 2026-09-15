@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { AppState } from "react-native";
@@ -13,6 +14,7 @@ import {
   authenticatedRequest,
   checkApiReachability,
   type AdminRole,
+  type GetToken,
 } from "@/services/admin-api";
 
 type AdminAccess = {
@@ -21,6 +23,7 @@ type AdminAccess = {
   isChecking: boolean;
   isOnline: boolean;
   error: string;
+  getToken: GetToken;
   refresh: () => Promise<void>;
 };
 
@@ -28,10 +31,20 @@ const AdminAccessContext = createContext<AdminAccess | undefined>(undefined);
 
 export function AdminAccessProvider({ children }: { children: ReactNode }) {
   const { getToken, isLoaded, isSignedIn, userId } = useAuth();
+  const getTokenRef = useRef(getToken);
   const [role, setRole] = useState<AdminRole | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    getTokenRef.current = getToken;
+  }, [getToken]);
+
+  const getStableToken = useCallback<GetToken>(
+    (options) => getTokenRef.current(options),
+    [],
+  );
 
   useEffect(() => {
     let active = true;
@@ -65,12 +78,14 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await authenticatedRequest<{ user: { role: AdminRole } }>(
-        getToken,
+        getStableToken,
         "/api/me",
       );
       setRole(response.user.role);
       setIsOnline(true);
     } catch (caughtError) {
+      // Fail closed: a failed check must not leave a stale admin state active.
+      setRole(null);
       setError(
         caughtError instanceof Error
           ? caughtError.message
@@ -79,7 +94,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsChecking(false);
     }
-  }, [getToken, isLoaded, isSignedIn, userId]);
+  }, [getStableToken, isLoaded, isSignedIn, userId]);
 
   useEffect(() => {
     void refresh();
@@ -93,6 +108,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
         isChecking,
         isOnline,
         error,
+        getToken: getStableToken,
         refresh,
       }}
     >

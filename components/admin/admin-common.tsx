@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import { useAdminAccess } from "@/contexts/AdminAccessContext";
+import type { AdminFieldError } from "@/services/admin-api";
 
 export const adminColors = {
   primary: "#B4233A",
@@ -137,8 +138,9 @@ export function StatusPill({ value }: { value: string }) {
 export function AdminTextField({
   label,
   multiline,
+  error,
   ...props
-}: TextInputProps & { label: string }) {
+}: TextInputProps & { label: string; error?: string }) {
   return (
     <View style={styles.field}>
       <Text style={styles.fieldLabel}>{label}</Text>
@@ -146,8 +148,14 @@ export function AdminTextField({
         {...props}
         multiline={multiline}
         placeholderTextColor="#98A2B3"
-        style={[styles.input, multiline && styles.textarea, props.style]}
+        style={[
+          styles.input,
+          multiline && styles.textarea,
+          error && styles.inputError,
+          props.style,
+        ]}
       />
+      {error ? <Text style={styles.fieldError}>{error}</Text> : null}
     </View>
   );
 }
@@ -190,6 +198,21 @@ export function LoadState({
       <Text style={styles.centerText}>{empty}</Text>
     </View>
   ) : null;
+}
+
+// Groups "path: message" issues by their top-level field so each input can show
+// its own error instead of one raw, concatenated validation string.
+export function fieldErrorMap(errors?: AdminFieldError[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const issue of errors ?? []) {
+    const path = issue.path.split(".").filter(Boolean);
+    const key =
+      (path[0] === "product" || path[0] === "advisory") && path[1]
+        ? path[1]
+        : path[0] || issue.path;
+    map[key] = map[key] ? `${map[key]}; ${issue.message}` : issue.message;
+  }
+  return map;
 }
 
 export function formatAdminDate(value: string) {
@@ -248,6 +271,8 @@ const styles = StyleSheet.create({
   field: { gap: 7 },
   fieldLabel: { color: "#475467", fontSize: 12, fontWeight: "700" },
   input: { minHeight: 46, paddingHorizontal: 13, paddingVertical: 11, borderWidth: 1, borderColor: "#D0D5DD", borderRadius: 11, backgroundColor: "#FFFFFF", color: adminColors.text, fontSize: 14 },
+  inputError: { borderColor: adminColors.danger },
+  fieldError: { color: adminColors.danger, fontSize: 12, lineHeight: 16 },
   textarea: { minHeight: 105, textAlignVertical: "top" },
   stateBox: { minHeight: 190, alignItems: "center", justifyContent: "center", padding: 24, gap: 13 },
 });

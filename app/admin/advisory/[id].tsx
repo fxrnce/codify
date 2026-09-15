@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/expo";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
@@ -10,10 +9,11 @@ import {
   LoadState,
   adminColors,
   adminStyles,
+  fieldErrorMap,
   formatAdminDate,
 } from "@/components/admin/admin-common";
 import { useAdminAccess } from "@/contexts/AdminAccessContext";
-import { adminRequest, type AdminAdvisory } from "@/services/admin-api";
+import { AdminApiError, adminRequest, type AdminAdvisory } from "@/services/admin-api";
 
 type AdvisoryDraft = Omit<AdminAdvisory, "id" | "updatedAt">;
 
@@ -41,8 +41,7 @@ const emptyAdvisory: AdvisoryDraft = {
 export default function AdminAdvisoryEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { getToken } = useAuth();
-  const { isOnline } = useAdminAccess();
+  const { getToken, isOnline } = useAdminAccess();
   const isNew = id === "new";
   const [draft, setDraft] = useState<AdvisoryDraft>({ ...emptyAdvisory });
   const [updatedAt, setUpdatedAt] = useState("");
@@ -52,7 +51,9 @@ export default function AdminAdvisoryEditorScreen() {
   const [baseline, setBaseline] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const dirty = useMemo(
     () => Boolean(baseline) && JSON.stringify(draft) !== baseline,
     [baseline, draft],
@@ -61,7 +62,14 @@ export default function AdminAdvisoryEditorScreen() {
   const set = <Key extends keyof AdvisoryDraft>(
     key: Key,
     value: AdvisoryDraft[Key],
-  ) => setDraft((current) => ({ ...current, [key]: value }));
+  ) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setFieldErrors((current) => {
+      if (!current[key as string]) return current;
+      const { [key as string]: _removed, ...rest } = current;
+      return rest;
+    });
+  };
 
   const load = useCallback(async () => {
     if (isNew) {
@@ -109,9 +117,10 @@ export default function AdminAdvisoryEditorScreen() {
   }, [load]);
 
   const save = async () => {
-    if (saving || !isOnline) return;
+    if (saving || deleting || !isOnline) return;
     setSaving(true);
     setError("");
+    setFieldErrors({});
     try {
       await adminRequest(getToken, isNew ? "/advisories" : `/advisories/${id}`, {
         method: isNew ? "POST" : "PUT",
@@ -123,14 +132,53 @@ export default function AdminAdvisoryEditorScreen() {
       );
       router.back();
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Unable to save this advisory.",
-      );
+      if (caughtError instanceof AdminApiError && caughtError.fieldErrors?.length) {
+        setFieldErrors(fieldErrorMap(caughtError.fieldErrors));
+        setError("Check the highlighted fields below.");
+      } else {
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : "Unable to save this advisory.",
+        );
+      }
     } finally {
       setSaving(false);
     }
+  };
+
+  const remove = () => {
+    if (isNew || saving || deleting || !isOnline) return;
+    Alert.alert(
+      "Delete Advisory",
+      `Permanently delete FDA ${draft.advisoryNumber}? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            setError("");
+            try {
+              await adminRequest(getToken, `/advisories/${id}`, {
+                method: "DELETE",
+                body: JSON.stringify({ updatedAt }),
+              });
+              router.back();
+            } catch (caughtError) {
+              setError(
+                caughtError instanceof Error
+                  ? caughtError.message
+                  : "Unable to delete this advisory.",
+              );
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ],
+    );
   };
 
   const choiceRow = <Value extends string>(
@@ -182,46 +230,58 @@ export default function AdminAdvisoryEditorScreen() {
             <Text style={adminStyles.sectionTitle}>ADVISORY IDENTITY</Text>
             <AdminTextField
               label="Advisory number (for example, 2026-001)"
+              placeholder="2026-001"
               value={draft.advisoryNumber}
               onChangeText={(value) => set("advisoryNumber", value)}
               editable={!saving && isOnline}
               autoCapitalize="characters"
+              error={fieldErrors.advisoryNumber}
             />
             <AdminTextField
               label="Title"
+              placeholder="Enter the official FDA advisory title"
               value={draft.title}
               onChangeText={(value) => set("title", value)}
               editable={!saving && isOnline}
               multiline
+              error={fieldErrors.title}
             />
             <Text style={adminStyles.sectionTitle}>CATEGORY</Text>
             {choiceRow(categories, draft.category, (value) => set("category", value))}
+            {fieldErrors.category && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.category}</Text>}
             <Text style={adminStyles.sectionTitle}>TYPE</Text>
             {choiceRow(types, draft.type, (value) => set("type", value))}
+            {fieldErrors.type && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.type}</Text>}
             <Text style={adminStyles.sectionTitle}>STATUS</Text>
             {choiceRow(statuses, draft.status, (value) => set("status", value))}
+            {fieldErrors.status && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.status}</Text>}
             <AdminTextField
               label="Publication date (YYYY-MM-DD)"
               value={draft.publishedAt}
               onChangeText={(value) => set("publishedAt", value)}
               editable={!saving && isOnline}
               autoCapitalize="none"
+              error={fieldErrors.publishedAt}
             />
             <AdminTextField
               label="Official source URL"
+              placeholder="https://www.fda.gov.ph/fda-advisory-no-2026-001/"
               value={draft.sourceUrl}
               onChangeText={(value) => set("sourceUrl", value)}
               editable={!saving && isOnline}
               keyboardType="url"
               autoCapitalize="none"
+              error={fieldErrors.sourceUrl}
             />
             <AdminTextField
               label="Filipino source URL (optional)"
+              placeholder="https://www.fda.gov.ph/..."
               value={draft.filipinoSourceUrl ?? ""}
               onChangeText={(value) => set("filipinoSourceUrl", value || null)}
               editable={!saving && isOnline}
               keyboardType="url"
               autoCapitalize="none"
+              error={fieldErrors.filipinoSourceUrl}
             />
             <Pressable
               disabled={saving || !isOnline}
@@ -263,10 +323,10 @@ export default function AdminAdvisoryEditorScreen() {
               </Pressable>
             )}
             <Pressable
-              disabled={!dirty || saving || !isOnline}
+              disabled={!dirty || saving || deleting || !isOnline}
               style={[
                 adminStyles.primaryButton,
-                (!dirty || saving || !isOnline) && adminStyles.disabled,
+                (!dirty || saving || deleting || !isOnline) && adminStyles.disabled,
               ]}
               onPress={() => void save()}
             >
@@ -274,6 +334,21 @@ export default function AdminAdvisoryEditorScreen() {
                 {saving ? "Saving…" : isNew ? "Add Advisory" : "Save Advisory"}
               </Text>
             </Pressable>
+            {!isNew && (
+              <Pressable
+                disabled={saving || deleting || !isOnline}
+                style={[
+                  adminStyles.secondaryButton,
+                  { borderColor: adminColors.danger },
+                  (saving || deleting || !isOnline) && adminStyles.disabled,
+                ]}
+                onPress={remove}
+              >
+                <Text style={{ color: adminColors.danger, fontWeight: "700" }}>
+                  {deleting ? "Deleting…" : "Delete Advisory"}
+                </Text>
+              </Pressable>
+            )}
             {!isNew && history.length > 0 && (
               <>
                 <Text style={adminStyles.sectionTitle}>AUDIT HISTORY</Text>

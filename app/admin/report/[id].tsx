@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/expo";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
@@ -30,8 +29,7 @@ const statuses: AdminReportStatus[] = [
 export default function AdminReportDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getToken } = useAuth();
-  const { isOnline } = useAdminAccess();
+  const { getToken, isOnline } = useAdminAccess();
   const [report, setReport] = useState<AdminReport | null>(null);
   const [history, setHistory] = useState<
     { id: string; createdAt: string; action: string; after: unknown }[]
@@ -40,6 +38,7 @@ export default function AdminReportDetailScreen() {
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
@@ -102,6 +101,40 @@ export default function AdminReportDetailScreen() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const remove = () => {
+    if (!report || deleting || !isOnline) return;
+    Alert.alert(
+      "Delete Report",
+      `Permanently delete the report for "${report.productName}"? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            setError("");
+            try {
+              await adminRequest(getToken, `/reports/${report.id}`, {
+                method: "DELETE",
+                body: JSON.stringify({ updatedAt: report.updatedAt }),
+              });
+              router.back();
+            } catch (caughtError) {
+              setError(
+                caughtError instanceof Error
+                  ? caughtError.message
+                  : "Unable to delete this report.",
+              );
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -223,6 +256,19 @@ export default function AdminReportDetailScreen() {
                 <Text style={adminStyles.secondaryButtonText}>Reload Latest Review</Text>
               </Pressable>
             )}
+            <Pressable
+              disabled={deleting || !isOnline}
+              style={[
+                adminStyles.secondaryButton,
+                { borderColor: adminColors.danger },
+                (deleting || !isOnline) && adminStyles.disabled,
+              ]}
+              onPress={remove}
+            >
+              <Text style={{ color: adminColors.danger, fontWeight: "700" }}>
+                {deleting ? "Deleting…" : "Delete Report"}
+              </Text>
+            </Pressable>
             <Text style={adminStyles.sectionTitle}>AUDIT HISTORY</Text>
             {history.length === 0 ? (
               <Text style={adminStyles.body}>No previous reviews.</Text>

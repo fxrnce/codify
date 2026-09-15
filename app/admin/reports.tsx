@@ -1,8 +1,8 @@
-import { useAuth } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -20,6 +20,7 @@ import {
   adminStyles,
   formatAdminDate,
 } from "@/components/admin/admin-common";
+import { useAdminAccess } from "@/contexts/AdminAccessContext";
 import {
   adminRequest,
   type AdminPage,
@@ -37,7 +38,7 @@ const filters: (AdminReportStatus | "ALL")[] = [
 
 export default function AdminReportsScreen() {
   const router = useRouter();
-  const { getToken } = useAuth();
+  const { getToken, isOnline } = useAdminAccess();
   const [reports, setReports] = useState<AdminReport[]>([]);
   const [pagination, setPagination] = useState<AdminPage | null>(null);
   const [status, setStatus] = useState<(typeof filters)[number]>("ALL");
@@ -46,6 +47,44 @@ export default function AdminReportsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const deleteReport = useCallback(
+    (report: AdminReport) => {
+      if (!isOnline) return;
+      Alert.alert(
+        "Delete Report",
+        `Permanently delete the report for "${report.productName}"? This cannot be undone.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              setDeletingId(report.id);
+              try {
+                await adminRequest(getToken, `/reports/${report.id}`, {
+                  method: "DELETE",
+                  body: JSON.stringify({ updatedAt: report.updatedAt }),
+                });
+                setReports((current) => current.filter((item) => item.id !== report.id));
+              } catch (caughtError) {
+                Alert.alert(
+                  "Unable to Delete",
+                  caughtError instanceof Error
+                    ? caughtError.message
+                    : "Unable to delete this report.",
+                );
+              } finally {
+                setDeletingId(null);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [getToken, isOnline],
+  );
 
   const load = useCallback(
     async (page = 1, replace = true) => {
@@ -208,6 +247,20 @@ export default function AdminReportsScreen() {
                   {item.brand} · {item.barcode || "No barcode"}
                 </Text>
               </View>
+              <Pressable
+                accessibilityLabel="Delete report"
+                disabled={deletingId === item.id || !isOnline}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  deleteReport(item);
+                }}
+                style={{
+                  padding: 6,
+                  opacity: deletingId === item.id || !isOnline ? 0.4 : 1,
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color={adminColors.danger} />
+              </Pressable>
               <Ionicons name="chevron-forward" size={18} color="#98A2B3" />
             </View>
             <StatusPill value={item.status} />

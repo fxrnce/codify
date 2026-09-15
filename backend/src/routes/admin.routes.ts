@@ -13,6 +13,7 @@ const querySchema = z.object({
 });
 const productUpdateSchema = z.object({ updatedAt: z.iso.datetime(), product: productSchema }).strict();
 const advisoryUpdateSchema = z.object({ updatedAt: z.iso.datetime(), advisory: advisorySchema }).strict();
+const deleteSchema = z.object({ updatedAt: z.iso.datetime() }).strict();
 const includeProduct = {
   nutrition: true,
   ingredients: { orderBy: { position: "asc" as const } },
@@ -20,12 +21,16 @@ const includeProduct = {
   alternatives: { orderBy: { position: "asc" as const } },
 };
 const json = (value: unknown): Prisma.InputJsonValue => JSON.parse(JSON.stringify(value));
+type AdminFieldError = { path: string; message: string };
 class AdminError extends Error {
-  constructor(public status: number, message: string) { super(message); }
+  constructor(public status: number, message: string, public fieldErrors?: AdminFieldError[]) { super(message); }
 }
 function parse<T>(schema: z.ZodType<T>, value: unknown): T {
   const result = schema.safeParse(value);
-  if (!result.success) throw new AdminError(400, result.error.issues.map(issue => `${issue.path.join(".")}: ${issue.message}`).join("; "));
+  if (!result.success) {
+    const fieldErrors = result.error.issues.map(issue => ({ path: issue.path.join("."), message: issue.message }));
+    throw new AdminError(400, fieldErrors.map(issue => `${issue.path}: ${issue.message}`).join("; "), fieldErrors);
+  }
   return result.data;
 }
 function pagination(page: number, limit: number, total: number) {
@@ -81,11 +86,27 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
     });
     response.json({ report });
   });
+  router.delete("/reports/:id", async (request, response) => {
+    const id = parse(z.uuid(), request.params.id);
+    const { updatedAt } = parse(deleteSchema, request.body);
+    await db.$transaction(async tx => {
+      const before = await tx.productReport.findUnique({ where: { id } });
+      if (!before) throw new AdminError(404, "Report not found.");
+      // Log what was deleted before removing it, so there is still an accountability
+      // trail even though the report row itself is gone.
+      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "REPORT", entityId: id, action: "DELETE", before: json(before), after: json({ deleted: true }) } });
+      const deleted = await tx.productReport.deleteMany({
+        where: { id, updatedAt: new Date(updatedAt) },
+      });
+      if (deleted.count !== 1) throw new AdminError(409, "This report changed. Reload it before deleting.");
+    });
+    response.json({ success: true });
+  });
 
   router.get("/products", async (request, response) => {
     const { q, page, limit } = parse(querySchema, request.query);
     const where: Prisma.ProductWhereInput = q ? { OR: ["name", "brand", "barcode"].map(field => ({ [field]: { contains: q, mode: "insensitive" } })) } : {};
-    const products = await db.product.findMany({ where, orderBy: [{ name: "asc" }, { id: "asc" }], skip: (page - 1) * limit, take: limit, select: { id: true, name: true, brand: true, barcode: true, category: true, status: true, isArchived: true } });
+    const products = await db.product.findMany({ where, orderBy: [{ name: "asc" }, { id: "asc" }], skip: (page - 1) * limit, take: limit, select: { id: true, name: true, brand: true, barcode: true, category: true, status: true, isArchived: true, updatedAt: true } });
     response.json({ products, pagination: pagination(page, limit, await db.product.count({ where })) });
   });
   router.get("/products/:id", async (request, response) => {
@@ -125,6 +146,20 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
   }
   router.post("/products", (request, response) => saveProduct(request, response, true));
   router.put("/products/:id", (request, response) => saveProduct(request, response, false));
+  router.delete("/products/:id", async (request, response) => {
+    const id = parse(z.uuid(), request.params.id);
+    const { updatedAt } = parse(deleteSchema, request.body);
+    await db.$transaction(async tx => {
+      const before = await tx.product.findUnique({ where: { id }, include: includeProduct });
+      if (!before) throw new AdminError(404, "Product not found.");
+      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "PRODUCT", entityId: id, action: "DELETE", before: json(before), after: json({ deleted: true }) } });
+      const deleted = await tx.product.deleteMany({
+        where: { id, updatedAt: new Date(updatedAt) },
+      });
+      if (deleted.count !== 1) throw new AdminError(409, "This product changed. Reload it before deleting.");
+    });
+    response.json({ success: true });
+  });
 
   router.get("/advisories", async (request, response) => {
     const { q, page, limit } = parse(querySchema, request.query);
@@ -163,9 +198,23 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
   }
   router.post("/advisories", (request, response) => saveAdvisory(request, response, true));
   router.put("/advisories/:id", (request, response) => saveAdvisory(request, response, false));
+  router.delete("/advisories/:id", async (request, response) => {
+    const id = parse(z.uuid(), request.params.id);
+    const { updatedAt } = parse(deleteSchema, request.body);
+    await db.$transaction(async tx => {
+      const before = await tx.fdaAdvisory.findUnique({ where: { id } });
+      if (!before) throw new AdminError(404, "Advisory not found.");
+      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "ADVISORY", entityId: id, action: "DELETE", before: json(before), after: json({ deleted: true }) } });
+      const deleted = await tx.fdaAdvisory.deleteMany({
+        where: { id, updatedAt: new Date(updatedAt) },
+      });
+      if (deleted.count !== 1) throw new AdminError(409, "This advisory changed. Reload it before deleting.");
+    });
+    response.json({ success: true });
+  });
 
   router.use((error: unknown, _request: Request, response: Response, next: NextFunction) => {
-    if (error instanceof AdminError) { response.status(error.status).json({ message: error.message }); return; }
+    if (error instanceof AdminError) { response.status(error.status).json({ message: error.message, errors: error.fieldErrors }); return; }
     if (error && typeof error === "object" && "code" in error && ["P2002", "P2034"].includes(String(error.code))) {
       response.status(409).json({ message: "A duplicate or concurrent change was detected. Reload the record before retrying." }); return;
     }

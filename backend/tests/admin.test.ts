@@ -5,7 +5,7 @@ import type { getAuth } from "@clerk/express";
 import type { prisma } from "../src/lib/prisma.js";
 import { createAdminRouter } from "../src/routes/admin.routes.js";
 import { createReportRouter } from "../src/routes/report.routes.js";
-import { equivalentBarcode, reviewSchema, productSchema } from "../src/lib/admin-validation.js";
+import { advisorySchema, equivalentBarcode, reviewSchema, productSchema } from "../src/lib/admin-validation.js";
 
 const id = "00000000-0000-4000-8000-000000000001";
 const timestamp = "2026-09-14T00:00:00.000Z";
@@ -32,7 +32,7 @@ async function request(role: "ADMIN" | "USER" | null, path: string, method = "GE
 
 test("all admin routes reject unauthenticated users and ordinary users", async () => {
   for (const role of [null, "USER"] as const) {
-    for (const [path, method] of [["/session", "GET"], ["/reports", "GET"], [`/reports/${id}`, "GET"], [`/reports/${id}`, "PATCH"], ["/products", "GET"], [`/products/${id}`, "GET"], ["/products", "POST"], [`/products/${id}`, "PUT"], ["/advisories", "GET"], [`/advisories/${id}`, "GET"], ["/advisories", "POST"], [`/advisories/${id}`, "PUT"]]) {
+    for (const [path, method] of [["/session", "GET"], ["/reports", "GET"], [`/reports/${id}`, "GET"], [`/reports/${id}`, "PATCH"], [`/reports/${id}`, "DELETE"], ["/products", "GET"], [`/products/${id}`, "GET"], ["/products", "POST"], [`/products/${id}`, "PUT"], [`/products/${id}`, "DELETE"], ["/advisories", "GET"], [`/advisories/${id}`, "GET"], ["/advisories", "POST"], [`/advisories/${id}`, "PUT"], [`/advisories/${id}`, "DELETE"]]) {
       assert.equal((await request(role, path, method, method === "GET" ? undefined : { role: "ADMIN" })).status, role === null ? 401 : 403, `${role} ${method} ${path}`);
     }
   }
@@ -89,10 +89,73 @@ test("stale review returns conflict without writing an audit entry", async () =>
   });
   assert.equal(result.status, 409);
 });
+test("deleting a report logs an audit entry before removing the expected version", async () => {
+  let audit: any; let deletedId: string | undefined; let transactional = false;
+  let deleteWhere: any;
+  const operations: string[] = [];
+  const result = await request("ADMIN", `/reports/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => {
+      transactional = true;
+      return callback({
+        productReport: {
+          findUnique: async () => original,
+          deleteMany: async ({ where }: { where: { id: string; updatedAt: Date } }) => { operations.push("delete"); deleteWhere = where; deletedId = where.id; return { count: 1 }; },
+        },
+        adminAuditLog: { create: async (input: unknown) => { operations.push("audit"); audit = input; } },
+      });
+    },
+  });
+  assert.equal(result.status, 200);
+  assert(transactional);
+  assert.equal(audit.data.actorId, id);
+  assert.equal(audit.data.action, "DELETE");
+  assert.equal(audit.data.before.status, "PENDING");
+  assert.equal(deletedId, id);
+  assert.deepEqual(deleteWhere, { id, updatedAt: new Date(timestamp) });
+  assert.deepEqual(operations, ["audit", "delete"]);
+});
+test("deleting a missing report returns 404 without writing an audit entry", async () => {
+  const result = await request("ADMIN", `/reports/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      productReport: { findUnique: async () => null },
+      adminAuditLog: { create: () => assert.fail("Must not audit a delete of a missing report") },
+    }),
+  });
+  assert.equal(result.status, 404);
+});
 const product = {
   slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", healthScore: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
   nutrition: { calories: "N/A", protein: "N/A", carbohydrates: "N/A", totalFat: "N/A", saturatedFat: "N/A", totalSugars: "N/A", dietaryFiber: "N/A", sodium: "N/A" }, ingredients: [], allergens: [], alternatives: [],
 };
+test("catalog validation returns structured nested field paths", async () => {
+  const result = await request("ADMIN", `/products/${id}`, "PUT", {
+    updatedAt: timestamp,
+    product: { ...product, slug: "Invalid Slug" },
+  });
+  assert.equal(result.status, 400);
+  assert.equal(result.body.errors[0].path, "product.slug");
+  assert.match(result.body.errors[0].message, /lowercase|Invalid/i);
+});
+test("advisory validation uses concise administrator-facing messages", () => {
+  const result = advisorySchema.safeParse({
+    advisoryNumber: "2",
+    title: "",
+    category: "FOOD",
+    type: "PUBLIC_HEALTH_WARNING",
+    status: "NOT_APPROVED",
+    publishedAt: "2026-99-99",
+    sourceUrl: "",
+    filipinoSourceUrl: null,
+    isActive: true,
+  });
+  assert.equal(result.success, false);
+  if (result.success) return;
+  const sourceIssues = result.error.issues.filter(issue => issue.path.join(".") === "sourceUrl");
+  assert.equal(sourceIssues.length, 1);
+  assert.equal(sourceIssues[0].message, "Enter a valid official source URL beginning with http:// or https://.");
+  assert.equal(result.error.issues.find(issue => issue.path.join(".") === "advisoryNumber")?.message.includes("2026-001"), true);
+  assert.equal(result.error.issues.find(issue => issue.path.join(".") === "publishedAt")?.message, "Enter a real publication date in YYYY-MM-DD format.");
+});
 test("catalog rejects duplicate UPC/EAN forms and unsafe fields", async () => {
   assert.equal(equivalentBarcode("012345678905"), "0012345678905");
   assert.equal(equivalentBarcode("0012345678905"), "012345678905");
@@ -104,6 +167,48 @@ test("catalog rejects duplicate UPC/EAN forms and unsafe fields", async () => {
   });
   assert.equal(result.status, 409);
   assert.deepEqual(query.where.OR[1].barcode.in, ["012345678905", "0012345678905"]);
+});
+
+test("deleting a product audits its full catalog snapshot and expected version", async () => {
+  let audit: any;
+  let deleteWhere: any;
+  const before = { id, ...product, updatedAt: new Date(timestamp) };
+  const result = await request("ADMIN", `/products/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      product: {
+        findUnique: async () => before,
+        deleteMany: async ({ where }: { where: unknown }) => { deleteWhere = where; return { count: 1 }; },
+      },
+      adminAuditLog: { create: async (input: unknown) => { audit = input; } },
+    }),
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(deleteWhere, { id, updatedAt: new Date(timestamp) });
+  assert.equal(audit.data.entityType, "PRODUCT");
+  assert.equal(audit.data.action, "DELETE");
+  assert.equal(audit.data.before.barcode, product.barcode);
+  assert.deepEqual(audit.data.after, { deleted: true });
+});
+
+test("deleting an advisory audits its snapshot and expected version", async () => {
+  let audit: any;
+  let deleteWhere: any;
+  const before = { id, advisoryNumber: "2026-001", title: "Sample advisory", updatedAt: new Date(timestamp) };
+  const result = await request("ADMIN", `/advisories/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      fdaAdvisory: {
+        findUnique: async () => before,
+        deleteMany: async ({ where }: { where: unknown }) => { deleteWhere = where; return { count: 1 }; },
+      },
+      adminAuditLog: { create: async (input: unknown) => { audit = input; } },
+    }),
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(deleteWhere, { id, updatedAt: new Date(timestamp) });
+  assert.equal(audit.data.entityType, "ADVISORY");
+  assert.equal(audit.data.action, "DELETE");
+  assert.equal(audit.data.before.advisoryNumber, "2026-001");
+  assert.deepEqual(audit.data.after, { deleted: true });
 });
 
 test("user report listing is owner-scoped and includes the admin response", async () => {

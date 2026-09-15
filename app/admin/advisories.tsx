@@ -1,8 +1,8 @@
-import { useAuth } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -29,15 +29,54 @@ import {
 
 export default function AdminAdvisoriesScreen() {
   const router = useRouter();
-  const { getToken } = useAuth();
-  const { isOnline } = useAdminAccess();
+  const { getToken, isOnline } = useAdminAccess();
   const [advisories, setAdvisories] = useState<AdminAdvisory[]>([]);
   const [pagination, setPagination] = useState<AdminPage | null>(null);
   const [search, setSearch] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  const deleteAdvisory = useCallback(
+    (advisory: AdminAdvisory) => {
+      if (!isOnline) return;
+      Alert.alert(
+        "Delete Advisory",
+        `Permanently delete FDA ${advisory.advisoryNumber}? This cannot be undone.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              setDeletingId(advisory.id);
+              try {
+                await adminRequest(getToken, `/advisories/${advisory.id}`, {
+                  method: "DELETE",
+                  body: JSON.stringify({ updatedAt: advisory.updatedAt }),
+                });
+                setAdvisories((current) =>
+                  current.filter((item) => item.id !== advisory.id),
+                );
+              } catch (caughtError) {
+                Alert.alert(
+                  "Unable to Delete",
+                  caughtError instanceof Error
+                    ? caughtError.message
+                    : "Unable to delete this advisory.",
+                );
+              } finally {
+                setDeletingId(null);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [getToken, isOnline],
+  );
 
   const load = useCallback(
     async (page = 1, replace = true) => {
@@ -171,6 +210,20 @@ export default function AdminAdvisoriesScreen() {
                   {item.category} · {formatAdminDate(item.publishedAt)}
                 </Text>
               </View>
+              <Pressable
+                accessibilityLabel={`Delete FDA ${item.advisoryNumber}`}
+                disabled={deletingId === item.id || !isOnline}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  deleteAdvisory(item);
+                }}
+                style={{
+                  padding: 6,
+                  opacity: deletingId === item.id || !isOnline ? 0.4 : 1,
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color={adminColors.danger} />
+              </Pressable>
               <Ionicons name="chevron-forward" size={18} color="#98A2B3" />
             </View>
             <View style={{ flexDirection: "row", gap: 8 }}>

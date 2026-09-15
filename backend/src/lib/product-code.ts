@@ -7,7 +7,7 @@ export const productCodeSchema = z
   .string()
   .trim()
   .min(1, {
-    message: "Product code cannot be empty.",
+    message: "Enter the barcode or QR value.",
   })
   .max(1024, {
     message: "Product code cannot exceed 1,024 characters.",
