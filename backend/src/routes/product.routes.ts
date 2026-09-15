@@ -58,8 +58,6 @@ productRouter.get(
           },
         ],
 
-        take: 500,
-
         select: {
           slug: true,
           barcode: true,
@@ -69,10 +67,26 @@ productRouter.get(
           status: true,
           fdaStatusLabel: true,
           registrationNumber: true,
+          healthScore: true,
+          servingSize: true,
+          warningMessage: true,
           imageUrl: true,
           verificationUrl: true,
 
+          nutrition: true,
+
           ingredients: {
+            orderBy: {
+              position: "asc",
+            },
+
+            select: {
+              name: true,
+              isAllergen: true,
+            },
+          },
+
+          allergens: {
             orderBy: {
               position: "asc",
             },
@@ -82,7 +96,7 @@ productRouter.get(
             },
           },
 
-          allergens: {
+          alternatives: {
             orderBy: {
               position: "asc",
             },
@@ -107,10 +121,37 @@ productRouter.get(
           status: productStatusLabels[product.status],
           fdaStatusLabel: product.fdaStatusLabel,
           registrationNumber: product.registrationNumber,
+          healthScore: product.healthScore,
+          servingSize: product.servingSize,
+          warningMessage: product.warningMessage,
           imageUrl: product.imageUrl,
           verificationUrl: product.verificationUrl,
-          ingredients: product.ingredients.map((ingredient) => ingredient.name),
+          nutrition: product.nutrition
+            ? {
+                calories: product.nutrition.calories,
+                protein: product.nutrition.protein,
+                carbohydrates: product.nutrition.carbohydrates,
+                totalFat: product.nutrition.totalFat,
+                saturatedFat: product.nutrition.saturatedFat,
+                totalSugars: product.nutrition.totalSugars,
+                dietaryFiber: product.nutrition.dietaryFiber,
+                sodium: product.nutrition.sodium,
+              }
+            : {
+                calories: "N/A",
+                protein: "N/A",
+                carbohydrates: "N/A",
+                totalFat: "N/A",
+                saturatedFat: "N/A",
+                totalSugars: "N/A",
+                dietaryFiber: "N/A",
+                sodium: "N/A",
+              },
+          ingredients: product.ingredients,
           allergens: product.allergens.map((allergen) => allergen.name),
+          alternatives: product.alternatives.map(
+            (alternative) => alternative.name,
+          ),
         })),
       });
     } catch (error) {

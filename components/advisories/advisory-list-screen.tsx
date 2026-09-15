@@ -55,6 +55,7 @@ export default function AdvisoryListScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUsingOfflineData, setIsUsingOfflineData] = useState(false);
   const requestIdRef = useRef(0);
   const isMountedRef = useRef(true);
 
@@ -107,6 +108,7 @@ export default function AdvisoryListScreen() {
         setTotalPages(result.pagination.totalPages);
         setTotal(result.pagination.total);
         setUpdatedThrough(result.updatedThrough);
+        setIsUsingOfflineData(result.source === "offline");
       } catch (error) {
         if (!isMountedRef.current || requestId !== requestIdRef.current) {
           return;
@@ -206,6 +208,14 @@ export default function AdvisoryListScreen() {
 
   const listHeader = (
     <View>
+      {isUsingOfflineData && (
+        <View style={styles.offlineCard}>
+          <Ionicons name="cloud-offline-outline" size={20} color="#475569" />
+          <Text style={styles.offlineText}>
+            Showing FDA advisories saved on this device.
+          </Text>
+        </View>
+      )}
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color="#90A1B9" />
         <TextInput
@@ -429,6 +439,26 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   listContent: { padding: 16, paddingBottom: 32 },
+  offlineCard: {
+    minHeight: 48,
+    marginBottom: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    backgroundColor: "#F1F5F9",
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+  },
+  offlineText: {
+    flex: 1,
+    color: "#475569",
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "700",
+  },
   searchContainer: {
     height: 54,
     borderRadius: 16,

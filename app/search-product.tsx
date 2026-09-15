@@ -16,93 +16,10 @@ import {
   type ProductStatus,
   demoProducts,
 } from "@/constants/MockData";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
-
-type SearchProduct = {
-  id: string;
-  barcode: string;
-  name: string;
-  brand: string;
-  category: string;
-  status: ProductStatus;
-  fdaStatusLabel: string;
-  registrationNumber: string;
-  ingredients: string[];
-  allergens: string[];
-};
-
-type ProductCatalogResponse = {
-  success?: boolean;
-  message?: string;
-  products?: SearchProduct[];
-};
-
-let productCatalogCache: SearchProduct[] | null = null;
-let productCatalogRequest: Promise<SearchProduct[]> | null = null;
-
-function mapDemoProduct(product: DemoProduct): SearchProduct {
-  return {
-    id: product.id,
-    barcode: product.barcode,
-    name: product.name,
-    brand: product.brand,
-    category: product.category,
-    status: product.status,
-    fdaStatusLabel: product.fdaStatusLabel,
-    registrationNumber: product.registrationNumber,
-    ingredients: product.ingredients.map((ingredient) => ingredient.name),
-    allergens: product.allergens,
-  };
-}
-
-const localFallbackProducts = demoProducts.map(mapDemoProduct);
-
-async function loadProductCatalog() {
-  if (productCatalogCache) {
-    return productCatalogCache;
-  }
-
-  if (productCatalogRequest) {
-    return productCatalogRequest;
-  }
-
-  if (!API_URL) {
-    throw new Error("EXPO_PUBLIC_API_URL is missing.");
-  }
-
-  productCatalogRequest = fetch(`${API_URL}/api/products`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
-  })
-    .then(async (response) => {
-      const responseBody = (await response
-        .json()
-        .catch(() => ({}))) as ProductCatalogResponse;
-
-      if (!response.ok) {
-        throw new Error(
-          responseBody.message ||
-            `Unable to load products (${response.status}).`,
-        );
-      }
-
-      const products = Array.isArray(responseBody.products)
-        ? responseBody.products
-        : [];
-
-      productCatalogCache = products;
-
-      return products;
-    })
-    .finally(() => {
-      productCatalogRequest = null;
-    });
-
-  return productCatalogRequest;
-}
+import {
+  loadCachedProductCatalog,
+  refreshProductCatalog,
+} from "@/services/products";
 
 function getStatusStyle(status: ProductStatus) {
   if (status === "Approved") {
@@ -148,35 +65,40 @@ export default function SearchProductScreen() {
   const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
-  const [products, setProducts] = useState<SearchProduct[]>(
-    productCatalogCache ?? localFallbackProducts,
-  );
+  const [products, setProducts] = useState<DemoProduct[]>(demoProducts);
+  const [isUsingOfflineCatalog, setIsUsingOfflineCatalog] = useState(true);
 
   const isNavigatingRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
-    const refreshProductCatalog = async () => {
+    const loadCatalog = async () => {
+      const cachedProducts = await loadCachedProductCatalog();
+      if (isMounted && cachedProducts.length > 0) {
+        setProducts(cachedProducts);
+      }
       try {
-        const backendProducts = await loadProductCatalog();
+        const backendProducts = await refreshProductCatalog(controller.signal);
 
         if (isMounted && backendProducts.length > 0) {
           setProducts(backendProducts);
+          setIsUsingOfflineCatalog(false);
         }
       } catch (error) {
-        /*
-         * Search remains available through the local demo catalog when the
-         * development backend is slow or temporarily unavailable.
-         */
-        console.log("Failed to refresh product catalog:", error);
+        if (!(error instanceof Error && error.name === "AbortError")) {
+          setIsUsingOfflineCatalog(true);
+          console.log("Using the offline product catalog:", error);
+        }
       }
     };
 
-    void refreshProductCatalog();
+    void loadCatalog();
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 
@@ -188,7 +110,10 @@ export default function SearchProductScreen() {
     }
 
     return products.filter((product) => {
-      const ingredientsText = product.ingredients.join(" ").toLowerCase();
+      const ingredientsText = product.ingredients
+        .map((ingredient) => ingredient.name)
+        .join(" ")
+        .toLowerCase();
       const allergensText = product.allergens.join(" ").toLowerCase();
 
       return (
@@ -303,8 +228,9 @@ export default function SearchProductScreen() {
           />
 
           <Text style={styles.infoText}>
-            The Codify catalog loads once, then your searches are filtered
-            instantly on this device.
+            {isUsingOfflineCatalog
+              ? "Offline catalog active. Saved products remain searchable on this device."
+              : "Online catalog synced. Searches are filtered instantly and saved for offline use."}
           </Text>
         </View>
 

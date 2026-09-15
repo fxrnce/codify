@@ -19,14 +19,9 @@ import {
 import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
+import { loadProduct as loadProductWithCache } from "@/services/products";
 
 type ProductLoadState = "loading" | "success" | "not-found" | "error";
-
-type ProductApiResponse = {
-  success?: boolean;
-  message?: string;
-  product?: DemoProduct;
-};
 
 type FdaFoodProductRecord = {
   ACCOUNTCODE: string;
@@ -232,6 +227,7 @@ export default function ProductResultScreen() {
   const [productLoadState, setProductLoadState] =
     useState<ProductLoadState>("loading");
   const [productLoadError, setProductLoadError] = useState("");
+  const [isUsingOfflineData, setIsUsingOfflineData] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
   const barcode = params.barcode ?? "";
@@ -311,55 +307,21 @@ export default function ProductResultScreen() {
       setProduct(null);
       setProductLoadState("loading");
       setProductLoadError("");
+      setIsUsingOfflineData(false);
 
       if (!barcode) {
         setProductLoadState("not-found");
         return;
       }
 
-      const apiUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
-
-      if (!apiUrl) {
-        setProductLoadError(
-          "EXPO_PUBLIC_API_URL is missing from the Expo .env file.",
-        );
-        setProductLoadState("error");
-        return;
-      }
-
       try {
-        const response = await fetch(
-          `${apiUrl}/api/products/${encodeURIComponent(barcode)}`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-            },
-            signal: controller.signal,
-          },
-        );
-
-        const responseBody = (await response
-          .json()
-          .catch(() => ({}))) as ProductApiResponse;
-
-        if (response.status === 404) {
+        const result = await loadProductWithCache(barcode, controller.signal);
+        if (result.notFound || !result.product) {
           setProductLoadState("not-found");
           return;
         }
-
-        if (!response.ok) {
-          throw new Error(
-            responseBody.message ||
-              `Product request failed with status ${response.status}.`,
-          );
-        }
-
-        if (!responseBody.product) {
-          throw new Error("The backend returned an invalid product response.");
-        }
-
-        setProduct(responseBody.product);
+        setProduct(result.product);
+        setIsUsingOfflineData(result.source === "offline");
         setProductLoadState("success");
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
@@ -517,7 +479,7 @@ export default function ProductResultScreen() {
               <Text style={styles.warningTitle}>Verification needed</Text>
 
               <Text style={styles.warningText}>
-                This barcode is not available in the Codify demo database. The
+                This barcode is not available in the Codify product database. The
                 product may need manual FDA verification before purchase or use.
               </Text>
             </View>
@@ -652,6 +614,14 @@ export default function ProductResultScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {isUsingOfflineData && (
+          <View style={styles.offlineBanner}>
+            <Ionicons name="cloud-offline-outline" size={18} color="#475569" />
+            <Text style={styles.offlineBannerText}>
+              Showing the latest product details saved on this device.
+            </Text>
+          </View>
+        )}
         {hasPersonalAllergenAlert && (
           <View style={styles.allergenAlert}>
             <View style={styles.allergenIconBox}>
@@ -1439,6 +1409,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 32,
     gap: 16,
+  },
+
+  offlineBanner: {
+    minHeight: 48,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    backgroundColor: "#F1F5F9",
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+  },
+
+  offlineBannerText: {
+    flex: 1,
+    color: "#475569",
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "700",
   },
 
   allergenAlert: {

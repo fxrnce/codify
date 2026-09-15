@@ -2,11 +2,14 @@ import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 
 import { AllergenProvider } from "@/contexts/AllergenContext";
 import { AdminAccessProvider } from "@/contexts/AdminAccessContext";
 import { ProductReportsProvider } from "@/contexts/ProductReportsContext";
 import { ScanHistoryProvider } from "@/contexts/ScanHistoryContext";
+import { refreshFdaAdvisoryCache } from "@/services/fda-advisories";
+import { refreshProductCatalog } from "@/services/products";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -16,9 +19,31 @@ if (!publishableKey) {
   );
 }
 
+function OfflineCatalogSync() {
+  useEffect(() => {
+    const syncCatalogs = async () => {
+      const results = await Promise.allSettled([
+        refreshProductCatalog(),
+        refreshFdaAdvisoryCache(),
+      ]);
+
+      for (const result of results) {
+        if (result.status === "rejected") {
+          console.log("Offline catalog background sync unavailable:", result.reason);
+        }
+      }
+    };
+
+    void syncCatalogs();
+  }, []);
+
+  return null;
+}
+
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <OfflineCatalogSync />
       <AdminAccessProvider>
         <AllergenProvider>
           <ScanHistoryProvider>

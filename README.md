@@ -6,7 +6,7 @@ authenticated product reports.
 
 ## Stack
 
-- Expo SDK 54, Expo Router, React Native, and TypeScript
+- Expo SDK 54, Expo Router, React Native, TypeScript, and Expo SQLite
 - Clerk authentication
 - Express 5 and TypeScript
 - Prisma 7 with PostgreSQL
@@ -75,6 +75,17 @@ The backend requires:
 
 Never put a secret in an `EXPO_PUBLIC_*` variable. Expo embeds those variables
 in the application bundle.
+
+## Hybrid offline data
+
+The PostgreSQL API remains the source of truth. After a successful connection,
+the mobile app stores the complete public product catalog and FDA advisory index
+in an on-device SQLite database. Product search, barcode results, advisory lists,
+and advisory details fall back to that saved snapshot when the API is unavailable.
+Scan history, reports, and allergen preferences keep their existing local queues
+and synchronize after connectivity returns. Administrator writes always require
+an online connection so authorization, conflict checks, and audit logging remain
+server controlled.
 
 ## Quality checks
 

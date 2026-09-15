@@ -65,6 +65,7 @@ export default function AdvisoryDetailScreen() {
   const [updatedThrough, setUpdatedThrough] = useState("2026-08-07");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUsingOfflineData, setIsUsingOfflineData] = useState(false);
 
   const loadAdvisory = async (signal?: AbortSignal) => {
     if (!advisoryNumber) {
@@ -80,6 +81,7 @@ export default function AdvisoryDetailScreen() {
       const result = await fetchFdaAdvisory(advisoryNumber, signal);
       setAdvisory(result.advisory);
       setUpdatedThrough(result.updatedThrough);
+      setIsUsingOfflineData(result.source === "offline");
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
         return;
@@ -196,6 +198,14 @@ export default function AdvisoryDetailScreen() {
         </LinearGradient>
 
         <View style={styles.content}>
+          {isUsingOfflineData && (
+            <View style={styles.offlineCard}>
+              <Ionicons name="cloud-offline-outline" size={19} color="#475569" />
+              <Text style={styles.offlineText}>
+                Showing the latest advisory saved on this device.
+              </Text>
+            </View>
+          )}
           <View
             style={[
               styles.safetyCard,
@@ -375,6 +385,25 @@ const styles = StyleSheet.create({
   headerMeta: { color: "rgba(255,255,255,0.8)", fontSize: 12, fontWeight: "700" },
   metaDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.55)" },
   content: { padding: 16, gap: 14 },
+  offlineCard: {
+    minHeight: 48,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    backgroundColor: "#F1F5F9",
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+  },
+  offlineText: {
+    flex: 1,
+    color: "#475569",
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "700",
+  },
   safetyCard: {
     padding: 16,
     borderRadius: 18,
