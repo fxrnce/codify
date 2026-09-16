@@ -69,9 +69,9 @@ const FEATURES: FeatureItem[] = [
     icon: "scan-outline",
     iconColor: "#615FFF",
     iconBoxColor: "#EEF2FF",
-    title: "Barcode & QR Scanning",
+    title: "Product Barcode Scanning",
     description:
-      "Instantly scan product barcodes and QR codes to fetch real-time FDA registration data.",
+      "Instantly scan UPC and EAN product barcodes to fetch FDA registration data.",
   },
   {
     id: "fda",

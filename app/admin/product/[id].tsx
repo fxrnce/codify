@@ -268,7 +268,7 @@ export default function AdminProductEditorScreen() {
             <Text style={adminStyles.sectionTitle}>PRODUCT IDENTITY</Text>
             <AdminTextField label="Product name, including size" placeholder="Coca-Cola Original Taste 320 mL" value={draft.name} onChangeText={(value) => set("name", value)} editable={!saving && isOnline} error={fieldErrors.name} />
             <AdminTextField label="Brand" placeholder="Coca-Cola" value={draft.brand} onChangeText={(value) => set("brand", value)} editable={!saving && isOnline} error={fieldErrors.brand} />
-            <AdminTextField label="Barcode or QR value" placeholder="Enter the code printed on the package" value={draft.barcode} onChangeText={(value) => set("barcode", value)} editable={!saving && isOnline} autoCapitalize="none" error={fieldErrors.barcode} />
+            <AdminTextField label="Product barcode" placeholder="Enter the UPC or EAN printed on the package" value={draft.barcode} onChangeText={(value) => set("barcode", value)} editable={!saving && isOnline} autoCapitalize="none" error={fieldErrors.barcode} />
             <AdminTextField label="Catalog ID (lowercase-with-hyphens)" placeholder="coca-cola-original-320ml" value={draft.slug} onChangeText={(value) => set("slug", value)} editable={isNew && !saving && isOnline} autoCapitalize="none" error={fieldErrors.slug} />
             <AdminTextField label="Category" placeholder="Carbonated Drink" value={draft.category} onChangeText={(value) => set("category", value)} editable={!saving && isOnline} error={fieldErrors.category} />
             <AdminTextField label="Serving size" placeholder="320 mL" value={draft.servingSize} onChangeText={(value) => set("servingSize", value)} editable={!saving && isOnline} error={fieldErrors.servingSize} />

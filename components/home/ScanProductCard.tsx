@@ -52,8 +52,8 @@ export default function ScanProductCard() {
           <Text style={styles.title}>Scan a Product</Text>
 
           <Text style={styles.description}>
-            Verify authenticity instantly by scanning the product barcode or QR
-            code.
+            Verify authenticity instantly by scanning the product&apos;s UPC or
+            EAN barcode.
           </Text>
 
           <View style={localStyles.actionRow}>

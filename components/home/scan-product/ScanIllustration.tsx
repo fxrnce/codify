@@ -14,9 +14,9 @@ export default function ScanIllustration() {
         <Ionicons name="phone-portrait" size={42} color={Colors.primary} />
       </View>
 
-      {/* QR Badge */}
-      <View style={styles.qrBadge}>
-        <Ionicons name="qr-code" size={22} color="#FFFFFF" />
+      {/* Barcode badge */}
+      <View style={styles.barcodeBadge}>
+        <Ionicons name="barcode-outline" size={22} color="#FFFFFF" />
       </View>
     </View>
   );
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  qrBadge: {
+  barcodeBadge: {
     position: "absolute",
     right: 8,
     bottom: 14,
