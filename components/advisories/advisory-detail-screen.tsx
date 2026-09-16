@@ -107,9 +107,12 @@ export default function AdvisoryDetailScreen() {
 
   useEffect(() => {
     const controller = new AbortController();
-    void loadAdvisory(controller.signal);
+    const timeoutId = setTimeout(() => {
+      void loadAdvisory(controller.signal);
+    }, 0);
 
     return () => {
+      clearTimeout(timeoutId);
       controller.abort();
     };
   }, [loadAdvisory]);

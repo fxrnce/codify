@@ -156,7 +156,13 @@ export default function AdminProductEditorScreen() {
   }, [getToken, id, isNew]);
 
   useEffect(() => {
-    void load();
+    const timeoutId = setTimeout(() => {
+      void load();
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [load]);
 
   const save = async () => {

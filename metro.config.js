@@ -8,6 +8,7 @@ config.transformer.babelTransformerPath =
 config.resolver.assetExts = config.resolver.assetExts.filter(
   (ext) => ext !== "svg",
 );
+config.resolver.assetExts.push("wasm");
 
 config.resolver.sourceExts.push("svg");
 

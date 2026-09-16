@@ -113,7 +113,13 @@ export default function AdminAdvisoryEditorScreen() {
   }, [getToken, id, isNew]);
 
   useEffect(() => {
-    void load();
+    const timeoutId = setTimeout(() => {
+      void load();
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [load]);
 
   const save = async () => {

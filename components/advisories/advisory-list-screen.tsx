@@ -142,7 +142,13 @@ export default function AdvisoryListScreen() {
   );
 
   useEffect(() => {
-    void loadPage(1, true);
+    const timeoutId = setTimeout(() => {
+      void loadPage(1, true);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [loadPage]);
 
   const loadMore = () => {
