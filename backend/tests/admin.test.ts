@@ -60,6 +60,44 @@ test("admin inbox includes reports hidden from personal history and paginates", 
   assert.deepEqual(captured, { where: { status: "PENDING" }, orderBy: [{ submittedAt: "desc" }, { id: "desc" }], skip: 5, take: 5 });
   assert.equal(result.body.pagination.totalPages, 2);
 });
+test("single-character admin searches match the start of searchable fields", async () => {
+  let reportsWhere: unknown;
+  let productsWhere: unknown;
+  let advisoriesWhere: unknown;
+
+  assert.equal((await request("ADMIN", "/reports?q=b", "GET", undefined, {
+    productReport: {
+      findMany: async ({ where }: { where: unknown }) => { reportsWhere = where; return []; },
+      count: async () => 0,
+      groupBy: async () => [],
+    },
+  })).status, 200);
+  assert.equal((await request("ADMIN", "/products?q=b", "GET", undefined, {
+    product: {
+      findMany: async ({ where }: { where: unknown }) => { productsWhere = where; return []; },
+      count: async () => 0,
+    },
+  })).status, 200);
+  assert.equal((await request("ADMIN", "/advisories?q=b", "GET", undefined, {
+    fdaAdvisory: {
+      findMany: async ({ where }: { where: unknown }) => { advisoriesWhere = where; return []; },
+      count: async () => 0,
+    },
+  })).status, 200);
+
+  const startsWith = (field: string) => ({
+    [field]: { startsWith: "b", mode: "insensitive" },
+  });
+  assert.deepEqual(reportsWhere, {
+    OR: ["productName", "brand", "barcode"].map(startsWith),
+  });
+  assert.deepEqual(productsWhere, {
+    OR: ["name", "brand", "barcode"].map(startsWith),
+  });
+  assert.deepEqual(advisoriesWhere, {
+    OR: ["title", "advisoryNumber"].map(startsWith),
+  });
+});
 test("review saves a user-visible response and an audit entry in one transaction", async () => {
   let audit: any; let mutation: any; let transactional = false;
   const result = await request("ADMIN", `/reports/${id}`, "PATCH", { status: "RESOLVED", resolutionNote: "Corrected the ingredient list.", updatedAt: timestamp }, {

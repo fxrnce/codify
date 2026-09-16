@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
+import { buildTextSearch } from "../lib/search.js";
 
 const advisoryQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
@@ -116,20 +117,10 @@ export function createAdvisoryRouter(db = prisma) {
         ...(status ? { status } : {}),
         ...(searchTerm
           ? {
-              OR: [
-                {
-                  advisoryNumber: {
-                    contains: searchTerm,
-                    mode: "insensitive" as const,
-                  },
-                },
-                {
-                  title: {
-                    contains: searchTerm,
-                    mode: "insensitive" as const,
-                  },
-                },
-              ],
+              OR: buildTextSearch(
+                ["advisoryNumber", "title"],
+                searchTerm,
+              ),
             }
           : {}),
       };

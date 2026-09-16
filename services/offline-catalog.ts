@@ -336,7 +336,8 @@ export async function queryCachedAdvisories(
   const query = filters.query?.trim();
   if (query) {
     where.push("(advisory_number LIKE ? COLLATE NOCASE OR title LIKE ? COLLATE NOCASE)");
-    values.push(`%${query}%`, `%${query}%`);
+    const searchPattern = query.length === 1 ? `${query}%` : `%${query}%`;
+    values.push(searchPattern, searchPattern);
   }
   if (filters.category) {
     where.push("category = ?");

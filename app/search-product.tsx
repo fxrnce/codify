@@ -21,6 +21,7 @@ import {
   loadCachedProductCatalog,
   refreshProductCatalog,
 } from "@/services/products";
+import { matchesCatalogSearch } from "@/utils/search";
 
 function getStatusStyle(status: ProductStatus) {
   if (status === "Approved") {
@@ -122,30 +123,22 @@ export default function SearchProductScreen() {
   }, [lastCatalogSyncAt]);
 
   const filteredProducts = useMemo(() => {
-    const normalizedSearchText = searchText.trim().toLowerCase();
-
-    if (!normalizedSearchText) {
-      return products;
-    }
-
     return products.filter((product) => {
       const ingredientsText = product.ingredients
         .map((ingredient) => ingredient.name)
-        .join(" ")
-        .toLowerCase();
-      const allergensText = product.allergens.join(" ").toLowerCase();
+        .join(" ");
+      const allergensText = product.allergens.join(" ");
 
-      return (
-        product.name.toLowerCase().includes(normalizedSearchText) ||
-        product.brand.toLowerCase().includes(normalizedSearchText) ||
-        product.category.toLowerCase().includes(normalizedSearchText) ||
-        product.barcode.includes(normalizedSearchText) ||
-        product.fdaStatusLabel.toLowerCase().includes(normalizedSearchText) ||
-        product.registrationNumber
-          .toLowerCase()
-          .includes(normalizedSearchText) ||
-        ingredientsText.includes(normalizedSearchText) ||
-        allergensText.includes(normalizedSearchText)
+      return matchesCatalogSearch(
+        searchText,
+        [product.name, product.brand, product.barcode],
+        [
+          product.category,
+          product.fdaStatusLabel,
+          product.registrationNumber,
+          ingredientsText,
+          allergensText,
+        ],
       );
     });
   }, [products, searchText]);

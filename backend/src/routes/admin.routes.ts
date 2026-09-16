@@ -3,6 +3,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { advisorySchema, equivalentBarcode, productSchema, reportStatusSchema, reviewSchema } from "../lib/admin-validation.js";
+import { buildTextSearch } from "../lib/search.js";
 import type { Prisma } from "../generated/prisma/client.js";
 
 const querySchema = z.object({
@@ -58,7 +59,7 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
     const { q, status, page, limit } = parse(querySchema, request.query);
     const where: Prisma.ProductReportWhereInput = {
       ...(status ? { status } : {}),
-      ...(q ? { OR: ["productName", "brand", "barcode"].map(field => ({ [field]: { contains: q, mode: "insensitive" } })) } : {}),
+      ...(q ? { OR: buildTextSearch(["productName", "brand", "barcode"], q) } : {}),
     };
     const reports = await db.productReport.findMany({ where, orderBy: [{ submittedAt: "desc" }, { id: "desc" }], skip: (page - 1) * limit, take: limit });
     const total = await db.productReport.count({ where });
@@ -105,7 +106,7 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
 
   router.get("/products", async (request, response) => {
     const { q, page, limit } = parse(querySchema, request.query);
-    const where: Prisma.ProductWhereInput = q ? { OR: ["name", "brand", "barcode"].map(field => ({ [field]: { contains: q, mode: "insensitive" } })) } : {};
+    const where: Prisma.ProductWhereInput = q ? { OR: buildTextSearch(["name", "brand", "barcode"], q) } : {};
     const products = await db.product.findMany({ where, orderBy: [{ name: "asc" }, { id: "asc" }], skip: (page - 1) * limit, take: limit, select: { id: true, name: true, brand: true, barcode: true, category: true, status: true, isArchived: true, updatedAt: true } });
     response.json({ products, pagination: pagination(page, limit, await db.product.count({ where })) });
   });
@@ -163,7 +164,7 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
 
   router.get("/advisories", async (request, response) => {
     const { q, page, limit } = parse(querySchema, request.query);
-    const where: Prisma.FdaAdvisoryWhereInput = q ? { OR: ["title", "advisoryNumber"].map(field => ({ [field]: { contains: q, mode: "insensitive" } })) } : {};
+    const where: Prisma.FdaAdvisoryWhereInput = q ? { OR: buildTextSearch(["title", "advisoryNumber"], q) } : {};
     const advisories = await db.fdaAdvisory.findMany({ where, orderBy: [{ publishedAt: "desc" }, { id: "asc" }], skip: (page - 1) * limit, take: limit });
     response.json({ advisories, pagination: pagination(page, limit, await db.fdaAdvisory.count({ where })) });
   });

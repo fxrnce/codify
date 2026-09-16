@@ -16,6 +16,7 @@ import {
   type ScanHistoryItem,
   useScanHistory,
 } from "@/contexts/ScanHistoryContext";
+import { matchesCatalogSearch } from "@/utils/search";
 
 type HistoryFilter =
   | "All"
@@ -111,16 +112,12 @@ export default function HistoryScreen() {
     (item) => item.status === "Unverified",
   ).length;
 
-  const normalizedSearchText = searchText.trim().toLowerCase();
-
   const filteredScans = scanHistory.filter((item) => {
-    const matchesSearch =
-      normalizedSearchText.length === 0 ||
-      item.name.toLowerCase().includes(normalizedSearchText) ||
-      item.brand.toLowerCase().includes(normalizedSearchText) ||
-      item.category.toLowerCase().includes(normalizedSearchText) ||
-      item.barcode.toLowerCase().includes(normalizedSearchText) ||
-      item.fdaStatusLabel.toLowerCase().includes(normalizedSearchText);
+    const matchesSearch = matchesCatalogSearch(
+      searchText,
+      [item.name, item.brand, item.barcode],
+      [item.category, item.fdaStatusLabel],
+    );
 
     const matchesFilter =
       selectedFilter === "All" ||

@@ -62,6 +62,40 @@ test("GET /advisories paginates and serializes labels", async () => {
   }
 });
 
+test("GET /advisories uses prefix matching for one character and broad matching for longer searches", async () => {
+  const capturedWhere: unknown[] = [];
+  const server = await withRouter({
+    fdaAdvisory: {
+      findMany: async ({ where }: { where: unknown }) => {
+        capturedWhere.push(where);
+        return [];
+      },
+      count: async () => 0,
+    },
+  });
+
+  try {
+    assert.equal((await server.request("/api/advisories?q=b")).status, 200);
+    assert.equal((await server.request("/api/advisories?q=be")).status, 200);
+    assert.deepEqual(capturedWhere, [
+      {
+        OR: [
+          { advisoryNumber: { startsWith: "b", mode: "insensitive" } },
+          { title: { startsWith: "b", mode: "insensitive" } },
+        ],
+      },
+      {
+        OR: [
+          { advisoryNumber: { contains: "be", mode: "insensitive" } },
+          { title: { contains: "be", mode: "insensitive" } },
+        ],
+      },
+    ]);
+  } finally {
+    await server.close();
+  }
+});
+
 test("GET /advisories/:advisoryNumber rejects a malformed advisory number", async () => {
   const server = await withRouter();
   try {
