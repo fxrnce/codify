@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -19,6 +22,14 @@ import {
   type ProductReportReason,
   useProductReports,
 } from "@/contexts/ProductReportsContext";
+import {
+  MAX_EVIDENCE_IMAGES,
+  captureEvidenceFromCamera,
+  deleteLocalEvidence,
+  deleteLocalEvidenceFile,
+  pickEvidenceFromLibrary,
+  type PendingEvidenceImage,
+} from "@/services/report-evidence";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
 
@@ -48,6 +59,26 @@ export default function ReportProductScreen() {
   );
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [draftId] = useState(
+    () => `draft-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
+  const [pendingImages, setPendingImages] = useState<PendingEvidenceImage[]>(
+    [],
+  );
+  const [isPickingPhoto, setIsPickingPhoto] = useState(false);
+  const hasSubmittedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      // The draft's local photo folder is only meaningful until the report
+      // is either submitted (ownership passes to the sync layer) or the
+      // user navigates away without submitting.
+      if (!hasSubmittedRef.current) {
+        deleteLocalEvidence(draftId);
+      }
+    };
+  }, [draftId]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -118,6 +149,132 @@ export default function ReportProductScreen() {
     router.back();
   };
 
+  const offerToOpenSettings = () => {
+    Alert.alert(
+      "Permission Needed",
+      "Codify needs permission to add a photo. You can allow it in your device settings.",
+      [
+        { text: "Not Now", style: "cancel" },
+        { text: "Open Settings", onPress: () => void Linking.openSettings() },
+      ],
+    );
+  };
+
+  const applyPickOutcome = (
+    outcome: Awaited<ReturnType<typeof pickEvidenceFromLibrary>>,
+    replaceIndex?: number,
+  ) => {
+    if (outcome.status === "cancelled") {
+      return;
+    }
+
+    if (outcome.status === "permission-denied") {
+      offerToOpenSettings();
+      return;
+    }
+
+    if (outcome.status === "error") {
+      Alert.alert("Could Not Add Photo", outcome.message);
+      return;
+    }
+
+    if (outcome.images.length === 0) {
+      if (outcome.skippedOversized > 0) {
+        Alert.alert(
+          "Photo Too Large",
+          "That photo could not be resized under the upload limit. Please try a different photo.",
+        );
+      }
+      return;
+    }
+
+    setPendingImages((current) => {
+      const picked = outcome.images[0];
+
+      if (replaceIndex !== undefined) {
+        const previous = current[replaceIndex];
+        if (previous) {
+          deleteLocalEvidenceFile(previous.localUri);
+        }
+
+        const next = [...current];
+        next[replaceIndex] = { ...picked, position: replaceIndex };
+        return next;
+      }
+
+      return [...current, ...outcome.images].map((image, index) => ({
+        ...image,
+        position: index,
+      }));
+    });
+
+    if (outcome.skippedOversized > 0) {
+      Alert.alert(
+        "Some Photos Skipped",
+        `${outcome.skippedOversized} photo(s) could not be resized under the upload limit and were skipped.`,
+      );
+    }
+  };
+
+  const handleAddFromLibrary = async () => {
+    if (isPickingPhoto || pendingImages.length >= MAX_EVIDENCE_IMAGES) {
+      return;
+    }
+
+    setIsPickingPhoto(true);
+    try {
+      const outcome = await pickEvidenceFromLibrary(
+        draftId,
+        MAX_EVIDENCE_IMAGES - pendingImages.length,
+      );
+      applyPickOutcome(outcome);
+    } finally {
+      setIsPickingPhoto(false);
+    }
+  };
+
+  const handleAddFromCamera = async () => {
+    if (isPickingPhoto || pendingImages.length >= MAX_EVIDENCE_IMAGES) {
+      return;
+    }
+
+    setIsPickingPhoto(true);
+    try {
+      const outcome = await captureEvidenceFromCamera(draftId);
+      applyPickOutcome(outcome);
+    } finally {
+      setIsPickingPhoto(false);
+    }
+  };
+
+  const handleReplaceImage = async (index: number) => {
+    if (isPickingPhoto) {
+      return;
+    }
+
+    setIsPickingPhoto(true);
+    try {
+      const outcome = await pickEvidenceFromLibrary(draftId, 1);
+      applyPickOutcome(outcome, index);
+    } finally {
+      setIsPickingPhoto(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setPendingImages((current) => {
+      const removed = current[index];
+
+      if (removed) {
+        deleteLocalEvidenceFile(removed.localUri);
+      }
+
+      return current
+        .filter((_, currentIndex) => currentIndex !== index)
+        .map((image, position) => ({ ...image, position }));
+    });
+  };
+
   const submitReport = async () => {
     if (isSubmitting) {
       return;
@@ -143,13 +300,23 @@ export default function ReportProductScreen() {
         category: cleanedCategory || "Uncategorized",
         reason: selectedReason,
         notes: cleanedNotes,
+        clientReportId: draftId,
+        pendingEvidence: pendingImages,
       });
+
+      hasSubmittedRef.current = true;
+
+      const evidenceStillPending =
+        submissionResult.report.pendingEvidence &&
+        submissionResult.report.pendingEvidence.length > 0;
 
       Alert.alert(
         "Report Submitted",
-        submissionResult.savedToBackend
-          ? "Your report was submitted and saved to your account."
-          : "Your report was saved on this device and will sync when the backend is available.",
+        !submissionResult.savedToBackend
+          ? "Your report was saved on this device and will sync when the backend is available."
+          : evidenceStillPending
+            ? "Your report was saved. Your photos could not be uploaded yet and will keep trying in the background."
+            : "Your report was submitted and saved to your account.",
         [
           {
             text: "View Reports",
@@ -336,6 +503,83 @@ export default function ReportProductScreen() {
             textAlignVertical="top"
             style={styles.notesInput}
           />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Photo Evidence (Optional)</Text>
+          <Text style={styles.evidenceHelpText}>
+            Add up to {MAX_EVIDENCE_IMAGES} photos of the product front, the
+            barcode, the FDA registration claim on the label, ingredients, the
+            expiry date, or anything about the packaging that looks
+            suspicious.
+          </Text>
+
+          <View style={styles.evidenceGrid}>
+            {pendingImages.map((image, index) => (
+              <Pressable
+                key={image.localUri}
+                style={styles.evidenceThumbWrapper}
+                disabled={isPickingPhoto}
+                onPress={() => void handleReplaceImage(index)}
+              >
+                <Image
+                  source={{ uri: image.localUri }}
+                  style={styles.evidenceThumb}
+                  contentFit="cover"
+                />
+                <Pressable
+                  accessibilityLabel="Remove photo"
+                  style={styles.evidenceRemoveButton}
+                  onPress={() => handleRemoveImage(index)}
+                >
+                  <Ionicons name="close" size={14} color="#FFFFFF" />
+                </Pressable>
+                <View style={styles.evidenceReplaceHint}>
+                  <Text style={styles.evidenceReplaceHintText}>Tap to replace</Text>
+                </View>
+              </Pressable>
+            ))}
+
+            {pendingImages.length < MAX_EVIDENCE_IMAGES && (
+              <View style={styles.evidenceAddRow}>
+                <Pressable
+                  style={styles.evidenceAddButton}
+                  disabled={isPickingPhoto}
+                  onPress={() => void handleAddFromLibrary()}
+                >
+                  {isPickingPhoto ? (
+                    <ActivityIndicator size="small" color="#4F46E5" />
+                  ) : (
+                    <Ionicons name="images-outline" size={20} color="#4F46E5" />
+                  )}
+                  <Text style={styles.evidenceAddButtonText}>
+                    Choose Photo
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.evidenceAddButton}
+                  disabled={isPickingPhoto}
+                  onPress={() => void handleAddFromCamera()}
+                >
+                  <Ionicons name="camera-outline" size={20} color="#4F46E5" />
+                  <Text style={styles.evidenceAddButtonText}>Take Photo</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+
+          <Text style={styles.evidenceCountText}>
+            {pendingImages.length}/{MAX_EVIDENCE_IMAGES} photos added
+          </Text>
+
+          <View style={styles.privacyNotice}>
+            <Ionicons name="shield-checkmark-outline" size={16} color="#62748E" />
+            <Text style={styles.privacyNoticeText}>
+              Please don&apos;t include faces, IDs, receipts, addresses, or
+              other personal information in your photos.
+            </Text>
+          </View>
         </View>
 
         <Pressable
@@ -625,6 +869,109 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: "#1D293D",
+  },
+
+  evidenceHelpText: {
+    marginTop: 8,
+    fontSize: 13,
+    lineHeight: 20,
+    color: "#62748E",
+  },
+
+  evidenceGrid: {
+    marginTop: 14,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+
+  evidenceThumbWrapper: {
+    width: 96,
+    height: 96,
+    borderRadius: 14,
+    overflow: "hidden",
+    backgroundColor: "#F1F5F9",
+  },
+
+  evidenceThumb: {
+    width: "100%",
+    height: "100%",
+  },
+
+  evidenceRemoveButton: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "rgba(15,23,43,0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  evidenceReplaceHint: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 3,
+    backgroundColor: "rgba(15,23,43,0.65)",
+    alignItems: "center",
+  },
+
+  evidenceReplaceHintText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  evidenceAddRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  evidenceAddButton: {
+    width: 96,
+    height: 96,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+    borderColor: "#C7D2FE",
+    backgroundColor: "#EEF2FF",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+
+  evidenceAddButtonText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#4F46E5",
+    textAlign: "center",
+  },
+
+  evidenceCountText: {
+    marginTop: 10,
+    fontSize: 12,
+    color: "#90A1B9",
+  },
+
+  privacyNotice: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: "#F1F5F9",
+  },
+
+  privacyNoticeText: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#62748E",
   },
 
   submitButton: {

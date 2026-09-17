@@ -1,6 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 import {
   AdminGate,
@@ -16,6 +26,7 @@ import { useAdminAccess } from "@/contexts/AdminAccessContext";
 import {
   adminRequest,
   type AdminReport,
+  type AdminReportEvidence,
   type AdminReportStatus,
 } from "@/services/admin-api";
 
@@ -40,6 +51,12 @@ export default function AdminReportDetailScreen() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [previewImage, setPreviewImage] = useState<AdminReportEvidence | null>(
+    null,
+  );
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -195,6 +212,88 @@ export default function AdminReportDetailScreen() {
                 </Pressable>
               )}
             </View>
+            <Text style={adminStyles.sectionTitle}>PHOTO EVIDENCE</Text>
+            {report.evidence.length === 0 ? (
+              <Text style={adminStyles.body}>
+                No photo evidence was submitted with this report.
+              </Text>
+            ) : (
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+                {[...report.evidence]
+                  .sort((a, b) => a.position - b.position)
+                  .map((item) => {
+                    const failed = failedImageIds.has(item.id);
+
+                    return (
+                      <Pressable
+                        key={item.id}
+                        disabled={!item.url || failed}
+                        onPress={() => setPreviewImage(item)}
+                        style={{
+                          width: 88,
+                          height: 88,
+                          borderRadius: 12,
+                          overflow: "hidden",
+                          backgroundColor: "#F1F5F9",
+                          borderWidth: 1,
+                          borderColor: adminColors.border,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {!item.url || failed ? (
+                          <>
+                            <Ionicons
+                              name={failed ? "alert-circle-outline" : "cloud-offline-outline"}
+                              size={20}
+                              color={adminColors.muted}
+                            />
+                            <Text style={{ fontSize: 10, color: adminColors.muted, marginTop: 4, textAlign: "center", paddingHorizontal: 4 }}>
+                              {failed ? "Image failed" : "Unavailable"}
+                            </Text>
+                          </>
+                        ) : (
+                          <Image
+                            source={{ uri: item.url }}
+                            style={{ width: "100%", height: "100%" }}
+                            contentFit="cover"
+                            onError={() =>
+                              setFailedImageIds((current) => new Set(current).add(item.id))
+                            }
+                          />
+                        )}
+                      </Pressable>
+                    );
+                  })}
+              </View>
+            )}
+            <Modal
+              visible={previewImage !== null}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setPreviewImage(null)}
+            >
+              <Pressable
+                style={{ flex: 1, backgroundColor: "rgba(15,23,43,0.92)", alignItems: "center", justifyContent: "center", padding: 20 }}
+                onPress={() => setPreviewImage(null)}
+              >
+                {previewImage?.url ? (
+                  <Image
+                    source={{ uri: previewImage.url }}
+                    style={{ width: "100%", height: "70%" }}
+                    contentFit="contain"
+                  />
+                ) : (
+                  <ActivityIndicator color="#FFFFFF" />
+                )}
+                <Pressable
+                  onPress={() => setPreviewImage(null)}
+                  style={{ position: "absolute", top: 48, right: 24, width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.15)", alignItems: "center", justifyContent: "center" }}
+                >
+                  <Ionicons name="close" size={22} color="#FFFFFF" />
+                </Pressable>
+              </Pressable>
+            </Modal>
             <Text style={adminStyles.sectionTitle}>REVIEW DECISION</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
               {statuses.map((item) => (

@@ -202,12 +202,43 @@ model ProductReport {
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  evidence ReportEvidence[]
 
   @@index([userId, submittedAt])
   @@unique([userId, clientReportId])
   @@index([productId])
   @@index([barcode])
   @@map("product_reports")
+}
+
+model ReportEvidence {
+  id         String   @id @default(uuid()) @db.Uuid
+  reportId   String   @map("report_id") @db.Uuid
+  storageKey String   @map("storage_key")
+  mimeType   String   @map("mime_type")
+  byteSize   Int      @map("byte_size")
+  width      Int?
+  height     Int?
+  position   Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  report ProductReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, position])
+  @@index([reportId])
+  @@map("report_evidence")
+}
+
+// A durable record of a storage object that failed to delete immediately
+// (e.g. the provider was unreachable when a report was deleted), so cleanup
+// can be retried later instead of silently leaking the object.
+model StorageCleanupTask {
+  id         String   @id @default(uuid()) @db.Uuid
+  storageKey String   @map("storage_key")
+  reason     String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("storage_cleanup_tasks")
 }
 
 model AdminAuditLog {

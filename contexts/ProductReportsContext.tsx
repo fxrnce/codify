@@ -12,6 +12,12 @@ import {
 } from "react";
 
 import { useNetworkStatus } from "@/contexts/NetworkContext";
+import {
+  deleteLocalEvidence,
+  uploadReportEvidence,
+  type PendingEvidenceImage,
+  type ReportEvidenceMeta,
+} from "@/services/report-evidence";
 
 const LEGACY_REPORTS_STORAGE_KEY = "codify_product_reports";
 const REPORTS_STORAGE_KEY_PREFIX = "codify_product_reports_user";
@@ -43,11 +49,26 @@ export type ProductReport = {
   resolutionNote?: string;
   reviewedAt?: string | null;
   updatedAt?: string;
+  // Evidence confirmed by the backend (has a real id + signed url).
+  evidence?: ReportEvidenceMeta[];
+  // Local-only photos not yet uploaded (offline, or the upload failed and
+  // is waiting to retry). The report is not fully synchronized while this
+  // is non-empty, even if the report text itself already saved.
+  pendingEvidence?: PendingEvidenceImage[];
+  evidenceUploadFailed?: boolean;
 };
 
 export type ProductReportDraft = Omit<
   ProductReport,
-  "id" | "pendingSync" | "submittedAt" | "status" | "resolutionNote" | "reviewedAt" | "updatedAt"
+  | "id"
+  | "pendingSync"
+  | "submittedAt"
+  | "status"
+  | "resolutionNote"
+  | "reviewedAt"
+  | "updatedAt"
+  | "evidence"
+  | "evidenceUploadFailed"
 >;
 
 type ProductReportApiResponse = {
@@ -190,6 +211,49 @@ async function postReportToBackend(
   }
 
   return responseBody.report;
+}
+
+// Uploads a report's queued local photos and folds the result back into the
+// report. On success the report is fully synchronized and the durable local
+// copies are removed; on failure the report keeps pendingSync=true and its
+// local files, so the next sync pass retries automatically without ever
+// losing the already-saved report text.
+async function syncPendingEvidence(
+  token: string,
+  report: ProductReport,
+  pendingEvidence: PendingEvidenceImage[],
+): Promise<ProductReport> {
+  if (!API_URL) {
+    return { ...report, pendingEvidence, pendingSync: true, evidenceUploadFailed: true };
+  }
+
+  try {
+    const evidence = await uploadReportEvidence(
+      API_URL,
+      token,
+      report.id,
+      pendingEvidence,
+    );
+
+    deleteLocalEvidence(report.clientReportId || report.id);
+
+    return {
+      ...report,
+      evidence,
+      pendingEvidence: [],
+      pendingSync: false,
+      evidenceUploadFailed: false,
+    };
+  } catch (error) {
+    console.log("Failed to upload queued report evidence:", error);
+
+    return {
+      ...report,
+      pendingEvidence,
+      pendingSync: true,
+      evidenceUploadFailed: true,
+    };
+  }
 }
 
 export function ProductReportsProvider({ children }: { children: ReactNode }) {
@@ -379,6 +443,40 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
           }
         }
 
+        // Catch up any report whose text has already synced (this round or a
+        // previous one) but whose photos are still only on this device —
+        // e.g. a prior evidence upload failed after the report itself saved.
+        for (const cachedReport of cachedReports) {
+          if (!cachedReport.pendingEvidence || cachedReport.pendingEvidence.length === 0) {
+            continue;
+          }
+
+          if (
+            authRef.current.userId !== currentAuth.userId ||
+            localMutationVersionRef.current !== refreshMutationVersion
+          ) {
+            return;
+          }
+
+          const reportKey = getReportKey(cachedReport);
+          const target = synchronizedReports.find(
+            (serverReport) => getReportKey(serverReport) === reportKey,
+          );
+
+          if (!target || !UUID_PATTERN.test(target.id)) {
+            // The report text itself has not synced yet; evidence waits for that.
+            continue;
+          }
+
+          const updatedReport = await syncPendingEvidence(
+            token,
+            target,
+            cachedReport.pendingEvidence,
+          );
+
+          synchronizedReports = mergeLatestReport(updatedReport, synchronizedReports);
+        }
+
         if (
           authRef.current.userId !== currentAuth.userId ||
           localMutationVersionRef.current !== refreshMutationVersion
@@ -427,8 +525,12 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
         barcode: normalizeBarcode(draft.barcode),
         submittedAt: new Date().toISOString(),
         pendingSync: true,
-        clientReportId: `report-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        clientReportId:
+          draft.clientReportId ||
+          `report-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         status: "PENDING",
+        evidence: [],
+        pendingEvidence: draft.pendingEvidence ?? [],
       };
 
       await replaceReports(
@@ -458,7 +560,12 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
           throw new Error("Clerk did not return a session token.");
         }
 
-        const savedReport = await postReportToBackend(token, localReport);
+        let savedReport = await postReportToBackend(token, localReport);
+
+        savedReport =
+          localReport.pendingEvidence && localReport.pendingEvidence.length > 0
+            ? await syncPendingEvidence(token, savedReport, localReport.pendingEvidence)
+            : { ...savedReport, pendingSync: false };
 
         await replaceReports(
           currentStorageKey,
@@ -487,6 +594,15 @@ export function ProductReportsProvider({ children }: { children: ReactNode }) {
     const currentAuth = authRef.current;
     const currentStorageKey = getStorageKey(currentAuth.userId);
     const previousReports = reportsRef.current;
+
+    // Reports still waiting on a photo upload only exist locally; once the
+    // report itself is cleared there is no later sync pass to clean up
+    // their durable local files, so do it now.
+    for (const report of previousReports) {
+      if (report.pendingEvidence && report.pendingEvidence.length > 0) {
+        deleteLocalEvidence(report.clientReportId || report.id);
+      }
+    }
 
     localMutationVersionRef.current += 1;
     reportsRef.current = [];

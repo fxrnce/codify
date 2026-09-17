@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { advisorySchema, equivalentBarcode, productSchema, reportStatusSchema, reviewSchema } from "../lib/admin-validation.js";
 import { buildTextSearch } from "../lib/search.js";
+import { getObjectStorage, type ObjectStorage } from "../lib/storage.js";
 import type { Prisma } from "../generated/prisma/client.js";
 
 const querySchema = z.object({
@@ -38,8 +39,16 @@ function pagination(page: number, limit: number, total: number) {
   return { page, limit, total, totalPages: Math.ceil(total / limit) };
 }
 
+async function recordCleanupFailure(db: typeof prisma, storageKey: string, reason: string) {
+  try {
+    await db.storageCleanupTask.create({ data: { storageKey, reason } });
+  } catch (error) {
+    console.error("Failed to record a storage cleanup task:", storageKey, error);
+  }
+}
+
 // Dependency injection permits authorization tests without a live database or Clerk session.
-export function createAdminRouter(db = prisma, authenticate = getAuth) {
+export function createAdminRouter(db = prisma, authenticate = getAuth, storage: ObjectStorage | null = getObjectStorage()) {
   const router = Router();
   router.use(async (request, response, next) => {
     try {
@@ -70,8 +79,19 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
     const id = parse(z.uuid(), request.params.id);
     const report = await db.productReport.findUnique({ where: { id } });
     if (!report) throw new AdminError(404, "Report not found.");
+    const evidenceRows = await db.reportEvidence.findMany({ where: { reportId: id }, orderBy: { position: "asc" } });
+    const evidence = await Promise.all([...evidenceRows].sort((a, b) => a.position - b.position).map(async row => ({
+      id: row.id,
+      url: storage ? await storage.getSignedGetUrl(row.storageKey) : null,
+      mimeType: row.mimeType,
+      byteSize: row.byteSize,
+      width: row.width,
+      height: row.height,
+      position: row.position,
+      createdAt: row.createdAt.toISOString(),
+    })));
     const history = await db.adminAuditLog.findMany({ where: { entityType: "REPORT", entityId: id }, orderBy: { createdAt: "desc" }, take: 50, select: { id: true, actorId: true, action: true, after: true, createdAt: true } });
-    response.json({ report, history });
+    response.json({ report: { ...report, evidence }, history });
   });
   router.patch("/reports/:id", async (request, response) => {
     const id = parse(z.uuid(), request.params.id);
@@ -90,17 +110,30 @@ export function createAdminRouter(db = prisma, authenticate = getAuth) {
   router.delete("/reports/:id", async (request, response) => {
     const id = parse(z.uuid(), request.params.id);
     const { updatedAt } = parse(deleteSchema, request.body);
-    await db.$transaction(async tx => {
+    const evidenceToDelete = await db.$transaction(async tx => {
       const before = await tx.productReport.findUnique({ where: { id } });
       if (!before) throw new AdminError(404, "Report not found.");
+      const evidence = await tx.reportEvidence.findMany({ where: { reportId: id }, orderBy: { position: "asc" } });
       // Log what was deleted before removing it, so there is still an accountability
-      // trail even though the report row itself is gone.
-      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "REPORT", entityId: id, action: "DELETE", before: json(before), after: json({ deleted: true }) } });
+      // trail even though the report row itself is gone. Evidence metadata (storage
+      // key, MIME type, size) is recorded, but never the image binary itself.
+      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "REPORT", entityId: id, action: "DELETE", before: json({ ...before, evidence }), after: json({ deleted: true }) } });
       const deleted = await tx.productReport.deleteMany({
         where: { id, updatedAt: new Date(updatedAt) },
       });
       if (deleted.count !== 1) throw new AdminError(409, "This report changed. Reload it before deleting.");
+      // ReportEvidence rows cascade-delete with the report; the external storage
+      // objects they point to do not, and must be cleaned up separately below.
+      return evidence;
     });
+    await Promise.allSettled(evidenceToDelete.map(async row => {
+      try {
+        if (!storage) throw new Error("Storage not configured.");
+        await storage.deleteObject(row.storageKey);
+      } catch {
+        await recordCleanupFailure(db, row.storageKey, "deleted-report");
+      }
+    }));
     response.json({ success: true });
   });
 

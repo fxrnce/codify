@@ -23,24 +23,29 @@
     "db:test": "tsx src/scripts/test-database.ts",
     "admin:set": "tsx src/scripts/set-admin.ts",
     "test:admin": "tsx --test tests/admin.test.ts",
-    "test": "tsx --test tests/admin.test.ts tests/product.test.ts tests/allergen.test.ts tests/scan.test.ts tests/advisory.test.ts tests/user.test.ts"
+    "test": "tsx --test tests/admin.test.ts tests/product.test.ts tests/allergen.test.ts tests/scan.test.ts tests/advisory.test.ts tests/user.test.ts tests/report.test.ts"
   },
   "engines": {
     "node": ">=24 <25"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1133.0",
+    "@aws-sdk/s3-request-presigner": "^3.1133.0",
     "@clerk/express": "^2.1.40",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "file-type": "^22.1.0",
+    "multer": "^2.4.0",
     "pg": "^8.22.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.2.0",
     "@types/node": "^24.10.9",
     "@types/pg": "^8.20.0",
     "prisma": "7.10.0",

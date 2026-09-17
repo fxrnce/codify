@@ -1,4 +1,7 @@
+import { randomUUID } from "node:crypto";
+
 import { getAuth } from "@clerk/express";
+import multer from "multer";
 import {
   Router,
   type NextFunction,
@@ -7,10 +10,28 @@ import {
 } from "express";
 import { z } from "zod";
 
+import {
+  MAX_EVIDENCE_FILES,
+  MAX_EVIDENCE_FILE_BYTES,
+  validateEvidenceFiles,
+} from "../lib/image-validation.js";
 import { prisma } from "../lib/prisma.js";
 import { productCodeSchema } from "../lib/product-code.js";
+import { getObjectStorage, type ObjectStorage } from "../lib/storage.js";
 
-export function createReportRouter(db = prisma, authenticate = getAuth) {
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_EVIDENCE_FILE_BYTES,
+    files: MAX_EVIDENCE_FILES,
+  },
+});
+
+export function createReportRouter(
+  db = prisma,
+  authenticate = getAuth,
+  storage: ObjectStorage | null = getObjectStorage(),
+) {
 const reportRouter = Router();
 
 const REPORT_REASONS = [
@@ -31,6 +52,8 @@ const reportBodySchema = z.object({
   clientReportId: z.string().trim().min(1).max(128).optional(),
 });
 
+const reportIdSchema = z.uuid();
+
 type DatabaseProductReport = {
   id: string;
   barcode: string | null;
@@ -45,6 +68,17 @@ type DatabaseProductReport = {
   reviewedAt: Date | null;
   updatedAt: Date;
   clientReportId: string | null;
+};
+
+type DatabaseReportEvidence = {
+  id: string;
+  storageKey: string;
+  mimeType: string;
+  byteSize: number;
+  width: number | null;
+  height: number | null;
+  position: number;
+  createdAt: Date;
 };
 
 function getAuthenticatedClerkUserId(
@@ -79,7 +113,27 @@ async function getOrCreateDatabaseUser(clerkUserId: string) {
   });
 }
 
-function mapReportToApi(report: DatabaseProductReport) {
+async function mapEvidenceToApi(rows: DatabaseReportEvidence[]) {
+  const sortedRows = [...rows].sort((a, b) => a.position - b.position);
+
+  return Promise.all(
+    sortedRows.map(async (row) => ({
+      id: row.id,
+      url: storage ? await storage.getSignedGetUrl(row.storageKey) : null,
+      mimeType: row.mimeType,
+      byteSize: row.byteSize,
+      width: row.width,
+      height: row.height,
+      position: row.position,
+      createdAt: row.createdAt.toISOString(),
+    })),
+  );
+}
+
+async function mapReportToApi(
+  report: DatabaseProductReport,
+  evidenceRows: DatabaseReportEvidence[] = [],
+) {
   return {
     id: report.id,
     barcode: report.barcode ?? "",
@@ -94,7 +148,24 @@ function mapReportToApi(report: DatabaseProductReport) {
     reviewedAt: report.reviewedAt?.toISOString() ?? null,
     updatedAt: report.updatedAt.toISOString(),
     clientReportId: report.clientReportId,
+    evidence: await mapEvidenceToApi(evidenceRows),
   };
+}
+
+async function recordCleanupFailure(storageKey: string, reason: string) {
+  try {
+    await db.storageCleanupTask.create({
+      data: { storageKey, reason },
+    });
+  } catch (error) {
+    // The cleanup task table is itself best-effort bookkeeping; if even
+    // that write fails, there is nothing left to do but log it.
+    console.error(
+      "Failed to record a storage cleanup task:",
+      storageKey,
+      error,
+    );
+  }
 }
 
 reportRouter.get(
@@ -118,9 +189,17 @@ reportRouter.get(
         orderBy: {
           submittedAt: "desc",
         },
+
+        include: {
+          evidence: { orderBy: { position: "asc" } },
+        },
       });
 
-      const reports = databaseReports.map(mapReportToApi);
+      const reports = await Promise.all(
+        databaseReports.map((report) =>
+          mapReportToApi(report, report.evidence),
+        ),
+      );
 
       response.status(200).json({
         success: true,
@@ -190,7 +269,178 @@ reportRouter.post(
       response.status(201).json({
         success: true,
         message: "Product report submitted successfully",
-        report: mapReportToApi(createdReport),
+        report: await mapReportToApi(createdReport, []),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// Evidence is uploaded as a follow-up request once the report row exists
+// (created above, possibly minutes or days earlier if the report was queued
+// offline). PUT replaces the report's whole evidence set in one call, which
+// makes a retried upload after a dropped connection naturally idempotent:
+// replaying the same request converges on the same end state instead of
+// appending duplicates.
+reportRouter.put(
+  "/reports/:id/evidence",
+  (request: Request, response: Response, next: NextFunction) => {
+    upload.array("images", MAX_EVIDENCE_FILES)(request, response, (error) => {
+      if (!error) {
+        next();
+        return;
+      }
+
+      if (error instanceof multer.MulterError) {
+        const message =
+          error.code === "LIMIT_FILE_SIZE"
+            ? `Each photo must be ${Math.floor(MAX_EVIDENCE_FILE_BYTES / (1024 * 1024))}MB or smaller.`
+            : error.code === "LIMIT_FILE_COUNT" || error.code === "LIMIT_UNEXPECTED_FILE"
+              ? `You can attach up to ${MAX_EVIDENCE_FILES} photos.`
+              : "The photos could not be uploaded.";
+
+        response.status(400).json({ success: false, message });
+        return;
+      }
+
+      next(error);
+    });
+  },
+  async (request: Request, response: Response, next: NextFunction) => {
+    const clerkUserId = getAuthenticatedClerkUserId(request, response);
+
+    if (!clerkUserId) {
+      return;
+    }
+
+    const parsedId = reportIdSchema.safeParse(request.params.id);
+
+    if (!parsedId.success) {
+      response.status(400).json({
+        success: false,
+        message: "Invalid report id.",
+      });
+
+      return;
+    }
+
+    try {
+      const databaseUser = await getOrCreateDatabaseUser(clerkUserId);
+      const report = await db.productReport.findUnique({
+        where: { id: parsedId.data },
+      });
+
+      // 404 (not 403) for a report that belongs to someone else, so a
+      // non-owner cannot even learn that the report id exists.
+      if (!report || report.userId !== databaseUser.id) {
+        response.status(404).json({
+          success: false,
+          message: "Report not found.",
+        });
+
+        return;
+      }
+
+      const files = (request.files as Express.Multer.File[] | undefined) ?? [];
+
+      const validation = await validateEvidenceFiles(
+        files.map((file) => ({ buffer: file.buffer })),
+      );
+
+      if (!validation.ok) {
+        response.status(400).json({
+          success: false,
+          message: "One or more photos are not a supported image type.",
+          errors: validation.errors,
+        });
+
+        return;
+      }
+
+      if (!storage) {
+        response.status(503).json({
+          success: false,
+          message:
+            "Photo evidence storage is not configured on this server yet.",
+        });
+
+        return;
+      }
+
+      const uploaded: {
+        key: string;
+        mimeType: string;
+        byteSize: number;
+        position: number;
+      }[] = [];
+
+      try {
+        for (const file of validation.files) {
+          const key = `report-evidence/${report.id}/${randomUUID()}.${file.extension}`;
+
+          await storage.putObject(key, file.buffer, file.mimeType);
+
+          uploaded.push({
+            key,
+            mimeType: file.mimeType,
+            byteSize: file.byteSize,
+            position: file.index,
+          });
+        }
+      } catch (uploadError) {
+        // Nothing in the database has changed yet, so this is fully
+        // retryable and the report text is untouched. Best-effort clean up
+        // whatever partial uploads did succeed before surfacing the error.
+        await Promise.allSettled(
+          uploaded.map((item) => storage!.deleteObject(item.key)),
+        );
+
+        next(uploadError);
+        return;
+      }
+
+      const previousEvidence = await db.reportEvidence.findMany({
+        where: { reportId: report.id },
+      });
+
+      await db.$transaction(async (tx) => {
+        await tx.reportEvidence.deleteMany({ where: { reportId: report.id } });
+
+        if (uploaded.length > 0) {
+          await tx.reportEvidence.createMany({
+            data: uploaded.map((item) => ({
+              reportId: report.id,
+              storageKey: item.key,
+              mimeType: item.mimeType,
+              byteSize: item.byteSize,
+              position: item.position,
+            })),
+          });
+        }
+      });
+
+      // The database row is already the source of truth for what evidence
+      // exists; deleting the replaced objects is best-effort cleanup, not a
+      // correctness requirement.
+      await Promise.allSettled(
+        previousEvidence.map(async (previous) => {
+          try {
+            await storage!.deleteObject(previous.storageKey);
+          } catch {
+            await recordCleanupFailure(previous.storageKey, "replaced-evidence");
+          }
+        }),
+      );
+
+      const evidenceRows = await db.reportEvidence.findMany({
+        where: { reportId: report.id },
+        orderBy: { position: "asc" },
+      });
+
+      response.json({
+        success: true,
+        report: await mapReportToApi(report, evidenceRows),
       });
     } catch (error) {
       next(error);

@@ -5,6 +5,17 @@ export type AdminReportStatus =
   | "RESOLVED"
   | "REJECTED";
 
+export type AdminReportEvidence = {
+  id: string;
+  url: string | null;
+  mimeType: string;
+  byteSize: number;
+  width: number | null;
+  height: number | null;
+  position: number;
+  createdAt: string;
+};
+
 export type AdminReport = {
   id: string;
   productId: string | null;
@@ -19,6 +30,7 @@ export type AdminReport = {
   submittedAt: string;
   reviewedAt: string | null;
   updatedAt: string;
+  evidence: AdminReportEvidence[];
 };
 
 export type AdminProductSummary = {

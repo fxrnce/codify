@@ -61,6 +61,29 @@ https://codify-api-hkjj.onrender.com/health
 
 The response should have HTTP status `200` and identify `codify-backend`.
 
+## 2b. Configure photo evidence storage (optional)
+
+Product reports can include up to three photos as evidence. Photos are
+never stored as base64 in the database or on Render's disk (deployed files
+disappear on redeploy) — they go to an S3-compatible object storage bucket,
+configured entirely through backend environment variables. If these are not
+set, the app still works fully; only photo upload is disabled, returning a
+clear "not configured" error instead of failing to start.
+
+Any S3-compatible provider works: Cloudflare R2 (recommended — free tier,
+no egress fees), Supabase Storage, AWS S3, Backblaze B2, or self-hosted
+MinIO. Create a private (non-public) bucket, then add these to Render:
+
+- `STORAGE_S3_BUCKET`
+- `STORAGE_S3_REGION` (use `auto` for R2)
+- `STORAGE_S3_ENDPOINT` (the provider's S3 API endpoint; omit for AWS S3)
+- `STORAGE_S3_ACCESS_KEY_ID`
+- `STORAGE_S3_SECRET_ACCESS_KEY`
+- `STORAGE_S3_FORCE_PATH_STYLE` (`true` for most MinIO setups; otherwise omit)
+
+The backend generates short-lived signed URLs for reading evidence photos
+rather than exposing the bucket publicly, so the bucket should stay private.
+
 ## 3. Configure EAS environments
 
 Sign in and verify that the local project is linked to the expected EAS project:

@@ -11,7 +11,7 @@ const id = "00000000-0000-4000-8000-000000000001";
 const timestamp = "2026-09-14T00:00:00.000Z";
 const original = { id, status: "PENDING", resolutionNote: "", updatedAt: new Date(timestamp) };
 
-async function request(role: "ADMIN" | "USER" | null, path: string, method = "GET", body?: unknown, overrides: Record<string, unknown> = {}, factory = createAdminRouter) {
+async function request(role: "ADMIN" | "USER" | null, path: string, method = "GET", body?: unknown, overrides: Record<string, unknown> = {}, factory = createAdminRouter, storage?: unknown) {
   const db = {
     user: { findUnique: async () => role ? { id, role } : null },
     ...overrides,
@@ -19,7 +19,7 @@ async function request(role: "ADMIN" | "USER" | null, path: string, method = "GE
   const auth = (() => ({ isAuthenticated: role !== null, userId: role ? "user_test" : null })) as unknown as typeof getAuth;
   const app = express();
   app.use(express.json());
-  app.use("/api/admin", factory(db, auth));
+  app.use("/api/admin", (factory as typeof createAdminRouter)(db, auth, storage as never));
   const server = app.listen(0, "127.0.0.1");
   await new Promise<void>(resolve => server.on("listening", resolve));
   try {
@@ -139,6 +139,7 @@ test("deleting a report logs an audit entry before removing the expected version
           findUnique: async () => original,
           deleteMany: async ({ where }: { where: { id: string; updatedAt: Date } }) => { operations.push("delete"); deleteWhere = where; deletedId = where.id; return { count: 1 }; },
         },
+        reportEvidence: { findMany: async () => [] },
         adminAuditLog: { create: async (input: unknown) => { operations.push("audit"); audit = input; } },
       });
     },
@@ -160,6 +161,81 @@ test("deleting a missing report returns 404 without writing an audit entry", asy
     }),
   });
   assert.equal(result.status, 404);
+});
+test("admin can view a report's photo evidence with signed URLs, in display order", async () => {
+  const evidenceRows = [
+    { id: "ev-1", storageKey: "report-evidence/x/1.jpg", mimeType: "image/jpeg", byteSize: 1000, width: null, height: null, position: 1, createdAt: new Date(timestamp) },
+    { id: "ev-0", storageKey: "report-evidence/x/0.jpg", mimeType: "image/jpeg", byteSize: 900, width: null, height: null, position: 0, createdAt: new Date(timestamp) },
+  ];
+  const storage = { getSignedGetUrl: async (key: string) => `https://cdn.test/${key}` };
+  const result = await request("ADMIN", `/reports/${id}`, "GET", undefined, {
+    productReport: { findUnique: async () => original },
+    reportEvidence: { findMany: async () => evidenceRows },
+    adminAuditLog: { findMany: async () => [] },
+  }, createAdminRouter, storage);
+  assert.equal(result.status, 200);
+  assert.equal(result.body.report.evidence.length, 2);
+  assert.equal(result.body.report.evidence[0].position, 0);
+  assert.equal(result.body.report.evidence[0].url, "https://cdn.test/report-evidence/x/0.jpg");
+  assert.equal(result.body.report.evidence[1].position, 1);
+});
+test("admin report evidence shows a null URL (not an error) when storage is not configured", async () => {
+  const result = await request("ADMIN", `/reports/${id}`, "GET", undefined, {
+    productReport: { findUnique: async () => original },
+    reportEvidence: { findMany: async () => [{ id: "ev-0", storageKey: "k", mimeType: "image/jpeg", byteSize: 1, width: null, height: null, position: 0, createdAt: new Date(timestamp) }] },
+    adminAuditLog: { findMany: async () => [] },
+  }, createAdminRouter, null);
+  assert.equal(result.status, 200);
+  assert.equal(result.body.report.evidence[0].url, null);
+});
+test("deleting a report removes its stored evidence objects and audits their metadata, never the binary", async () => {
+  const evidenceRows = [
+    { id: "ev-0", storageKey: "report-evidence/x/0.jpg", mimeType: "image/jpeg", byteSize: 900, width: null, height: null, position: 0, createdAt: new Date(timestamp) },
+  ];
+  let audit: any;
+  const deletedKeys: string[] = [];
+  const storage = {
+    deleteObject: async (key: string) => { deletedKeys.push(key); },
+  };
+  const result = await request("ADMIN", `/reports/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      productReport: {
+        findUnique: async () => original,
+        deleteMany: async () => ({ count: 1 }),
+      },
+      reportEvidence: { findMany: async () => evidenceRows },
+      adminAuditLog: { create: async (input: unknown) => { audit = input; } },
+    }),
+  }, createAdminRouter, storage);
+  assert.equal(result.status, 200);
+  assert.deepEqual(deletedKeys, ["report-evidence/x/0.jpg"]);
+  assert.equal(audit.data.before.evidence[0].storageKey, "report-evidence/x/0.jpg");
+  assert.equal(audit.data.before.evidence[0].mimeType, "image/jpeg");
+  assert.equal("buffer" in audit.data.before.evidence[0], false);
+});
+test("a storage failure while deleting a report records a cleanup task instead of losing track of the object", async () => {
+  const evidenceRows = [
+    { id: "ev-0", storageKey: "report-evidence/x/0.jpg", mimeType: "image/jpeg", byteSize: 900, width: null, height: null, position: 0, createdAt: new Date(timestamp) },
+  ];
+  const cleanupTasks: { storageKey: string; reason: string }[] = [];
+  const storage = {
+    deleteObject: async () => { throw new Error("storage unreachable"); },
+  };
+  const result = await request("ADMIN", `/reports/${id}`, "DELETE", { updatedAt: timestamp }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      productReport: {
+        findUnique: async () => original,
+        deleteMany: async () => ({ count: 1 }),
+      },
+      reportEvidence: { findMany: async () => evidenceRows },
+      adminAuditLog: { create: async () => {} },
+    }),
+    storageCleanupTask: { create: async ({ data }: { data: { storageKey: string; reason: string } }) => { cleanupTasks.push(data); } },
+  }, createAdminRouter, storage);
+  assert.equal(result.status, 200);
+  assert.equal(cleanupTasks.length, 1);
+  assert.equal(cleanupTasks[0].storageKey, "report-evidence/x/0.jpg");
+  assert.equal(cleanupTasks[0].reason, "deleted-report");
 });
 const product = {
   slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", healthScore: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
