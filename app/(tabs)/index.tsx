@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import BarcodeSamples from "@/components/home/BarcodeSamples";
 import FdaAdvisoriesCard from "@/components/home/fda-advisories-card";
 import Header from "@/components/home/Header";
+import RecentlyAddedProductsCard from "@/components/home/RecentlyAddedProductsCard";
 import RecentScans from "@/components/home/RecentScans";
 import ScanProductCard from "@/components/home/ScanProductCard";
 import StatusGuide from "@/components/home/StatusGuide";
@@ -30,6 +31,8 @@ export default function HomeScreen() {
         <ScanProductCard />
 
         <FdaAdvisoriesCard />
+
+        <RecentlyAddedProductsCard />
 
         <StatusGuide />
 

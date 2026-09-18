@@ -17,10 +17,7 @@ import {
   demoProducts,
 } from "@/constants/MockData";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
-import {
-  loadCachedProductCatalog,
-  refreshProductCatalog,
-} from "@/services/products";
+import { loadCachedProductCatalog } from "@/services/products";
 import { matchesCatalogSearch } from "@/utils/search";
 
 function getStatusStyle(status: ProductStatus) {
@@ -73,31 +70,27 @@ export default function SearchProductScreen() {
 
   const isNavigatingRef = useRef(false);
 
+  // The app-wide sync in the root layout already keeps the local product
+  // cache fresh — it's the only place that should call
+  // refreshProductCatalog() / replace the cache, since two components
+  // racing to run competing SQLite write transactions causes "database is
+  // locked" errors. This screen only ever reads the cache, and re-reads
+  // whenever connectivity changes or that sync last completed.
   useEffect(() => {
     let isMounted = true;
-    const controller = new AbortController();
 
     const loadCatalog = async () => {
-      const cachedProducts = await loadCachedProductCatalog();
-      if (isMounted && cachedProducts.length > 0) {
-        setProducts(cachedProducts);
-      }
-
-      if (!isBackendReachable) {
-        if (isMounted) setIsUsingOfflineCatalog(true);
-        return;
-      }
-
       try {
-        const backendProducts = await refreshProductCatalog(controller.signal);
+        const cachedProducts = await loadCachedProductCatalog();
 
-        if (isMounted && backendProducts.length > 0) {
-          setProducts(backendProducts);
-          setIsUsingOfflineCatalog(false);
+        if (isMounted && cachedProducts.length > 0) {
+          setProducts(cachedProducts);
         }
       } catch (error) {
-        if (!(error instanceof Error && error.name === "AbortError")) {
-          setIsUsingOfflineCatalog(true);
+        console.log("Failed to load cached product catalog:", error);
+      } finally {
+        if (isMounted) {
+          setIsUsingOfflineCatalog(!isBackendReachable);
         }
       }
     };
@@ -106,9 +99,8 @@ export default function SearchProductScreen() {
 
     return () => {
       isMounted = false;
-      controller.abort();
     };
-  }, [isBackendReachable]);
+  }, [isBackendReachable, lastCatalogSyncAt]);
 
   const lastSyncLabel = useMemo(() => {
     if (!lastCatalogSyncAt) return "";

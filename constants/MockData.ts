@@ -18,6 +18,7 @@ export type DemoProduct = {
   warningMessage: string;
   imageUrl?: string | null;
   verificationUrl?: string | null;
+  createdAt: string;
   nutrition: {
     calories: string;
     protein: string;
@@ -63,6 +64,7 @@ export const recentScans = [
 export const demoProducts: DemoProduct[] = [
   {
     id: "green-cross-total-defense-hand-spray-40ml",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "4800047865152",
     name: "Green Cross Total Defense Antibacterial Hand Spray 40mL",
     brand: "Green Cross",
@@ -100,6 +102,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "safeguard-pure-white-bar-soap-90g",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "4987176026750",
     name: "Safeguard Pure White Bar Soap 90g",
     brand: "Safeguard",
@@ -151,6 +154,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "super-delights-brownie-bites-14g",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "4800365881315",
     name: "Super Delights Brownie Bites 14g",
     brand: "Super Delights",
@@ -197,6 +201,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "coca-cola-original-taste-can-320ml",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "4801981110001",
     name: "Coca-Cola Original Taste 320mL Can",
     brand: "Coca-Cola",
@@ -238,6 +243,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "century-tuna-flakes-in-oil-155g",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "748485100401",
     name: "Century Tuna Flakes in Oil 155g",
     brand: "Century",
@@ -278,6 +284,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "athlene-active-creatine-monohydrate-300g",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "0745125547008",
     name: "Athlene Active Creatine Monohydrate 300g",
     brand: "Athlene",
@@ -308,6 +315,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "atc-fish-oil-1000mg-30-softgels",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "4806518900247",
     name: "ATC Fish Oil 1000mg 30 Softgel Capsules",
     brand: "ATC Healthcare",
@@ -345,6 +353,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "nescafe-tradicao-forte-200g",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "7891000304808",
     name: "Nescafé Tradição Forte 200g",
     brand: "Nescafé",
@@ -375,6 +384,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "biogesic-paracetamol-500mg-tablet",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "DR-XY39670",
     name: "Biogesic Paracetamol 500mg Tablet",
     brand: "Biogesic",
@@ -402,6 +412,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "neozep-forte-tablet",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "DR-XY29559",
     name: "Neozep Forte Tablet",
     brand: "Neozep Forte",
@@ -432,6 +443,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "bioflu-tablet",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "DR-XY34482",
     name: "Bioflu Tablet",
     brand: "Bioflu",
@@ -463,6 +475,7 @@ export const demoProducts: DemoProduct[] = [
   },
   {
     id: "nescafe-classic-190g-brazil-algeria",
+    createdAt: "2026-01-01T00:00:00.000Z",
     barcode: "7891000361917",
     name: "Nescafé Classic 190g",
     brand: "Nescafé",

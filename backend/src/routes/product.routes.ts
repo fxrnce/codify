@@ -74,6 +74,7 @@ export function createProductRouter(db = prisma) {
             warningMessage: true,
             imageUrl: true,
             verificationUrl: true,
+            createdAt: true,
 
             nutrition: true,
 
@@ -128,6 +129,7 @@ export function createProductRouter(db = prisma) {
             warningMessage: product.warningMessage,
             imageUrl: product.imageUrl,
             verificationUrl: product.verificationUrl,
+            createdAt: product.createdAt.toISOString(),
             nutrition: product.nutrition
               ? {
                   calories: product.nutrition.calories,
@@ -246,6 +248,7 @@ export function createProductRouter(db = prisma) {
             warningMessage: product.warningMessage,
             imageUrl: product.imageUrl,
             verificationUrl: product.verificationUrl,
+            createdAt: product.createdAt.toISOString(),
 
             nutrition: product.nutrition
               ? {

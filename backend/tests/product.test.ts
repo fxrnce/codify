@@ -19,6 +19,7 @@ const baseProduct = {
   warningMessage: "None",
   imageUrl: null,
   verificationUrl: null,
+  createdAt: new Date("2026-01-01T00:00:00.000Z"),
   isArchived: false,
   nutrition: null,
   ingredients: [],
@@ -47,6 +48,10 @@ test("GET /products only returns non-archived catalog entries with default nutri
     assert.equal(result.status, 200);
     assert.deepEqual(query.where, { isArchived: false });
     assert.equal(result.body.products[0].status, "Approved");
+    assert.equal(
+      result.body.products[0].createdAt,
+      "2026-01-01T00:00:00.000Z",
+    );
     assert.deepEqual(result.body.products[0].nutrition, {
       calories: "N/A",
       protein: "N/A",
