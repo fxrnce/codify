@@ -59,6 +59,32 @@ enum ReportStatus {
   @@map("report_status")
 }
 
+// Health Star Rating (AU/NZ) categories used by the HSR-based nutrition
+// rating estimator. See backend/src/lib/nutrition-score.ts and
+// docs/nutrition-rating-methodology.md for the calculation method and
+// official references. PLAIN_WATER and UNSWEETENED_FLAVOURED_WATER are
+// automatic-rating special cases, not general nutrient-profiling categories.
+enum HsrCategory {
+  NON_DAIRY_BEVERAGE
+  DAIRY_BEVERAGE
+  FOOD
+  DAIRY_FOOD
+  FATS_OILS_SPREADS
+  CHEESE
+  PLAIN_WATER
+  UNSWEETENED_FLAVOURED_WATER
+
+  @@map("hsr_category")
+}
+
+enum HsrConfidence {
+  COMPLETE
+  CONSERVATIVE
+  INSUFFICIENT_DATA
+
+  @@map("hsr_confidence")
+}
+
 model User {
   id          String   @id @default(uuid()) @db.Uuid
   clerkUserId String   @unique @map("clerk_user_id")
@@ -84,7 +110,6 @@ model Product {
   status             ProductStatus
   fdaStatusLabel     String        @map("fda_status_label")
   registrationNumber String        @map("registration_number")
-  healthScore        Int?          @map("health_score")
   servingSize        String        @map("serving_size")
   warningMessage     String        @map("warning_message")
   imageUrl           String?       @map("image_url")
@@ -93,12 +118,13 @@ model Product {
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
 
-  nutrition    NutritionFact?
-  ingredients  ProductIngredient[]
-  allergens    ProductAllergen[]
-  alternatives ProductAlternative[]
-  scans        Scan[]
-  reports      ProductReport[]
+  nutrition       NutritionFact?
+  nutritionRating NutritionRating?
+  ingredients     ProductIngredient[]
+  allergens       ProductAllergen[]
+  alternatives    ProductAlternative[]
+  scans           Scan[]
+  reports         ProductReport[]
 
   @@index([status])
   @@index([category])
@@ -120,6 +146,63 @@ model NutritionFact {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("nutrition_facts")
+}
+
+// Stores everything needed to reproduce an HSR-based nutrition rating: the
+// verified numeric inputs an administrator entered (per serving, as printed
+// on the label), the values standardized to per 100 g / 100 mL, the point
+// breakdown, and the resulting star rating. The backend always derives
+// starRatingHalfSteps and the point fields from the verified inputs via
+// backend/src/lib/nutrition-score.ts — nothing here is submitted directly by
+// an administrator. A half-star rating is stored as an integer half-step
+// from 1 (0.5 star) to 10 (5 stars) to avoid floating-point ambiguity and to
+// avoid resembling the old, misleading 0-100 "percentage-like" health score.
+model NutritionRating {
+  id        String        @id @default(uuid()) @db.Uuid
+  productId String        @unique @map("product_id") @db.Uuid
+  category  HsrCategory
+  confidence HsrConfidence
+  methodVersion String    @map("method_version")
+  reason    String?
+
+  // Verified inputs, as printed on the label, per serving.
+  servingQuantity             Float?  @map("serving_quantity")
+  servingUnit                 String? @map("serving_unit")
+  caloriesPerServing          Float?  @map("calories_per_serving")
+  saturatedFatGramsPerServing Float?  @map("saturated_fat_grams_per_serving")
+  totalSugarsGramsPerServing  Float?  @map("total_sugars_grams_per_serving")
+  sodiumMilligramsPerServing  Float?  @map("sodium_milligrams_per_serving")
+  proteinGramsPerServing      Float?  @map("protein_grams_per_serving")
+  fibreGramsPerServing        Float?  @map("fibre_grams_per_serving")
+  fvnlPercent                 Float?  @map("fvnl_percent")
+  containsFruitOrVegetable    Boolean @default(false) @map("contains_fruit_or_vegetable")
+  containsNutsOrLegumes       Boolean @default(false) @map("contains_nuts_or_legumes")
+
+  // Values standardized to per 100 g / 100 mL, shown in "Why this rating?".
+  energyKilojoulesPer100  Float?
+  saturatedFatGramsPer100 Float?
+  totalSugarsGramsPer100  Float?
+  sodiumMilligramsPer100  Float?
+  proteinGramsPer100      Float?
+  fibreGramsPer100        Float?
+
+  baselinePoints              Int?     @map("baseline_points")
+  proteinPoints               Int?     @map("protein_points")
+  fibrePoints                 Int?     @map("fibre_points")
+  fvnlPoints                  Int?     @map("fvnl_points")
+  finalPoints                 Int?     @map("final_points")
+  proteinPointsWithheldByRule Boolean  @default(false) @map("protein_points_withheld_by_rule")
+  unavailableComponents       String[] @default([]) @map("unavailable_components")
+
+  // 1 = 0.5 star ... 10 = 5 stars. Null when confidence is INSUFFICIENT_DATA.
+  starRatingHalfSteps Int? @map("star_rating_half_steps")
+
+  calculatedAt DateTime @default(now()) @map("calculated_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("nutrition_ratings")
 }
 
 model ProductIngredient {

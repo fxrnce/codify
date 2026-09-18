@@ -1,3 +1,5 @@
+import type { HsrCategory, HsrConfidence } from "@/types/nutrition-rating";
+
 export type AdminRole = "USER" | "ADMIN";
 export type AdminReportStatus =
   | "PENDING"
@@ -44,11 +46,44 @@ export type AdminProductSummary = {
   updatedAt: string;
 };
 
+export type AdminNutritionRating = {
+  category: HsrCategory;
+  confidence: HsrConfidence;
+  reason: string | null;
+  servingQuantity: number | null;
+  servingUnit: string | null;
+  caloriesPerServing: number | null;
+  saturatedFatGramsPerServing: number | null;
+  totalSugarsGramsPerServing: number | null;
+  sodiumMilligramsPerServing: number | null;
+  proteinGramsPerServing: number | null;
+  fibreGramsPerServing: number | null;
+  fvnlPercent: number | null;
+  containsFruitOrVegetable: boolean;
+  containsNutsOrLegumes: boolean;
+  starRatingHalfSteps: number | null;
+};
+
+export type AdminNutritionRatingInput = {
+  category: HsrCategory;
+  servingQuantity?: number;
+  servingUnit?: "g" | "mL";
+  caloriesPerServing?: number;
+  saturatedFatGramsPerServing?: number;
+  totalSugarsGramsPerServing?: number;
+  sodiumMilligramsPerServing?: number;
+  proteinGramsPerServing?: number;
+  fibreGramsPerServing?: number;
+  fvnlPercent?: number;
+  containsFruitOrVegetable?: boolean;
+  containsNutsOrLegumes?: boolean;
+};
+
 export type AdminProduct = AdminProductSummary & {
   slug: string;
   fdaStatusLabel: string;
   registrationNumber: string;
-  healthScore: number | null;
+  nutritionRating: AdminNutritionRating | null;
   servingSize: string;
   warningMessage: string;
   imageUrl: string | null;

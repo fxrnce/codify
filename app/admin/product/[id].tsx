@@ -12,7 +12,113 @@ import {
   fieldErrorMap,
 } from "@/components/admin/admin-common";
 import { useAdminAccess } from "@/contexts/AdminAccessContext";
-import { AdminApiError, adminRequest, type AdminProduct } from "@/services/admin-api";
+import {
+  AdminApiError,
+  adminRequest,
+  type AdminNutritionRating,
+  type AdminNutritionRatingInput,
+  type AdminProduct,
+} from "@/services/admin-api";
+import {
+  HSR_CATEGORIES,
+  HSR_CATEGORY_LABELS,
+  type HsrCategory,
+} from "@/types/nutrition-rating";
+
+const WATER_CATEGORIES: HsrCategory[] = ["PLAIN_WATER", "UNSWEETENED_FLAVOURED_WATER"];
+
+type NutritionRatingFormState = {
+  enabled: boolean;
+  category: HsrCategory;
+  servingQuantity: string;
+  servingUnit: "g" | "mL";
+  caloriesPerServing: string;
+  saturatedFatGramsPerServing: string;
+  totalSugarsGramsPerServing: string;
+  sodiumMilligramsPerServing: string;
+  proteinGramsPerServing: string;
+  fibreGramsPerServing: string;
+  fvnlPercent: string;
+  containsFruitOrVegetable: boolean;
+  containsNutsOrLegumes: boolean;
+};
+
+const emptyNutritionRatingForm: NutritionRatingFormState = {
+  enabled: false,
+  category: "FOOD",
+  servingQuantity: "",
+  servingUnit: "g",
+  caloriesPerServing: "",
+  saturatedFatGramsPerServing: "",
+  totalSugarsGramsPerServing: "",
+  sodiumMilligramsPerServing: "",
+  proteinGramsPerServing: "",
+  fibreGramsPerServing: "",
+  fvnlPercent: "",
+  containsFruitOrVegetable: false,
+  containsNutsOrLegumes: false,
+};
+
+function numberToFieldText(value: number | null) {
+  return value === null || value === undefined ? "" : String(value);
+}
+
+function nutritionRatingToForm(
+  rating: AdminNutritionRating | null,
+): NutritionRatingFormState {
+  if (!rating) return emptyNutritionRatingForm;
+
+  return {
+    enabled: true,
+    category: rating.category,
+    servingQuantity: numberToFieldText(rating.servingQuantity),
+    servingUnit: rating.servingUnit === "mL" ? "mL" : "g",
+    caloriesPerServing: numberToFieldText(rating.caloriesPerServing),
+    saturatedFatGramsPerServing: numberToFieldText(rating.saturatedFatGramsPerServing),
+    totalSugarsGramsPerServing: numberToFieldText(rating.totalSugarsGramsPerServing),
+    sodiumMilligramsPerServing: numberToFieldText(rating.sodiumMilligramsPerServing),
+    proteinGramsPerServing: numberToFieldText(rating.proteinGramsPerServing),
+    fibreGramsPerServing: numberToFieldText(rating.fibreGramsPerServing),
+    fvnlPercent: numberToFieldText(rating.fvnlPercent),
+    containsFruitOrVegetable: rating.containsFruitOrVegetable,
+    containsNutsOrLegumes: rating.containsNutsOrLegumes,
+  };
+}
+
+function parseOptionalNumber(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+// The backend always (re)computes the star rating, confidence, and point
+// breakdown from these verified inputs — there is no field here to submit a
+// rating, score, or point total directly.
+function nutritionRatingFormToInput(
+  form: NutritionRatingFormState,
+): AdminNutritionRatingInput | null {
+  if (!form.enabled) return null;
+
+  if (WATER_CATEGORIES.includes(form.category)) {
+    return { category: form.category };
+  }
+
+  return {
+    category: form.category,
+    servingQuantity: parseOptionalNumber(form.servingQuantity),
+    servingUnit: form.servingUnit,
+    caloriesPerServing: parseOptionalNumber(form.caloriesPerServing),
+    saturatedFatGramsPerServing: parseOptionalNumber(form.saturatedFatGramsPerServing),
+    totalSugarsGramsPerServing: parseOptionalNumber(form.totalSugarsGramsPerServing),
+    sodiumMilligramsPerServing: parseOptionalNumber(form.sodiumMilligramsPerServing),
+    proteinGramsPerServing: parseOptionalNumber(form.proteinGramsPerServing),
+    fibreGramsPerServing: parseOptionalNumber(form.fibreGramsPerServing),
+    fvnlPercent: parseOptionalNumber(form.fvnlPercent),
+    containsFruitOrVegetable: form.containsFruitOrVegetable,
+    containsNutsOrLegumes: form.containsNutsOrLegumes,
+  };
+}
 
 const nutritionKeys = [
   "calories",
@@ -25,9 +131,13 @@ const nutritionKeys = [
   "sodium",
 ] as const;
 
-type ProductDraft = Omit<AdminProduct, "id" | "updatedAt" | "allergens" | "alternatives"> & {
+type ProductDraft = Omit<
+  AdminProduct,
+  "id" | "updatedAt" | "allergens" | "alternatives" | "nutritionRating"
+> & {
   allergens: string[];
   alternatives: string[];
+  nutritionRating: NutritionRatingFormState;
 };
 
 const emptyProduct: ProductDraft = {
@@ -39,7 +149,7 @@ const emptyProduct: ProductDraft = {
   status: "UNVERIFIED",
   fdaStatusLabel: "FDA Verification Pending",
   registrationNumber: "Not verified",
-  healthScore: null,
+  nutritionRating: emptyNutritionRatingForm,
   servingSize: "",
   warningMessage: "",
   imageUrl: null,
@@ -114,7 +224,7 @@ export default function AdminProductEditorScreen() {
         status: product.status,
         fdaStatusLabel: product.fdaStatusLabel,
         registrationNumber: product.registrationNumber,
-        healthScore: product.healthScore,
+        nutritionRating: nutritionRatingToForm(product.nutritionRating),
         servingSize: product.servingSize,
         warningMessage: product.warningMessage,
         imageUrl: product.imageUrl,
@@ -169,6 +279,7 @@ export default function AdminProductEditorScreen() {
     if (saving || deleting || !isOnline) return;
     const product = {
       ...draft,
+      nutritionRating: nutritionRatingFormToInput(draft.nutritionRating),
       ingredients: fromLines(ingredientLines).map((line) => ({
         name: line.replace(/^\*\s*/, ""),
         isAllergen: line.startsWith("*"),
@@ -252,6 +363,21 @@ export default function AdminProductEditorScreen() {
     });
   };
 
+  const setNutritionRating = <Key extends keyof NutritionRatingFormState>(
+    key: Key,
+    value: NutritionRatingFormState[Key],
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      nutritionRating: { ...current.nutritionRating, [key]: value },
+    }));
+    setFieldErrors((current) => {
+      if (!current.nutritionRating) return current;
+      const { nutritionRating: _removed, ...rest } = current;
+      return rest;
+    });
+  };
+
   return (
     <AdminGate>
       <ScrollView
@@ -313,17 +439,131 @@ export default function AdminProductEditorScreen() {
                 editable={!saving && isOnline}
               />
             ))}
-            <AdminTextField
-              label="Reviewed health score (0–100, optional)"
-              value={draft.healthScore?.toString() ?? ""}
-              onChangeText={(value) => {
-                const digitsOnly = value.replace(/[^0-9]/g, "");
-                set("healthScore", digitsOnly ? Number(digitsOnly) : null);
+            <Text style={adminStyles.sectionTitle}>NUTRITION RATING (HSR ESTIMATE)</Text>
+            <Text style={{ color: adminColors.muted, fontSize: 11, lineHeight: 16 }}>
+              The backend always calculates the star rating, confidence, and point breakdown from these verified values using the Health Star Rating method — there is no field to enter a rating or score directly.
+            </Text>
+            {fieldErrors.nutritionRating && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.nutritionRating}</Text>}
+            <Pressable
+              disabled={saving || !isOnline}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                borderWidth: 1,
+                borderColor: adminColors.border,
+                borderRadius: 13,
+                padding: 14,
+                backgroundColor: "#FFFFFF",
+                marginTop: 8,
               }}
-              editable={!saving && isOnline}
-              keyboardType="number-pad"
-              error={fieldErrors.healthScore}
-            />
+              onPress={() => setNutritionRating("enabled", !draft.nutritionRating.enabled)}
+            >
+              <View style={{ width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: draft.nutritionRating.enabled ? adminColors.primary : "#98A2B3", backgroundColor: draft.nutritionRating.enabled ? adminColors.primary : "transparent", alignItems: "center", justifyContent: "center" }}>
+                {draft.nutritionRating.enabled && <Text style={{ color: "white", fontWeight: "900" }}>✓</Text>}
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: adminColors.text, fontWeight: "800" }}>Eligible for a nutrition rating</Text>
+                <Text style={{ color: adminColors.muted, fontSize: 11, lineHeight: 17 }}>
+                  Turn off for cosmetics, medicines, and other non-food products — the rating card is hidden entirely.
+                </Text>
+              </View>
+            </Pressable>
+
+            {draft.nutritionRating.enabled && (
+              <>
+                <Text style={[adminStyles.sectionTitle, { marginTop: 12 }]}>CALCULATION CATEGORY</Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                  {HSR_CATEGORIES.map((category) => (
+                    <Pressable
+                      key={category}
+                      disabled={saving || !isOnline}
+                      style={[
+                        adminStyles.secondaryButton,
+                        draft.nutritionRating.category === category && {
+                          backgroundColor: adminColors.primarySoft,
+                          borderColor: "#F5B7C0",
+                        },
+                      ]}
+                      onPress={() => setNutritionRating("category", category)}
+                    >
+                      <Text style={{ color: draft.nutritionRating.category === category ? adminColors.primary : adminColors.text, fontWeight: "800", fontSize: 11 }}>
+                        {HSR_CATEGORY_LABELS[category]}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+
+                {!WATER_CATEGORIES.includes(draft.nutritionRating.category) && (
+                  <>
+                    <AdminTextField
+                      label="Serving quantity, as printed on the label"
+                      value={draft.nutritionRating.servingQuantity}
+                      onChangeText={(value) => setNutritionRating("servingQuantity", value)}
+                      editable={!saving && isOnline}
+                      keyboardType="decimal-pad"
+                    />
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      {(["g", "mL"] as const).map((unit) => (
+                        <Pressable
+                          key={unit}
+                          disabled={saving || !isOnline}
+                          style={[
+                            adminStyles.secondaryButton,
+                            draft.nutritionRating.servingUnit === unit && {
+                              backgroundColor: adminColors.primarySoft,
+                              borderColor: "#F5B7C0",
+                            },
+                          ]}
+                          onPress={() => setNutritionRating("servingUnit", unit)}
+                        >
+                          <Text style={{ color: draft.nutritionRating.servingUnit === unit ? adminColors.primary : adminColors.text, fontWeight: "800", fontSize: 11 }}>
+                            {unit}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                    <AdminTextField label="Calories per serving (kcal)" value={draft.nutritionRating.caloriesPerServing} onChangeText={(value) => setNutritionRating("caloriesPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    {draft.nutritionRating.category !== "NON_DAIRY_BEVERAGE" && (
+                      <AdminTextField label="Saturated fat per serving (g)" value={draft.nutritionRating.saturatedFatGramsPerServing} onChangeText={(value) => setNutritionRating("saturatedFatGramsPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    )}
+                    <AdminTextField label="Total sugars per serving (g)" value={draft.nutritionRating.totalSugarsGramsPerServing} onChangeText={(value) => setNutritionRating("totalSugarsGramsPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    {draft.nutritionRating.category !== "NON_DAIRY_BEVERAGE" && (
+                      <AdminTextField label="Sodium per serving (mg)" value={draft.nutritionRating.sodiumMilligramsPerServing} onChangeText={(value) => setNutritionRating("sodiumMilligramsPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    )}
+                    <AdminTextField label="Protein per serving (g) — optional, leave blank if not verified" value={draft.nutritionRating.proteinGramsPerServing} onChangeText={(value) => setNutritionRating("proteinGramsPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    <AdminTextField label="Dietary fibre per serving (g) — optional, leave blank if not verified" value={draft.nutritionRating.fibreGramsPerServing} onChangeText={(value) => setNutritionRating("fibreGramsPerServing", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    <AdminTextField label="Fruit / vegetable / nut / legume % — optional, leave blank if not verified" value={draft.nutritionRating.fvnlPercent} onChangeText={(value) => setNutritionRating("fvnlPercent", value)} editable={!saving && isOnline} keyboardType="decimal-pad" />
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                      <Pressable
+                        disabled={saving || !isOnline}
+                        style={[
+                          adminStyles.secondaryButton,
+                          draft.nutritionRating.containsFruitOrVegetable && { backgroundColor: adminColors.primarySoft, borderColor: "#F5B7C0" },
+                        ]}
+                        onPress={() => setNutritionRating("containsFruitOrVegetable", !draft.nutritionRating.containsFruitOrVegetable)}
+                      >
+                        <Text style={{ color: draft.nutritionRating.containsFruitOrVegetable ? adminColors.primary : adminColors.text, fontWeight: "800", fontSize: 11 }}>
+                          Contains fruit/vegetable
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        disabled={saving || !isOnline}
+                        style={[
+                          adminStyles.secondaryButton,
+                          draft.nutritionRating.containsNutsOrLegumes && { backgroundColor: adminColors.primarySoft, borderColor: "#F5B7C0" },
+                        ]}
+                        onPress={() => setNutritionRating("containsNutsOrLegumes", !draft.nutritionRating.containsNutsOrLegumes)}
+                      >
+                        <Text style={{ color: draft.nutritionRating.containsNutsOrLegumes ? adminColors.primary : adminColors.text, fontWeight: "800", fontSize: 11 }}>
+                          Contains nuts/legumes
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+              </>
+            )}
 
             <Text style={adminStyles.sectionTitle}>INGREDIENTS AND ALLERGENS</Text>
             <AdminTextField label="Ingredients — one per line; prefix an allergenic ingredient with *" value={ingredientLines} onChangeText={(value) => { setIngredientLines(value); setFieldErrors((current) => { const { ingredients: _removed, ...rest } = current; return rest; }); }} editable={!saving && isOnline} multiline error={fieldErrors.ingredients} />

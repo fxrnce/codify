@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { HSR_CATEGORIES } from "./nutrition-score.js";
 import { productCodeSchema } from "./product-code.js";
 
 const requiredText = (label: string, max = 200) => z.string().trim()
@@ -24,6 +25,28 @@ export const reviewSchema = z.object({
 }).strict().refine(value => !["RESOLVED", "REJECTED"].includes(value.status) || value.resolutionNote.length > 0, {
   message: "A response is required when resolving or rejecting a report.", path: ["resolutionNote"],
 });
+const nonNegativeNumber = (label: string) =>
+  z.number().finite(`Enter a valid number for ${label}.`).min(0, `${label} cannot be negative.`);
+
+// Administrators enter verified nutrition-label values and a calculation
+// category; the backend (see nutrition-score.ts) always derives the actual
+// star rating from these values. There is no field here for submitting a
+// rating or score directly.
+export const nutritionRatingInputSchema = z.object({
+  category: z.enum(HSR_CATEGORIES, { error: "Choose a valid HSR calculation category." }),
+  servingQuantity: z.number().finite().positive("Serving quantity must be greater than 0.").optional(),
+  servingUnit: z.enum(["g", "mL"], { error: "Serving unit must be g or mL." }).optional(),
+  caloriesPerServing: nonNegativeNumber("Calories").optional(),
+  saturatedFatGramsPerServing: nonNegativeNumber("Saturated fat").optional(),
+  totalSugarsGramsPerServing: nonNegativeNumber("Total sugars").optional(),
+  sodiumMilligramsPerServing: nonNegativeNumber("Sodium").optional(),
+  proteinGramsPerServing: nonNegativeNumber("Protein").optional(),
+  fibreGramsPerServing: nonNegativeNumber("Fibre").optional(),
+  fvnlPercent: z.number().min(0, "FVNL percent cannot be negative.").max(100, "FVNL percent cannot exceed 100.").optional(),
+  containsFruitOrVegetable: z.boolean().optional(),
+  containsNutsOrLegumes: z.boolean().optional(),
+}).strict();
+
 export const productSchema = z.object({
   slug: z.string().trim()
     .min(1, "Enter a catalog ID.")
@@ -36,7 +59,10 @@ export const productSchema = z.object({
   status: z.enum(["APPROVED", "CAUTION", "FDA_ADVISORY", "UNVERIFIED"], { error: "Choose a valid FDA status." }),
   fdaStatusLabel: requiredText("the FDA status label"),
   registrationNumber: requiredText("the registration or notification number"),
-  healthScore: z.number().int("Use a whole number.").min(0, "The health score cannot be below 0.").max(100, "The health score cannot exceed 100.").nullable(),
+  // null means "not applicable" (e.g. a cosmetic or medicine): no
+  // NutritionRating row is created and the product-result screen hides the
+  // nutrition rating card entirely.
+  nutritionRating: nutritionRatingInputSchema.nullable(),
   servingSize: requiredText("the serving size"),
   warningMessage: requiredText("product guidance", 8000),
   imageUrl: optionalUrl("product image URL"),

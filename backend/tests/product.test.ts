@@ -14,7 +14,6 @@ const baseProduct = {
   status: "APPROVED" as const,
   fdaStatusLabel: "Approved",
   registrationNumber: "FR-12345",
-  healthScore: 82,
   servingSize: "100g",
   warningMessage: "None",
   imageUrl: null,
@@ -22,6 +21,7 @@ const baseProduct = {
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   isArchived: false,
   nutrition: null,
+  nutritionRating: null,
   ingredients: [],
   allergens: [],
   alternatives: [],
@@ -96,6 +96,58 @@ test("GET /products/:barcode returns 404 for a missing or archived product", asy
     assert.equal(result.status, 404);
   } finally {
     await archivedServer.close();
+  }
+});
+
+test("GET /products includes the mapped HSR nutrition rating when present, and null for cosmetics/medicines", async () => {
+  const withRating = {
+    ...baseProduct,
+    nutritionRating: {
+      category: "FOOD",
+      confidence: "CONSERVATIVE",
+      methodVersion: "test-version",
+      reason: null,
+      servingQuantity: 14,
+      servingUnit: "g",
+      caloriesPerServing: 60,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 6,
+      sodiumMilligramsPerServing: 40,
+      proteinGramsPerServing: null,
+      fibreGramsPerServing: null,
+      fvnlPercent: null,
+      containsFruitOrVegetable: false,
+      containsNutsOrLegumes: false,
+      energyKilojoulesPer100: 1793.14,
+      saturatedFatGramsPer100: 7.14,
+      totalSugarsGramsPer100: 42.86,
+      sodiumMilligramsPer100: 285.71,
+      proteinGramsPer100: null,
+      fibreGramsPer100: null,
+      baselinePoints: 25,
+      proteinPoints: 0,
+      fibrePoints: 0,
+      fvnlPoints: 0,
+      finalPoints: 25,
+      proteinPointsWithheldByRule: false,
+      unavailableComponents: ["protein", "fibre", "fvnl"],
+      starRatingHalfSteps: 1,
+      calculatedAt: new Date("2026-01-01T00:00:00.000Z"),
+    },
+  };
+  const server = await withRouter({
+    product: { findMany: async () => [withRating, { ...baseProduct, nutritionRating: null }] },
+  });
+  try {
+    const result = await server.request("/api/products");
+    assert.equal(result.status, 200);
+    assert.equal(result.body.products[0].nutritionRating.confidence, "CONSERVATIVE");
+    assert.equal(result.body.products[0].nutritionRating.starRating, 0.5);
+    assert.equal(result.body.products[0].nutritionRating.category, "FOOD");
+    // A cosmetic/medicine product has no NutritionRating row at all.
+    assert.equal(result.body.products[1].nutritionRating, null);
+  } finally {
+    await server.close();
   }
 });
 

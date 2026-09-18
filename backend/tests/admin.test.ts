@@ -238,7 +238,7 @@ test("a storage failure while deleting a report records a cleanup task instead o
   assert.equal(cleanupTasks[0].reason, "deleted-report");
 });
 const product = {
-  slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", healthScore: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
+  slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", nutritionRating: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
   nutrition: { calories: "N/A", protein: "N/A", carbohydrates: "N/A", totalFat: "N/A", saturatedFat: "N/A", totalSugars: "N/A", dietaryFiber: "N/A", sodium: "N/A" }, ingredients: [], allergens: [], alternatives: [],
 };
 test("catalog validation returns structured nested field paths", async () => {
@@ -274,13 +274,68 @@ test("catalog rejects duplicate UPC/EAN forms and unsafe fields", async () => {
   assert.equal(equivalentBarcode("012345678905"), "0012345678905");
   assert.equal(equivalentBarcode("0012345678905"), "012345678905");
   assert.equal(productSchema.safeParse({ ...product, verificationUrl: "javascript:alert(1)" }).success, false);
-  assert.equal(productSchema.safeParse({ ...product, healthScore: 101 }).success, false);
+  assert.equal(productSchema.safeParse({ ...product, nutritionRating: { category: "NOT_A_CATEGORY" } }).success, false);
+  assert.equal(productSchema.safeParse({ ...product, nutritionRating: { category: "FOOD", servingQuantity: -1 } }).success, false);
   let query: any;
   const result = await request("ADMIN", "/products", "POST", product, {
     $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({ product: { findFirst: async (input: unknown) => { query = input; return { id }; }, create: () => assert.fail("Duplicate must not be created") } }),
   });
   assert.equal(result.status, 409);
   assert.deepEqual(query.where.OR[1].barcode.in, ["012345678905", "0012345678905"]);
+});
+
+test("nutritionRating input schema rejects a directly-submitted score or rating", () => {
+  // There is no field for a star rating, point total, or 0-100 score at all;
+  // .strict() rejects any such extra key outright.
+  const withInjectedScore = productSchema.safeParse({
+    ...product,
+    nutritionRating: { category: "FOOD", servingQuantity: 100, servingUnit: "g", starRatingHalfSteps: 10 },
+  });
+  assert.equal(withInjectedScore.success, false);
+
+  const withInjectedPoints = productSchema.safeParse({
+    ...product,
+    nutritionRating: { category: "FOOD", servingQuantity: 100, servingUnit: "g", finalPoints: -99 },
+  });
+  assert.equal(withInjectedPoints.success, false);
+});
+
+test("creating a product always computes its nutrition rating server-side from verified inputs", async () => {
+  let createdNutritionRating: any;
+  const created = { id, ...product, updatedAt: new Date(timestamp) };
+  const result = await request("ADMIN", "/products", "POST", {
+    ...product,
+    slug: "brownie-bites-test",
+    barcode: "4800365881315",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 14,
+      servingUnit: "g",
+      caloriesPerServing: 60,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 6,
+      sodiumMilligramsPerServing: 40,
+    },
+  }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      product: {
+        findFirst: async () => null,
+        create: async () => created,
+        findUniqueOrThrow: async () => ({ ...created, nutritionRating: createdNutritionRating }),
+      },
+      nutritionRating: {
+        upsert: async ({ create }: { create: unknown }) => { createdNutritionRating = create; },
+      },
+      adminAuditLog: { create: async () => {} },
+    }),
+  });
+  assert.equal(result.status, 201);
+  // The client never sends a star rating or point total; the server derives
+  // both from the verified per-serving inputs using the HSR estimator.
+  assert.equal(createdNutritionRating.confidence, "CONSERVATIVE");
+  assert.equal(createdNutritionRating.baselinePoints, 25);
+  assert.equal(createdNutritionRating.finalPoints, 25);
+  assert.equal(createdNutritionRating.starRatingHalfSteps, 1);
 });
 
 test("deleting a product audits its full catalog snapshot and expected version", async () => {

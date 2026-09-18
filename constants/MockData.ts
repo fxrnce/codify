@@ -1,3 +1,5 @@
+import type { NutritionRating } from "@/types/nutrition-rating";
+
 export type ProductStatus =
   | "Approved"
   | "Caution"
@@ -13,7 +15,7 @@ export type DemoProduct = {
   status: ProductStatus;
   fdaStatusLabel: string;
   registrationNumber: string;
-  healthScore: number | null;
+  nutritionRating: NutritionRating | null;
   servingSize: string;
   warningMessage: string;
   imageUrl?: string | null;
@@ -72,7 +74,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011397349",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "40mL spray bottle",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000011397349 is valid through November 28, 2026. For external use only. Do not swallow or use near the eyes. Keep tightly closed and away from flame or heat; children should use it under adult supervision.",
@@ -110,7 +112,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011604555",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "90g bar",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000011604555 for Safeguard Pure White Bar Soap is valid through August 13, 2027. The FDA record does not list pack weight, while the Philippine DTI identifies a 90g retail variant. For external body cleansing only. Avoid contact with eyes and discontinue use if irritation occurs.",
@@ -162,7 +164,47 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000010589283",
-    healthScore: 10,
+    nutritionRating: {
+      category: "FOOD",
+      categoryLabel: "General food (HSR Category 2)",
+      confidence: "CONSERVATIVE",
+      reason: null,
+      methodVersion:
+        "AU/NZ Health Star Rating Implementation Guide v9 (Dec 2025) — Codify HSR estimator v1.0",
+      starRating: 0.5,
+      calculatedAt: "2026-01-01T00:00:00.000Z",
+      input: {
+        servingQuantity: 14,
+        servingUnit: "g",
+        caloriesPerServing: 60,
+        saturatedFatGramsPerServing: 1,
+        totalSugarsGramsPerServing: 6,
+        sodiumMilligramsPerServing: 40,
+        proteinGramsPerServing: null,
+        fibreGramsPerServing: null,
+        fvnlPercent: null,
+        containsFruitOrVegetable: false,
+        containsNutsOrLegumes: false,
+      },
+      standardized: {
+        perUnitLabel: "100 g",
+        energyKilojoules: 1793.1428571428573,
+        saturatedFatGrams: 7.142857142857143,
+        totalSugarsGrams: 42.85714285714286,
+        sodiumMilligrams: 285.7142857142857,
+        proteinGrams: null,
+        fibreGrams: null,
+      },
+      points: {
+        baselinePoints: 25,
+        proteinPoints: 0,
+        fibrePoints: 0,
+        fvnlPoints: 0,
+        finalPoints: 25,
+      },
+      unavailableComponents: ["fvnl", "fibre"],
+      proteinPointsWithheldByRule: true,
+    },
     servingSize: "14g (1 pack)",
     warningMessage:
       "FDA registration FR-4000010589283 is valid through February 1, 2028. The FDA portal does not publish retail barcodes; this match uses the product name, brand, manufacturer, address, and packaging. Contains wheat/gluten, eggs, milk, and soy. The label also states that it is manufactured on equipment and/or in facilities that use nut ingredients.",
@@ -209,7 +251,47 @@ export const demoProducts: DemoProduct[] = [
     status: "Caution",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008139975",
-    healthScore: 10,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      categoryLabel: "Non-dairy beverage (HSR Category 1)",
+      confidence: "CONSERVATIVE",
+      reason: null,
+      methodVersion:
+        "AU/NZ Health Star Rating Implementation Guide v9 (Dec 2025) — Codify HSR estimator v1.0",
+      starRating: 0.5,
+      calculatedAt: "2026-01-01T00:00:00.000Z",
+      input: {
+        servingQuantity: 320,
+        servingUnit: "mL",
+        caloriesPerServing: 134,
+        saturatedFatGramsPerServing: null,
+        totalSugarsGramsPerServing: 33.5,
+        sodiumMilligramsPerServing: null,
+        proteinGramsPerServing: null,
+        fibreGramsPerServing: null,
+        fvnlPercent: null,
+        containsFruitOrVegetable: false,
+        containsNutsOrLegumes: false,
+      },
+      standardized: {
+        perUnitLabel: "100 mL",
+        energyKilojoules: 175.205,
+        saturatedFatGrams: null,
+        totalSugarsGrams: 10.46875,
+        sodiumMilligrams: null,
+        proteinGrams: null,
+        fibreGrams: null,
+      },
+      points: {
+        baselinePoints: 13,
+        proteinPoints: 0,
+        fibrePoints: 0,
+        fvnlPoints: 0,
+        finalPoints: 13,
+      },
+      unavailableComponents: ["fvnl"],
+      proteinPointsWithheldByRule: false,
+    },
     servingSize: "320mL (1 can)",
     warningMessage:
       "Philippine FDA registration FR-4000008139975 covers Coca-Cola in cans and is valid through May 10, 2027. One 320mL can contains 33.5g total sugar and 134 calories, so enjoy it in moderation.",
@@ -251,7 +333,47 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008019521",
-    healthScore: 40,
+    nutritionRating: {
+      category: "FOOD",
+      categoryLabel: "General food (HSR Category 2)",
+      confidence: "CONSERVATIVE",
+      reason: null,
+      methodVersion:
+        "AU/NZ Health Star Rating Implementation Guide v9 (Dec 2025) — Codify HSR estimator v1.0",
+      starRating: 2,
+      calculatedAt: "2026-01-01T00:00:00.000Z",
+      input: {
+        servingQuantity: 56,
+        servingUnit: "g",
+        caloriesPerServing: 100,
+        saturatedFatGramsPerServing: 3,
+        totalSugarsGramsPerServing: 0,
+        sodiumMilligramsPerServing: 380,
+        proteinGramsPerServing: null,
+        fibreGramsPerServing: null,
+        fvnlPercent: null,
+        containsFruitOrVegetable: false,
+        containsNutsOrLegumes: false,
+      },
+      standardized: {
+        perUnitLabel: "100 g",
+        energyKilojoules: 747.1428571428572,
+        saturatedFatGrams: 5.357142857142858,
+        totalSugarsGrams: 0,
+        sodiumMilligrams: 678.5714285714286,
+        proteinGrams: null,
+        fibreGrams: null,
+      },
+      points: {
+        baselinePoints: 14,
+        proteinPoints: 0,
+        fibrePoints: 0,
+        fvnlPoints: 0,
+        finalPoints: 14,
+      },
+      unavailableComponents: ["fvnl", "fibre"],
+      proteinPointsWithheldByRule: true,
+    },
     servingSize: "56g (about 3 servings per 155g can)",
     warningMessage:
       "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. Contains fish and soy. One 56g serving contains 380mg sodium.",
@@ -292,7 +414,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Caution",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009873654",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "5g (1 scoop)",
     warningMessage:
       "For healthy adults only. Consult a physician before use if taking medication or if you have a medical condition. Do not use if under 18, pregnant, trying to become pregnant, or breastfeeding. Follow the recommended dosage and stay hydrated.",
@@ -323,7 +445,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Caution",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009275304",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "1 softgel capsule",
     warningMessage:
       "Philippine FDA registration FR-4000009275304 is approved, active, and valid through June 2, 2027, but this food supplement has no approved therapeutic claims. For adult use only. Consult a physician or healthcare professional before use if taking prescription medicine. Not recommended for children or for pregnant or lactating women. Contains fish.",
@@ -361,7 +483,7 @@ export const demoProducts: DemoProduct[] = [
     status: "FDA Advisory",
     fdaStatusLabel: "FDA Advisory No. 2026-0463",
     registrationNumber: "No Certificate of Product Registration issued",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "N/A",
     warningMessage:
       "The Philippine FDA warns the public not to purchase or consume this unregistered product.",
@@ -392,7 +514,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY39670",
-    healthScore: null,
+    nutritionRating: null,
     servingSize:
       "500mg tablet; blister x10 (box of 10) or blister x20 (box of 500)",
     warningMessage:
@@ -420,7 +542,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY29559",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "tablet; Alu/PVC blister pack x10 tablets",
     warningMessage:
       "Philippine FDA registration DR-XY29559 is valid through May 3, 2029. The exact retail-package barcode is not yet cataloged. Contains paracetamol; do not combine it with Biogesic, Bioflu, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
@@ -451,7 +573,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY34482",
-    healthScore: null,
+    nutritionRating: null,
     servingSize:
       "film-coated tablet; blister x10 (box of 100) or blister x5 (envelope of 5)",
     warningMessage:
@@ -483,7 +605,7 @@ export const demoProducts: DemoProduct[] = [
     status: "Unverified",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "No matching Philippine FDA record",
-    healthScore: null,
+    nutritionRating: null,
     servingSize: "1 tsp with 180ml hot water",
     warningMessage:
       "No exact Philippine FDA record was found for this barcode. The label identifies it as produced in Brazil for the Algerian market, so verify this exact imported variant before purchase or use.",

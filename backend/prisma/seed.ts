@@ -4,8 +4,8 @@ import { z } from "zod";
 
 import { prisma } from "../src/lib/prisma.js";
 import {
-  calculateConservativeCategory1NutritionScore,
-  calculateConservativeCategory2NutritionScore,
+  buildNutritionRatingData,
+  type HsrCalculationInput,
 } from "../src/lib/nutrition-score.js";
 
 type SeedProductStatus =
@@ -23,7 +23,12 @@ type SeedProduct = {
   status: SeedProductStatus;
   fdaStatusLabel: string;
   registrationNumber: string;
-  healthScore: number | null;
+  // Omit entirely for cosmetics/medicines (no nutrition rating at all).
+  // Provide a category and whatever verified numeric fields are known for
+  // eligible food/drink products; calculateHealthStarRating() decides
+  // whether that is enough for a COMPLETE, CONSERVATIVE, or
+  // INSUFFICIENT_DATA result. Never invent a value here.
+  nutritionRating?: HsrCalculationInput;
   servingSize: string;
   warningMessage: string;
   imageUrl?: string | null;
@@ -48,6 +53,7 @@ type SeedProduct = {
   allergens: string[];
   alternatives: string[];
 };
+
 
 const seedAdvisorySchema = z.object({
   advisoryNumber: z.string().min(1),
@@ -92,7 +98,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000009056295",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "8g dry mix (5 servings per 40g pack)",
     warningMessage:
       "Philippine FDA product registration FR-4000009056295 lists McCORMICK TACO SEASONING MIX, valid through 31 March 2027. This is a product-name match; the portal does not specify individual package sizes. Contains milk, soybean, and wheat. Nutrition values apply to the dry seasoning mix, not the prepared taco recipe. The label lists 621mg sodium per 8g serving.",
@@ -138,7 +146,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012924055",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
     warningMessage:
       "Philippine FDA product registration FR-4000012924055 lists UFC OPPA! MIXES SOY GARLIC ALL PURPOSE KOREAN STYLE MEAT SAUCE, valid through 25 July 2029. This is a product-name match; the portal does not specify individual package sizes. The label declares soybean, wheat, corn, and oyster allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Each 20g serving contains 7g total sugar, including 4g added sugar, and 320mg sodium.",
@@ -182,7 +192,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012923153",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 tbsp (20g; 4 servings per 80g pack)",
     warningMessage:
       "Philippine FDA product registration FR-4000012923153 lists UFC OPPA! MIXES SWEET AND SPICY ALL PURPOSE KOREAN STYLE MEAT SAUCE, valid through 05 June 2029. This is a product-name match; the portal does not specify individual package sizes. The label declares soybean, wheat, corn, and sesame allergens. Nutrition values apply to the sauce alone, not the prepared meat dishes. Calories, total sugar, and sodium could not be read reliably from the supplied photo and remain unavailable; a clearer nutrition-label photo is needed.",
@@ -233,7 +245,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012331192",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "350mL (1 bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 350mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 21g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
@@ -280,7 +294,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012331192",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "200mL (2.5 servings per 500mL bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 500mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 30g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
@@ -327,7 +343,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012331192",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "200mL (4.5 servings per 900mL bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 900mL bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 54g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
@@ -374,7 +392,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012331192",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "200mL (7.5 servings per 1.5L bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000012331192 lists GATORADE SPORTS DRINK - BLUE BOLT FLAVOR, valid through 09 December 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed 1.5L bottle is the regular sugar-containing Blue Bolt variant made for or by Pepsi-Cola Products Philippines, Inc. A full bottle contains 90g total sugar based on its nutrition label. Contains sugar, dextrose, and brilliant blue coloring.",
@@ -421,7 +441,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000011017606",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 glass (200mL); label states about 2 servings per 335mL bottle",
     warningMessage:
       "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 335mL bottle contains approximately 28.5g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
@@ -466,7 +488,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000011017606",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 glass (200mL); label states about 2.5 servings per 455mL bottle",
     warningMessage:
       "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 455mL bottle contains approximately 38.7g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
@@ -511,7 +535,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000011017606",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 glass (200mL); label states 5 servings per 1L bottle",
     warningMessage:
       "Philippine FDA product registration FR-4000011017606 lists C2 COOL & CLEAN APPLE FLAVORED GREEN TEA, valid through 08 May 2028. This is a product-name match; the portal does not specify individual package sizes. Manufactured by Universal Robina Corporation in the Philippines. Each 200mL serving contains 70 calories, 17g total sugar (including 16g added sugar), and 55mg sodium. The 1L bottle contains approximately 85g total sugar when calculated from its volume. Contains sugar and sucralose. Shake well before drinking and refrigerate after opening.",
@@ -556,7 +582,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000015281764",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "240mL (about 2 servings per 473mL bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000015281764 lists SOLA ICED TEA (PEACH FLAVOR) under THE FIRST ENTERPRISES, INC., valid through 28 October 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed glass bottle is peach flavored. Each 240mL serving contains 100 calories and 24g total sugar; the full 473mL bottle contains approximately 47g total sugar.",
@@ -598,7 +626,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000015269203",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "250mL (1 can)",
     warningMessage:
       "Philippine FDA product registration FR-4000015269203 lists SOLA ICED TEA (LEMON FLAVOR) under THE FIRST ENTERPRISES, INC., valid through 18 November 2030. This is a product-name match; the portal does not specify individual package sizes. The photographed can is lemon flavored and contains 101 calories and 25g total sugar. Shake well and serve chilled. Store in a cool, dry place away from direct sunlight; after opening, transfer any remaining drink to a sealed container and refrigerate.",
@@ -640,7 +670,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000009035450",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "100mL (label: 1/3 bottle, about 3 servings per 320mL bottle)",
     warningMessage:
       "Philippine FDA product registration FR-4000009035450 lists MOGU MOGU YOGURT FLAVORED DRINK WITH NATA DE COCO, valid through 06 February 2027. This is a product-name match; the portal does not specify individual package sizes. The Sappe product label identifies a yogurt-flavored drink made in Thailand. Per 100mL, it lists 50 calories, 13g sugar, and 25mg sodium; a full 320mL bottle contains approximately 160 calories and 41.6g sugar. Milk content cannot be determined from the yogurt flavor name alone. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
@@ -676,7 +708,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000010851054",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 glass (200mL); 5 servings per 1L bottle",
     warningMessage:
       "Philippine FDA product registration FR-4000010851054 lists MOGU MOGU COCONUT FLAVORED DRINK WITH NATA DE COCO, valid through 01 March 2030. This is a product-name match; the portal does not specify individual package sizes. The Sappe product label identifies a coconut-flavored drink made in Thailand. Each 200mL serving contains 90 calories, 22g sugar, 45mg sodium, and less than 1g dietary fiber. The full 1L bottle contains 110g total sugar. The full ingredient and allergen panels are absent from the submitted photos. An empty allergen list does not confirm that the drink is allergen-free. Contains nata de coco pieces; chew them before swallowing. Shake before drinking and keep in a cool, dry place.",
@@ -712,7 +746,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011397349",
-    healthScore: null,
     servingSize: "40mL spray bottle",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000011397349 is valid through November 28, 2026. For external use only. Do not swallow or use near the eyes. Keep tightly closed and away from flame or heat; children should use it under adult supervision.",
@@ -778,7 +811,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011604555",
-    healthScore: null,
     servingSize: "90g bar",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000011604555 for Safeguard Pure White Bar Soap is valid through August 13, 2027. The FDA record does not list pack weight, while the Philippine DTI identifies a 90g retail variant. For external body cleansing only. Avoid contact with eyes and discontinue use if irritation occurs.",
@@ -876,7 +908,6 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "No matching Philippine FDA notification",
-    healthScore: null,
     servingSize: "80g tube",
     warningMessage:
       "No exact Philippine FDA notification was found for this 80g product and barcode. The package is labeled as made in India, so other Philippine-notified Colgate Total variants must not be treated as an exact match. Do not swallow. Children under 6 should use a pea-sized amount under adult supervision, and use should be discontinued if irritation occurs.",
@@ -932,7 +963,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000010711083",
-    healthScore: null,
     servingSize: "25g bottle",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000010711083 is valid through December 23, 2026. Keep powder away from children's nose and mouth because inhalation can cause breathing problems. Avoid contact with eyes, use externally only, and do not apply to broken skin.",
@@ -979,7 +1009,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000009072915",
-    healthScore: null,
     servingSize: "40g stick",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000009072915 lists Dove Men+Care Antiperspirant Deodorant Stick Extra Fresh by Unilever Philippines, Inc., with the Extra Fresh stick variant and an expiry date of November 18, 2027. The portal does not list retail barcodes or pack weights; the submitted stick is labeled 40g. For external underarm use only. Apply 4-6 swipes per underarm daily as directed. Do not apply to irritated or damaged skin, discontinue use if irritation occurs, and keep out of reach of children. Contains perfume.",
@@ -1029,7 +1058,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000013870718",
-    healthScore: null,
     servingSize: "90g bar",
     warningMessage:
       "Published Philippine FDA cosmetic notification NN-1000013870718 lists Dove Radiant+Care Serum Bar 50x Niacinamide + Vitamin C & E by Unilever Philippines, Inc., with an expiry date of January 15, 2028. The record matches the photographed variant and Philippine importer but does not list retail barcodes or pack weights; the package states 90g when packed. Current portal status was not rechecked. For external use only. Apply to skin and rinse off. Discontinue use if skin irritation occurs; rinse immediately with water after eye contact and consult a doctor if irritation persists. Store in a cool, dry place. Contains perfume.",
@@ -1094,7 +1122,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000014323532",
-    healthScore: null,
     servingSize: "170mL tube",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000014323532 lists Cream Silk Triple Keratin Ultimate Straight Keratin Serum Conditioner by Unilever Philippines, Inc., with an expiry date of May 10, 2028. The product name, variant, and company match the submitted 170mL tube; the portal does not list retail barcodes or pack sizes. For external hair use only. After shampooing, massage through hair, especially the ends, and rinse well after one minute. Avoid contact with eyes; if contact occurs, rinse thoroughly with water. Contains perfume.",
@@ -1150,7 +1177,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Notified Product Name",
     registrationNumber: "NN-1000014487810",
-    healthScore: null,
     servingSize: "12mL sachet",
     warningMessage:
       "Philippine FDA cosmetic notification NN-1000014487810 lists HEAD & SHOULDERS ANTI-DANDRUFF SHAMPOO SMOOTH & SILKY, valid through 05 May 2027. This is a product-name match; the portal does not specify individual package sizes. The submitted 12mL sachet identifies Head & Shoulders Smooth & Silky shampoo, made in Indonesia and imported by Procter & Gamble Philippines, Inc. For external hair and scalp use only. Wet hair, gently massage onto the scalp, lather, and rinse thoroughly; repeat if desired. Avoid contact with eyes and rinse well with water if contact occurs. Contains fragrance, methylchloroisothiazolinone, and methylisothiazolinone; check the ingredient list if you have known sensitivities.",
@@ -1208,13 +1234,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000010589283",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 14,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 14,
+      servingUnit: "g",
       caloriesPerServing: 60,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 6,
       sodiumMilligramsPerServing: 40,
-    }),
+    },
     servingSize: "14g (1 pack)",
     warningMessage:
       "FDA registration FR-4000010589283 is valid through February 1, 2028. The FDA portal does not publish retail barcodes; this match uses the product name, brand, manufacturer, address, and packaging. Contains wheat/gluten, eggs, milk, and soy. The label also states that it is manufactured on equipment and/or in facilities that use nut ingredients.",
@@ -1295,7 +1323,9 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012963838",
-    healthScore: 100,
+    nutritionRating: {
+      category: "PLAIN_WATER",
+    },
     servingSize: "500mL (1 bottle)",
     warningMessage:
       "Philippine FDA registration FR-4000012963838 lists SIP Purified Water as approved, active, and valid through September 30, 2029. Its High Risk Food Product classification is a regulatory category for bottled water, not an FDA warning. The 500mL bottle label lists zero calories, fat, carbohydrates, sodium, and protein.",
@@ -1336,7 +1366,9 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000010780064",
-    healthScore: 100,
+    nutritionRating: {
+      category: "PLAIN_WATER",
+    },
     servingSize: "500mL (1 bottle)",
     warningMessage:
       "Philippine FDA registration FR-4000010780064 lists Summit Natural Drinking Water as approved, active, and valid through April 26, 2028. Its High Risk Food Product classification is a regulatory category for bottled water, not an FDA warning. The 500mL bottle label lists zero calories, fat, carbohydrates, sodium, and protein.",
@@ -1378,7 +1410,9 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008213343",
-    healthScore: 100,
+    nutritionRating: {
+      category: "PLAIN_WATER",
+    },
     servingSize: "240mL (about 2 servings per 500mL bottle)",
     warningMessage:
       "The package CPR number FR-4000008213343 matches the Philippine FDA record for Wilkins Distilled Drinking Water, valid through January 27, 2030. The current record names Coca-Cola Europacific Aboitiz Philippines, Inc.; the photographed bottle names Coca-Cola Beverages Philippines, Inc. The label lists zero calories, fat, carbohydrates, sodium, and protein per 240mL serving.",
@@ -1417,7 +1451,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000012826276",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "100mL (nutrition table basis); 350mL bottle",
     warningMessage:
       "Philippine FDA product registration FR-4000012826276 lists POCARI SWEAT ION SUPPLY DRINK under OTSUKA-SOLAR PHILIPPINES INCORPORATED, valid through 04 September 2029. The published record lists PET bottles; the exact bottle size is not specified. Nutrition values follow the table's explicit 100mL basis: its separate 350mL serving-size heading conflicts with the stated 3.5 servings. A full 350mL bottle therefore provides approximately 84 calories, 20g total sugar, and 172mg sodium. The ingredient and allergen panels are not shown; an empty allergen list does not confirm that the product is allergen-free.",
@@ -1453,11 +1489,13 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012372160",
-    healthScore: calculateConservativeCategory1NutritionScore({
-      servingSizeMilliliters: 220,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 220,
+      servingUnit: "mL",
       caloriesPerServing: 120,
       totalSugarsGramsPerServing: 22,
-    }),
+    },
     servingSize: "1 can (220mL)",
     warningMessage:
       "Philippine FDA registration FR-4000012372160 lists Del Monte 100% Pineapple Juice - Fiber Enriched by Del Monte Philippines, Inc., valid through March 6, 2029. The product, variant, and company match the photographed 220mL can; the portal does not list retail barcodes or pack sizes. Although labeled no sugar added, one can contains 22g total sugar and 120 calories, alongside 4g dietary fiber. The nutrition score is a conservative estimate that does not credit the fruit or added fiber.",
@@ -1500,11 +1538,13 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000008153458",
-    healthScore: calculateConservativeCategory1NutritionScore({
-      servingSizeMilliliters: 320,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 320,
+      servingUnit: "mL",
       caloriesPerServing: 134,
       totalSugarsGramsPerServing: 33.5,
-    }),
+    },
     servingSize: "320mL (1 can)",
     warningMessage:
       "Philippine FDA product registration FR-4000008153458 lists COCA-COLA ORIGINAL TASTE CARBONATED COLA DRINK, valid through 12 June 2031. This is a product-name match; the portal does not specify individual package sizes. One 320mL can contains 33.5g total sugar and 134 calories, so enjoy it in moderation.",
@@ -1565,11 +1605,13 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000014670413",
-    healthScore: calculateConservativeCategory1NutritionScore({
-      servingSizeMilliliters: 200,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 200,
+      servingUnit: "mL",
       caloriesPerServing: 1,
       totalSugarsGramsPerServing: 0,
-    }),
+    },
     servingSize: "200mL (about 7.5 servings per 1.5L bottle)",
     warningMessage:
       "Philippine FDA registration FR-4000014670413 lists Lipton Soda Ice Tea Lemon Flavor - Zero Sugar as approved, active, and valid through August 17, 2028. Its Medium Risk Food Product classification is a regulatory category, not an FDA warning. It contains zero sugar and uses sucralose, steviol glycosides, and acesulfame potassium as sweeteners. One 200mL serving contains 56mg sodium.",
@@ -1642,11 +1684,13 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012378562",
-    healthScore: calculateConservativeCategory1NutritionScore({
-      servingSizeMilliliters: 250,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 250,
+      servingUnit: "mL",
       caloriesPerServing: 20,
       totalSugarsGramsPerServing: 3,
-    }),
+    },
     servingSize:
       "Approx. 5g powder prepared as directed (about 4 servings per 19g pack)",
     warningMessage:
@@ -1728,11 +1772,13 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory1NutritionScore({
-      servingSizeMilliliters: 250,
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 250,
+      servingUnit: "mL",
       caloriesPerServing: 20,
       totalSugarsGramsPerServing: 3,
-    }),
+    },
     servingSize:
       "Approx. 5g powder prepared as directed (about 4 servings per 19g pack; one pack prepares 700mL)",
     warningMessage:
@@ -1793,13 +1839,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000015595825",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 56,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
       caloriesPerServing: 153,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 5,
       sodiumMilligramsPerServing: 215,
-    }),
+    },
     servingSize: "56g (2 slices; about 10 servings per 600g loaf)",
     warningMessage:
       "Philippine FDA registration FR-4000015595825 lists Gardenia Classic Enriched White Bread 600g as approved, active, and valid through March 5, 2031. The FDA portal does not publish retail barcodes; barcode 4806502720615 matches the Philippine 600g regular-slice pack. Contains wheat/gluten and milk and may contain soy and egg. One serving contains 215mg sodium.",
@@ -1884,13 +1932,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000009868111",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 110,
       saturatedFatGramsPerServing: 6,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 350,
-    }),
+    },
     servingSize: "30g (about 5 servings per 160g pack)",
     warningMessage:
       "Philippine FDA registration FR-4000009868111 lists Magnolia Quickmelt Pasteurized Processed Cheese Product as approved, active, and valid through January 15, 2029. Its High Risk Food Product classification is a regulatory category for the dairy product, not an FDA warning. One 30g serving contains 6g saturated fat and 350mg sodium. Contains milk and is made in a facility that also processes soy and gluten-containing cereals.",
@@ -1975,13 +2025,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000015357502",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 90,
       saturatedFatGramsPerServing: 6,
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 450,
-    }),
+    },
     servingSize: "30g (about 5 servings per 160g pack)",
     warningMessage:
       "Philippine FDA registration FR-4000015357502 lists Eden Original Processed Filled Cheese Spread as approved, active, and valid through November 6, 2030. Its High Risk Food Product classification is a regulatory category for the dairy product, not an FDA warning. One 30g serving contains 6g saturated fat and 450mg sodium. Contains milk.",
@@ -2068,13 +2120,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000007690965",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 2.8,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 2.8,
+      servingUnit: "g",
       caloriesPerServing: 6,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 476,
-    }),
+    },
     servingSize: "2.8g mix (makes 1/2 cup / 125mL; about 16 servings per pack)",
     warningMessage:
       "Philippine FDA registration FR-4000007690965 lists Knorr Sinigang sa Sampalok Mix Original as approved, active, and valid through September 8, 2030. Its Low Risk Food Product classification is a regulatory category, not an FDA warning. One 2.8g serving contains 476mg sodium (24% RENI). Contains milk and crustaceans, and may contain eggs, fish, soy, and wheat.",
@@ -2169,13 +2223,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000009681523",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 3,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 3,
+      servingUnit: "g",
       caloriesPerServing: 6,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 470,
-    }),
+    },
     servingSize: "3g mix (makes 1/2 cup / 125mL; about 15 servings per pack)",
     warningMessage:
       "Philippine FDA registration FR-4000009681523 lists Knorr Sinigang sa Sampalok Mix Gabi for the local and export markets as approved, active, and valid through May 9, 2028. Its Low Risk Food Product classification is a regulatory category, not an FDA warning. One 3g serving contains 470mg sodium (24% RENI). Contains milk, crustaceans, and gluten-containing cereals, and may contain eggs, fish, and soy.",
@@ -2272,13 +2328,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008019521",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 56,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
       caloriesPerServing: 100,
       saturatedFatGramsPerServing: 3,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 380,
-    }),
+    },
     servingSize: "56g (about 3 servings per 155g can)",
     warningMessage:
       "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. Contains fish and soy. One 56g serving contains 380mg sodium.",
@@ -2347,13 +2405,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000009631036",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 85,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 85,
+      servingUnit: "g",
       caloriesPerServing: 50,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 342,
-    }),
+    },
     servingSize: "85g (about 5 servings per 425g can)",
     warningMessage:
       "Philippine FDA registration FR-4000009631036 lists Uni-Pak Squid in Natural Ink by Slord Development Corporation as approved, active, and valid through August 5, 2027. The product, brand, manufacturer, 425g label, and barcode match the cataloged variant. One 85g serving contains 342mg sodium. Contains squid, soy, and wheat/gluten.",
@@ -2400,13 +2460,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000015381871",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 55,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 55,
+      servingUnit: "g",
       caloriesPerServing: 50,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 240,
-    }),
+    },
     servingSize: "55g (about 3 servings per 155g can)",
     warningMessage:
       "Philippine FDA registration FR-4000015381871 lists Mega Mackerel in Natural Oil by Mega Prime Foods Incorporated as approved, active, and valid through December 26, 2030. The product name, brand, company, 155g label, and barcode match the cataloged variant. One 55g serving contains 240mg sodium and 55mg cholesterol. Contains fish and soy.",
@@ -2447,13 +2509,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000014436411",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 114,
       saturatedFatGramsPerServing: 0.2,
       totalSugarsGramsPerServing: 2.9,
       sodiumMilligramsPerServing: 134,
-    }),
+    },
     servingSize: "30g (5 servings per 150g box)",
     warningMessage:
       "Philippine FDA registration FR-4000014436411 lists Nestlé Gold Corn Flakes — Toasted Flakes of Corn Breakfast Cereal for local and export markets — as approved, active, and valid through May 9, 2028. The product description and brand match this 150g retail box. One 30g serving contains 2.9g total sugar and 134mg sodium. Contains gluten and soy; the label says it may contain milk and tree nuts.",
@@ -2512,13 +2576,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012213874",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 114,
       saturatedFatGramsPerServing: 0.3,
       totalSugarsGramsPerServing: 8,
       sodiumMilligramsPerServing: 50,
-    }),
+    },
     servingSize: "30g (label lists 5 servings per 170g box)",
     warningMessage:
       "Philippine FDA registration FR-4000012213874 lists Nestlé Koko Krunch Duo Chocolate and Vanilla Flavoured Wheat Curls Breakfast Cereal as approved, active, and valid through January 9, 2029. The product description and brand match this 170g retail box. One 30g serving contains 8g total sugar. Contains gluten, milk, and soy; the label says it may contain tree nuts.",
@@ -2581,13 +2647,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008762278",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 35,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 35,
+      servingUnit: "g",
       caloriesPerServing: 133,
       saturatedFatGramsPerServing: 0.6,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 2,
-    }),
+    },
     servingSize: "35g or 4 tablespoons (about 11 servings per 400g pack)",
     warningMessage:
       "Philippine FDA registration FR-4000008762278 lists Quaker Rolled Oats as approved, active, and valid through February 19, 2027. The brand and rolled-oats product description match this Quaker Quick Cook 400g retail variant. The ingredient list is 100% whole grain oats, with 0g total sugar and 2mg sodium per 35g serving. Contains oats and may contain traces of wheat.",
@@ -2623,13 +2691,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "4000011038021",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 120,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 7,
       sodiumMilligramsPerServing: 85,
-    }),
+    },
     servingSize: "30g (about 6 servings per 175g box)",
     warningMessage:
       "Philippine FDA registration 4000011038021 lists Kellogg's Frosties Breakfast Cereal Frosted Toasted Flakes of Corn as approved, active, and valid through May 5, 2028. The FDA record explicitly includes a 175g box. One 30g serving contains 7g total sugar. The label says it may contain traces of peanuts, tree nuts, gluten, milk, and soy.",
@@ -2676,13 +2746,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000011512404",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 15,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 15,
+      servingUnit: "g",
       caloriesPerServing: 98,
       saturatedFatGramsPerServing: 1.5,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 82,
-    }),
+    },
     servingSize: "15g (about 8 servings per 120g pouch)",
     warningMessage:
       "Philippine FDA registration FR-4000011512404 lists Heinz Seriously Good Mayonnaise as approved, active, and valid through November 4, 2030. The FDA record specifies pouch packaging and the same manufacturer address in Thailand shown on this label. One 15g serving contains 98 calories, 10g total fat, and 1.5g saturated fat, so use it in moderation. Contains egg and mustard. Refrigerate after opening.",
@@ -2735,7 +2807,9 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Not Verified",
     registrationNumber: "No current matching Philippine FDA record",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "56g; about 5 servings per can",
     warningMessage:
       "No currently active Philippine FDA registration was found for this exact regular 260g retail variant and barcode as of August 11, 2026. FDA registration FR-4000008091671 covers a different Argentina Century Pacific Food Service product and expired on July 15, 2026; other active Argentina records found are for Hot and Spicy or export variants. This does not prove the product is unsafe, but this exact variant could not be verified in the current FDA registry.",
@@ -2816,13 +2890,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 56,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
       caloriesPerServing: 104,
       saturatedFatGramsPerServing: 2.8,
       totalSugarsGramsPerServing: 0.8,
       sodiumMilligramsPerServing: 415,
-    }),
+    },
     servingSize: "56g (6 servings per 340g / 12 oz can)",
     warningMessage:
       "The Philippine FDA portal lists multiple active registrations matching SPAM Lite Luncheon Meat, including a 12 oz record valid through February 16, 2031, but it does not map a registration to barcode 037600336161. One 56g serving contains 415mg sodium, 2.8g saturated fat, and 39.5mg cholesterol. Refrigerate unused contents promptly in a separate covered container after opening.",
@@ -2869,13 +2945,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000015029812",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 50,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 50,
+      servingUnit: "g",
       caloriesPerServing: 101,
       saturatedFatGramsPerServing: 3,
       totalSugarsGramsPerServing: 2,
       sodiumMilligramsPerServing: 377,
-    }),
+    },
     servingSize: "50g (about 3 servings per 175g can)",
     warningMessage:
       "Philippine FDA registration FR-4000015029812 lists Delimondo Garlic and Chili Corned Beef by Delimondo Food Specialties Inc. as active through November 27, 2030. The official Delimondo catalog confirms the 175g variant; the FDA portal does not publish retail barcodes. One 50g serving contains 377mg sodium and 3g saturated fat. The label says it is manufactured in a facility that also processes wheat, milk, soy, fish, tree nuts, celery, and eggs.",
@@ -2934,13 +3012,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 13.7,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 13.7,
+      servingUnit: "g",
       caloriesPerServing: 120,
       saturatedFatGramsPerServing: 2.2,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 0,
-    }),
+    },
     servingSize: "15mL (1 tablespoon; about 133 servings per 2L bottle)",
     warningMessage:
       "The Philippine FDA portal lists multiple active registrations matching Bertolli Extra Virgin Olive Oil, including records valid through April 28 and July 19, 2027, but it does not map a registration to barcode 041790002201. One 15mL serving contains 120 calories and 13.7g total fat. Store tightly capped in a cool place away from light; cloudiness below 20°C is normal and clears at room temperature.",
@@ -2976,13 +3056,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000010035715",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 35,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 35,
+      servingUnit: "g",
       caloriesPerServing: 143,
       saturatedFatGramsPerServing: 2,
       totalSugarsGramsPerServing: 2,
       sodiumMilligramsPerServing: 146,
-    }),
+    },
     servingSize:
       "35g powder prepared with 200mL water (about 8 servings per 280g pack)",
     warningMessage:
@@ -3039,13 +3121,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000009339422",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 3,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 3,
+      servingUnit: "g",
       caloriesPerServing: 10,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 0,
-    }),
+    },
     servingSize: "2 pellets (3g; about 19 servings per 58g bottle)",
     warningMessage:
       "Philippine FDA registration FR-4000009339422 lists Lotte Xylitol Gum Blueberry Mint Flavor as active through May 19, 2027. It is sugar-free but contains aspartame and phenylalanine, so people with phenylketonuria should follow the label warning. The matched 58g product information also identifies soy and bee pollen/propolis allergens.",
@@ -3098,7 +3182,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000014622661",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 tablet (30 tablets per bottle)",
     warningMessage:
       "Philippine FDA registration FR-4000014622661 lists Dr. Daily Vitamin C (Sodium Ascorbate) 800mg Food Supplement Tablet as active through September 2, 2027, with no approved therapeutic claims. For adults only. If pregnant, lactating, taking medication, or managing a medical condition, consult a physician before use. Do not exceed one tablet per day, and keep out of reach of children.",
@@ -3143,7 +3229,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009873654",
-    healthScore: null,
     servingSize: "5g (1 scoop)",
     warningMessage:
       "For healthy adults only. Consult a physician before use if taking medication or if you have a medical condition. Do not use if under 18, pregnant, trying to become pregnant, or breastfeeding. Follow the recommended dosage and stay hydrated.",
@@ -3183,7 +3268,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000010114915",
-    healthScore: null,
     servingSize: "1 scoop (6.5g); suggested use: 2 scoops (13g)",
     warningMessage:
       "Philippine FDA registration FR-4000010114915 is approved, active, and valid through April 2, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Do not use if under 18, pregnant, trying to become pregnant, breastfeeding, or sensitive to caffeine or beta-alanine. Consult a physician before use if taking medication or managing a medical condition. Limit other caffeine sources, do not take within four hours of alcohol, and do not exceed four scoops in 24 hours.",
@@ -3247,7 +3331,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000014471625",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 scoop (32.4g)",
     warningMessage:
       "Philippine FDA registration FR-4000014471625 is approved, active, and valid through June 2, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Not intended for children or for pregnant or breastfeeding women. Consult a physician before use if managing a medical condition. Contains milk and soy lecithin.",
@@ -3305,7 +3391,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000014732971",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 scoop (31.5g)",
     warningMessage:
       "Philippine FDA registration FR-4000014732971 is approved, active, and valid through June 30, 2031, but this food supplement has no approved therapeutic claims. For healthy adults only. Not intended for children or for pregnant or breastfeeding women. Consult a physician before use if managing a medical condition. Contains milk and soy.",
@@ -3363,7 +3451,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009275304",
-    healthScore: null,
     servingSize: "1 softgel capsule",
     warningMessage:
       "Philippine FDA registration FR-4000009275304 is approved, active, and valid through June 2, 2027, but this food supplement has no approved therapeutic claims. For adult use only. Consult a physician or healthcare professional before use if taking prescription medicine. Not recommended for children or for pregnant or lactating women. Contains fish.",
@@ -3419,7 +3506,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000014693821",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 capsule",
     warningMessage:
       "Philippine FDA registration FR-4000014693821 is approved, active, and valid through June 4, 2028, but this food supplement has no approved therapeutic claims. Take one capsule on an empty stomach one hour before a meal, or as recommended by a physician. Consult a physician before use if pregnant, breastfeeding, taking medication, or managing a medical condition.",
@@ -3491,7 +3580,6 @@ const products: SeedProduct[] = [
     status: "FDA_ADVISORY",
     fdaStatusLabel: "Not Approved",
     registrationNumber: "No Certificate of Product Registration issued",
-    healthScore: null,
     servingSize: "5g sachet (7 sachets per 35g pack)",
     warningMessage:
       "FDA Advisory No. 2026-0830 warns the public not to purchase or consume this unregistered food supplement. No Certificate of Product Registration has been issued, so the Philippine FDA cannot assure its quality and safety.",
@@ -3535,7 +3623,6 @@ const products: SeedProduct[] = [
     status: "FDA_ADVISORY",
     fdaStatusLabel: "FDA Advisory No. 2026-0463",
     registrationNumber: "No Certificate of Product Registration issued",
-    healthScore: null,
     servingSize: "N/A",
     warningMessage:
       "The Philippine FDA warns the public not to purchase or consume this unregistered product.",
@@ -3570,7 +3657,6 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Not Verified",
     registrationNumber: "No matching Philippine FDA record",
-    healthScore: null,
     servingSize: "1 softgel; suggested use: 1 softgel twice daily",
     warningMessage:
       "No exact Philippine FDA registration or advisory was found for barcode 096619926626. The bottle is labeled as a U.S. Costco product and does not show a Philippine FDA registration or local importer. The USP Verified seal is separate from Philippine FDA product registration. Verify this exact imported product before purchase or use, especially if pregnant, nursing, taking medication, planning a medical procedure, or managing a medical condition.",
@@ -3631,13 +3717,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012611623",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 250,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 250,
+      servingUnit: "g",
       caloriesPerServing: 158,
       saturatedFatGramsPerServing: 6.4,
       totalSugarsGramsPerServing: 12,
       sodiumMilligramsPerServing: 100,
-    }),
+    },
     servingSize: "250mL (about 4 servings per 1L carton)",
     warningMessage:
       "Philippine FDA registration FR-4000012611623 lists Cowhead Pure Milk by Sabrosa Foods, Inc. as approved, active, and valid through September 23, 2029. The company matches the Philippine distributor printed on the carton; the FDA portal does not publish retail barcodes. One 250mL serving contains 6.4g saturated fat and 12g naturally occurring milk sugar. Contains milk.",
@@ -3678,13 +3766,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000014732317",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 250,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 250,
+      servingUnit: "g",
       caloriesPerServing: 90,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 12.5,
       sodiumMilligramsPerServing: 100,
-    }),
+    },
     servingSize: "250mL (about 4 servings per 1L carton)",
     warningMessage:
       "Philippine FDA registration FR-4000014732317 lists Nestlé Non-Fat Milk by Nestlé Philippines, Inc. as approved, active, and valid through July 3, 2028. The product name, brand, company, 1L retail barcode, and New Zealand UHT packaging match the photographed carton. One 250mL serving contains 90 calories, less than 1g fat, 9g protein, and 350mg calcium. Contains milk.",
@@ -3725,13 +3815,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000012481347",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 245,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 245,
+      servingUnit: "g",
       caloriesPerServing: 160,
       saturatedFatGramsPerServing: 6,
       totalSugarsGramsPerServing: 13,
       sodiumMilligramsPerServing: 135,
-    }),
+    },
     servingSize: "245mL (about 4 servings per 1L carton)",
     warningMessage:
       "Philippine FDA registration FR-4000012481347 lists Selecta Fortified Sterilized Filled Milk by RFM Corporation as approved, active, and valid through March 14, 2029. The FDA product and company match the photographed 1L carton and barcode. One 245mL serving contains 6g saturated fat, 13g total sugar, and 135mg sodium. Contains milk and is manufactured in a facility that processes soy products.",
@@ -3801,7 +3893,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000011217178",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "245mL (about 4 servings per 1L carton)",
     warningMessage:
       "Philippine FDA registration FR-4000011217178 lists Selecta Adult Active Adult Nutritional Supplement Drink - Vanilla Flavor by RFM Corporation, valid through September 19, 2028. The name, flavor, and manufacturer match the photographed 1L carton; the portal does not list retail barcodes or pack sizes. One 245mL serving contains 150 calories, 8g protein, 4g saturated fat, 5g total sugar, and 240mg sodium. RFM's official product listing identifies it as a milk drink. The submitted photos omit the ingredient and allergen panels, so the full formula and any additional allergens remain unverified. No health score is assigned to this adult nutritional supplement.",
@@ -3840,13 +3934,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000011480835",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 64,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 64,
+      servingUnit: "g",
       caloriesPerServing: 161,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 4,
       sodiumMilligramsPerServing: 192,
-    }),
+    },
     servingSize: "2 slices (64g)",
     warningMessage:
       "Philippine FDA registration FR-4000011480835 for Gardenia High Fiber Whole Wheat Bread is valid through December 4, 2028. The submitted package is the 600g retail variant. It contains wheat and milk ingredients, so check the label if you have food allergies.",
@@ -3897,13 +3993,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000009914872",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 50,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 50,
+      servingUnit: "g",
       caloriesPerServing: 150,
       saturatedFatGramsPerServing: 0.5,
       totalSugarsGramsPerServing: 5,
       sodiumMilligramsPerServing: 220,
-    }),
+    },
     servingSize: "2 pieces (50g)",
     warningMessage:
       "Philippine FDA registration FR-4000009914872 for Delisoft Jumbo Sandwich Loaf under Cindy's Bakery is valid through December 18, 2026. The submitted package is the 785g retail variant. The ingredient and allergen panel was not included in the submitted reference, so check the physical package before use if you have allergies.",
@@ -3938,13 +4036,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000011136754",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 38,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 38,
+      servingUnit: "g",
       caloriesPerServing: 180,
       saturatedFatGramsPerServing: 4.5,
       totalSugarsGramsPerServing: 11,
       sodiumMilligramsPerServing: 95,
-    }),
+    },
     servingSize: "1 cake bite (38g)",
     warningMessage:
       "Philippine FDA registration FR-4000011136754 for Choo Choo Cake Bites Choco Vanilla with creamy filling is valid through May 29, 2028. This is an FDA-registered product, but its nutrition score reflects the submitted label's sugar, saturated fat, and energy values. Contains wheat, milk, egg, and soy.",
@@ -3993,13 +4093,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000015674360",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 38,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 38,
+      servingUnit: "g",
       caloriesPerServing: 140,
       saturatedFatGramsPerServing: 3,
       totalSugarsGramsPerServing: 11,
       sodiumMilligramsPerServing: 120,
-    }),
+    },
     servingSize: "1 cake bar (38g)",
     warningMessage:
       "Philippine FDA registration FR-4000015674360 for Lava Cake Matcha Latte Flavored Cake is valid through January 14, 2031. This is an FDA-registered product, but its nutrition score reflects the submitted label's sugar, saturated fat, sodium, and energy values. Contains wheat, milk, egg, and soy.",
@@ -4047,13 +4149,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000014912252",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 32,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 32,
+      servingUnit: "g",
       caloriesPerServing: 18,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 2,
       sodiumMilligramsPerServing: 295,
-    }),
+    },
     servingSize: "2 tablespoons (32g)",
     warningMessage:
       "Philippine FDA registration FR-4000014912252 lists UFC Tamis Anghang Banana Catsup by NutriAsia, Inc. in glass-bottle packaging as valid through November 28, 2028. The submitted 530g bottle provides 295mg sodium per 32g serving. Contains wheat, milk, and soybeans.",
@@ -4100,13 +4204,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000012759350",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 32,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 32,
+      servingUnit: "g",
       caloriesPerServing: 30,
       saturatedFatGramsPerServing: 0,
       totalSugarsGramsPerServing: 4,
       sodiumMilligramsPerServing: 320,
-    }),
+    },
     servingSize: "2 tablespoons (32g)",
     warningMessage:
       "Philippine FDA registration FR-4000012759350 lists Mang Tomas Siga All-Around Sarsa Hot & Spicy by Nutri-Asia, Inc. in glass-bottle packaging as valid through May 9, 2029. The 325g bottle provides 320mg sodium per 32g serving. Contains wheat/gluten and soy. Contains aspartame, a source of phenylalanine.",
@@ -4157,7 +4263,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA HUHS Registration Not Verified",
     registrationNumber: "No matching Philippine FDA HUHS record",
-    healthScore: null,
     servingSize: "120g detergent bar",
     warningMessage:
       "The submitted package identifies UPC 4800888136770 as the 120g Surf Active Clean Sun Fresh detergent bar distributed by Unilever Philippines. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. For laundry use only. Keep out of reach of children, do not ingest, avoid eye contact and prolonged skin contact, and rinse thoroughly with water if exposed.",
@@ -4190,7 +4295,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA HUHS Registration Not Verified",
     registrationNumber: "No matching Philippine FDA HUHS record",
-    healthScore: null,
     servingSize: "555g package",
     warningMessage:
       "The photographed package and UPC 4902430473538 identify the 555g Ariel Powder Detergent with Downy Floral Passion; the PDF's typed 2kg description does not match the photographed pack. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. The label warns that it causes skin irritation and serious eye irritation. Keep out of reach of children, do not ingest, avoid breathing detergent dust, and rinse exposed eyes or skin thoroughly with water.",
@@ -4241,7 +4345,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA HUHS Registration Not Verified",
     registrationNumber: "No matching Philippine FDA HUHS record",
-    healthScore: null,
     servingSize: "250mL bottle",
     warningMessage:
       "The submitted 250mL bottle identifies UPC 4800888112958 and Unilever Philippines. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. DANGER: corrosive cleaner that may cause severe skin burns and eye damage. Never mix it with muriatic or hydrochloric acid, ammonia, bleach, toilet cleaner, or any other household cleaner. Use only as directed with ventilation, keep tightly closed and out of reach of children, and do not transfer it to another container.",
@@ -4283,7 +4386,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA HUHS Registration Not Verified",
     registrationNumber: "No matching Philippine FDA HUHS record",
-    healthScore: null,
     servingSize: "500mL bottle",
     warningMessage:
       "The submitted bottle and manufacturer information identify UPC 4800047840272 as Zonrox Lemon Bleach 500mL by Green Cross, Inc. No exact product registration was found in the current Philippine FDA Household/Urban Hazardous Substances search. DANGER: chlorine bleach. Never mix with acids, ammonia, toilet cleaners, Domex, or other household chemicals because toxic gas may form. Use only as directed in a ventilated area, avoid skin and eye contact, do not ingest, and keep out of reach of children.",
@@ -4320,7 +4422,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000010260517",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "110g cup (1 serving)",
     warningMessage:
       "Philippine FDA product registration FR-4000010260517 lists NESTLE CREAMY YOGURT under FRONERI PHILIPPINES, INC, valid through 27 November 2030. This is a product-name match; the portal does not specify individual package sizes. One 110g cup contains 63 calories, 1.5g saturated fat, 4g sugar, and 62mg sodium. Contains milk and must be kept refrigerated.",
@@ -4365,13 +4469,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000007845990",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 100,
       saturatedFatGramsPerServing: 4.5,
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 330,
-    }),
+    },
     servingSize: "30g (about 5 servings per 160g pack)",
     warningMessage:
       "Philippine FDA registration FR-4000007845990 lists Cheezee Milky White Pasteurized Processed Cheese Product by Magnolia, Inc. as active through September 7, 2033. One 30g serving contains 4.5g saturated fat and 330mg sodium, so compare portions if limiting either nutrient. Contains milk. The submitted photos do not show the ingredient statement, so check the physical pack before use if you have additional food allergies.",
@@ -4407,7 +4513,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000011722267",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "1 tablespoon (15g; about 13 servings per pack)",
     warningMessage:
       "Philippine FDA product registration FR-4000011722267 lists ANCHOR BUTTERY (VEGETABLE OIL & DAIRY FAT BLEND SPREAD) - UNSALTED under FONTERRA BRANDS PHILS., INC., valid through 10 October 2028. This is a product-name match; the portal does not specify individual package sizes. One 15g serving contains 10g saturated fat. Contains milk and must be kept refrigerated.",
@@ -4452,13 +4560,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000008665131",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 10,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 10,
+      servingUnit: "g",
       caloriesPerServing: 29,
       saturatedFatGramsPerServing: 2,
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 4,
-    }),
+    },
     servingSize: "10g (about 25 portions per can)",
     warningMessage:
       "Philippine FDA registration FR-4000008665131 lists Alaska Créma UHT Processed Whipped Cream by Alaska Milk Corporation as active through November 27, 2028. One 10g serving contains 2g saturated fat. Contains milk. Keep refrigerated at 2–7°C and do not freeze. The can is pressurized: keep it away from heat and never pierce or burn it.",
@@ -4507,13 +4617,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 180,
       saturatedFatGramsPerServing: 6,
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 85,
-    }),
+    },
     servingSize:
       "1 cup (30g), about 1 serving per package; the package net weight is 25g",
     warningMessage:
@@ -4561,13 +4673,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 30,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 30,
+      servingUnit: "g",
       caloriesPerServing: 150,
       saturatedFatGramsPerServing: 3.5,
       totalSugarsGramsPerServing: 2,
       sodiumMilligramsPerServing: 170,
-    }),
+    },
     servingSize:
       "1 cup (30g), 1 serving per container; the package net weight is 40g",
     warningMessage:
@@ -4635,7 +4749,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000015763792",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "30g (about 3 servings per 100g package)",
     warningMessage:
       "Philippine FDA product registration FR-4000015763792 lists LAY'S STAX POTATO CHIPS SOUR CREAM & ONION FLAVORED, valid through 12 February 2029. This is a product-name match; the portal does not specify individual package sizes. One 30g serving contains 3.5g saturated fat and 137mg sodium. Contains wheat/gluten, milk, and soy.",
@@ -4680,7 +4796,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000015981518",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "30g (about 2 servings per 65g package)",
     warningMessage:
       "Philippine FDA product registration FR-4000015981518 lists DORITOS NACHO CHEESE FLAVORED TORTILLA CHIPS under BENBY ENTERPRISES, INCORPORATED, valid through 30 May 2029. This is a product-name match; the portal does not specify individual package sizes. One 30g serving contains 192mg sodium and 3.2g saturated fat. Contains milk.",
@@ -4725,13 +4843,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 23,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 23,
+      servingUnit: "g",
       caloriesPerServing: 70,
       saturatedFatGramsPerServing: 4.5,
       totalSugarsGramsPerServing: 0,
       sodiumMilligramsPerServing: 50,
-    }),
+    },
     servingSize:
       "23g sachet prepared with 200mL hot water; the label also prints 11.5g/100mL and 2 servings per pack",
     warningMessage:
@@ -4784,13 +4904,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 20,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 20,
+      servingUnit: "g",
       caloriesPerServing: 100,
       saturatedFatGramsPerServing: 3.5,
       totalSugarsGramsPerServing: 8,
       sodiumMilligramsPerServing: 160,
-    }),
+    },
     servingSize: "1 sachet (20g), prepared with 150mL hot water",
     warningMessage:
       "The Philippine FDA portal lists multiple active registrations matching Kopiko Brown Just Right Blend Coffee Mix, including records for the photographed Philippine importer Ecossential Foods Corp., but it does not publish enough package detail to assign one CPR confidently to barcode 8996001410547. One 20g sachet contains 8g sugar, 3.5g saturated fat, and 160mg sodium. Contains milk and malt/gluten.",
@@ -4849,13 +4971,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000009074767",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 26,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 26,
+      servingUnit: "g",
       caloriesPerServing: 101,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 15,
       sodiumMilligramsPerServing: 70,
-    }),
+    },
     servingSize: "1 sachet (26g), prepares about 165mL chocolate drink",
     warningMessage:
       "Philippine FDA registration FR-4000009074767 lists Goya Everyday Instant Powdered Milk Chocolate Drink by Delfi Foods, Inc. as active through November 25, 2027. One 26g sachet contains 15g sugar. Contains milk and may contain traces of peanuts, tree nuts, soy, and wheat/gluten.",
@@ -4904,13 +5028,15 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000008512440",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 12,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 12,
+      servingUnit: "g",
       caloriesPerServing: 52,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 2,
       sodiumMilligramsPerServing: 17,
-    }),
+    },
     servingSize: "1 sachet (12g), prepared with 150mL hot water",
     warningMessage:
       "Philippine FDA registration FR-4000008512440 lists Boss Max3 Creamy Coffee Drink Mix with Mangosteen Powder by Corbridge Group Phils., Inc. as active through November 2, 2028. The package states that it is not recommended for children or for pregnant or lactating women. Its creamer contains milk protein despite being described as non-dairy. Do not use this beverage as a substitute for medical treatment.",
@@ -4953,7 +5079,6 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: null,
     servingSize:
       "3 level scoops (approximately 30.9g), prepared with 180mL cooled previously boiled drinking water",
     warningMessage:
@@ -5024,7 +5149,9 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "No matching Philippine FDA food registration found",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "50g (approximately 2 servings per 120g pack)",
     warningMessage:
       "No exact current match for Nestlé Cerelac Mixed Vegetables & Soya was found in the Philippine FDA verification portal; this does not by itself establish that the product is unsafe. Verify the current package and registration before use. This complementary food is intended for children from 6 months up to 2 years and is not a breastmilk substitute. Continue breastfeeding, follow age-appropriate preparation guidance, and check the package's complete ingredient and allergen statement because the available images do not show the full ingredient panel.",
@@ -5071,7 +5198,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000013790215",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "7g (approximately 1/2 cup; 7 servings per 50g pack)",
     warningMessage:
       "Philippine FDA registration FR-4000013790215 for Nestlé Cerelac NutriPuffs Banana & Strawberry is active through January 7, 2030. This complementary snack is intended for children from 9 months and is not a breastmilk substitute. Only feed it to a seated, supervised child who is developmentally ready for finger foods. Contains wheat/gluten and soy, may contain milk, and should not be used for a child with cow's-milk-protein allergy unless a healthcare professional advises otherwise.",
@@ -5122,7 +5251,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "Multiple matching active Philippine FDA records",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "50g (5 servings per 250g pack)",
     warningMessage:
       "Multiple active Philippine FDA records match Nestlé Cerelac Rice & Soya, but the FDA portal does not identify which record belongs to this exact barcode and 250g pack. This complementary food is intended for children from 6 months up to 2 years and is not a breastmilk substitute. Continue breastfeeding and follow age-appropriate preparation guidance. Contains soy, milk, and fish and may contain wheat/gluten.",
@@ -5174,14 +5305,16 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000011392884",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 6,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 6,
+      servingUnit: "g",
       caloriesPerServing: 0,
       saturatedFatGramsPerServing: 0,
       // Use the label's upper bound conservatively; retain "Less than 1g" below.
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 150,
-    }),
+    },
     servingSize: "1 teaspoon (6g); about 86 servings per 515g bottle",
     warningMessage:
       "Published Philippine FDA record FR-4000011392884 lists Jufran Sriracha Hot Chili Sauce by Nutri-Asia, Inc. in PET/sachet packaging with an expiry date of July 26, 2028. It does not list retail barcodes or pack weights; the submitted 515g bottle identifies the same importer and Thai origin. The live portal was unavailable on September 7, 2026, so current status could not be rechecked. One 6g serving contains 150mg sodium. Contains sulfites. Shake well before using.",
@@ -5234,7 +5367,9 @@ const products: SeedProduct[] = [
     status: "CAUTION",
     fdaStatusLabel: "FDA Registered Product Name",
     registrationNumber: "FR-4000011823898",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "2 tablespoons (40g); about 6 servings per 230g can",
     warningMessage:
       "Philippine FDA product registration FR-4000011823898 lists RENO BRAND® LIVER SPREAD under RENO FOODS, INC., valid through 31 October 2030. This is a product-name match; the portal does not specify individual package sizes. One 40g serving contains 262mg sodium and 2g saturated fat. The package declares poultry meat, wheat, and soy as allergens and says to consume completely after opening.",
@@ -5283,7 +5418,9 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "Philippine FDA registration not verified",
-    healthScore: null,
+    nutritionRating: {
+      category: "FOOD",
+    },
     servingSize: "25g (approximately 4 squares); 6.8 servings per 170g bar",
     warningMessage:
       "The photographed barcode identifies an Australian-made Cadbury Dairy Milk Biscoff 170g bar. No exact Philippine FDA registration was found in indexed records, and the live portal was unavailable on September 7, 2026; Philippine authorization remains unverified. The label provides 550kJ (approximately 131 kcal), 13.2g sugar, and 4.1g saturated fat per 25g serving, and displays a 0.5-star Health Star Rating. Contains milk, wheat/gluten, and soy; may contain peanuts and tree nuts. Store in cool, dry conditions.",
@@ -5334,13 +5471,15 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered Food Product",
     registrationNumber: "FR-4000014213544",
-    healthScore: calculateConservativeCategory2NutritionScore({
-      servingSizeGrams: 44,
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 44,
+      servingUnit: "g",
       caloriesPerServing: 110,
       saturatedFatGramsPerServing: 1,
       totalSugarsGramsPerServing: 1,
       sodiumMilligramsPerServing: 159,
-    }),
+    },
     servingSize: "44g; about 8 servings per 350g loaf",
     warningMessage:
       "The indexed Philippine FDA record FR-4000014213544 lists Monde Walter No Sugar Added Wheat Bread by Sarimonde Foods Corporation with an expiry date of April 4, 2028, matching the photographed product and manufacturer. It does not list retail barcodes or pack weights, and the live portal was unavailable on September 7, 2026. No sugar added does not mean sugar free: one 44g serving contains 1g sugar and 20g carbohydrates. Contains wheat and milk; may contain soy. Sweetened with isomaltitol and acesulfame potassium.",
@@ -5396,7 +5535,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY39670",
-    healthScore: null,
     servingSize:
       "500mg tablet; blister x10 (box of 10) or blister x20 (box of 500)",
     warningMessage:
@@ -5426,7 +5564,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY29559",
-    healthScore: null,
     servingSize: "tablet; Alu/PVC blister pack x10 tablets",
     warningMessage:
       "Philippine FDA registration DR-XY29559 is valid through May 3, 2029. The exact retail-package barcode is not yet cataloged. Contains paracetamol; do not combine it with Biogesic, Bioflu, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
@@ -5459,7 +5596,6 @@ const products: SeedProduct[] = [
     status: "APPROVED",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY34482",
-    healthScore: null,
     servingSize:
       "film-coated tablet; blister x10 (box of 100) or blister x5 (envelope of 5)",
     warningMessage:
@@ -5493,7 +5629,6 @@ const products: SeedProduct[] = [
     status: "UNVERIFIED",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "No matching Philippine FDA record",
-    healthScore: null,
     servingSize: "1 tsp with 180ml hot water",
     warningMessage:
       "No exact Philippine FDA record was found for this barcode. The label identifies it as produced in Brazil for the Algerian market, so verify this exact imported variant before purchase or use.",
@@ -5558,7 +5693,6 @@ async function seedDatabase() {
         status: product.status,
         fdaStatusLabel: product.fdaStatusLabel,
         registrationNumber: product.registrationNumber,
-        healthScore: product.healthScore,
         servingSize: product.servingSize,
         warningMessage: product.warningMessage,
         imageUrl: product.imageUrl ?? null,
@@ -5589,6 +5723,17 @@ async function seedDatabase() {
             },
           },
         },
+
+        ...(product.nutritionRating
+          ? {
+              nutritionRating: {
+                upsert: {
+                  create: buildNutritionRatingData(product.nutritionRating),
+                  update: buildNutritionRatingData(product.nutritionRating),
+                },
+              },
+            }
+          : {}),
 
         ingredients: {
           deleteMany: {},
@@ -5628,7 +5773,6 @@ async function seedDatabase() {
         status: product.status,
         fdaStatusLabel: product.fdaStatusLabel,
         registrationNumber: product.registrationNumber,
-        healthScore: product.healthScore,
         servingSize: product.servingSize,
         warningMessage: product.warningMessage,
         imageUrl: product.imageUrl ?? null,
@@ -5646,6 +5790,14 @@ async function seedDatabase() {
             sodium: product.nutrition.sodium,
           },
         },
+
+        ...(product.nutritionRating
+          ? {
+              nutritionRating: {
+                create: buildNutritionRatingData(product.nutritionRating),
+              },
+            }
+          : {}),
 
         ingredients: {
           create: product.ingredients.map((ingredient, index) => ({

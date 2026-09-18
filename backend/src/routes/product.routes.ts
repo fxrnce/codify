@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
+import { mapNutritionRatingToApi } from "../lib/nutrition-score.js";
 import {
   INVALID_PRODUCT_CODE_MESSAGE,
   productCodeSchema,
@@ -69,7 +70,6 @@ export function createProductRouter(db = prisma) {
             status: true,
             fdaStatusLabel: true,
             registrationNumber: true,
-            healthScore: true,
             servingSize: true,
             warningMessage: true,
             imageUrl: true,
@@ -77,6 +77,7 @@ export function createProductRouter(db = prisma) {
             createdAt: true,
 
             nutrition: true,
+            nutritionRating: true,
 
             ingredients: {
               orderBy: {
@@ -124,7 +125,9 @@ export function createProductRouter(db = prisma) {
             status: productStatusLabels[product.status],
             fdaStatusLabel: product.fdaStatusLabel,
             registrationNumber: product.registrationNumber,
-            healthScore: product.healthScore,
+            nutritionRating: product.nutritionRating
+              ? mapNutritionRatingToApi(product.nutritionRating)
+              : null,
             servingSize: product.servingSize,
             warningMessage: product.warningMessage,
             imageUrl: product.imageUrl,
@@ -181,6 +184,7 @@ export function createProductRouter(db = prisma) {
       try {
         const productInclude = {
           nutrition: true,
+          nutritionRating: true,
 
           ingredients: {
             orderBy: {
@@ -243,7 +247,9 @@ export function createProductRouter(db = prisma) {
             status: productStatusLabels[product.status],
             fdaStatusLabel: product.fdaStatusLabel,
             registrationNumber: product.registrationNumber,
-            healthScore: product.healthScore,
+            nutritionRating: product.nutritionRating
+              ? mapNutritionRatingToApi(product.nutritionRating)
+              : null,
             servingSize: product.servingSize,
             warningMessage: product.warningMessage,
             imageUrl: product.imageUrl,

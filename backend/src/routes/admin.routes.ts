@@ -3,6 +3,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { advisorySchema, equivalentBarcode, productSchema, reportStatusSchema, reviewSchema } from "../lib/admin-validation.js";
+import { buildNutritionRatingData } from "../lib/nutrition-score.js";
 import { buildTextSearch } from "../lib/search.js";
 import { getObjectStorage, type ObjectStorage } from "../lib/storage.js";
 import type { Prisma } from "../generated/prisma/client.js";
@@ -18,6 +19,7 @@ const advisoryUpdateSchema = z.object({ updatedAt: z.iso.datetime(), advisory: a
 const deleteSchema = z.object({ updatedAt: z.iso.datetime() }).strict();
 const includeProduct = {
   nutrition: true,
+  nutritionRating: true,
   ingredients: { orderBy: { position: "asc" as const } },
   allergens: { orderBy: { position: "asc" as const } },
   alternatives: { orderBy: { position: "asc" as const } },
@@ -152,7 +154,7 @@ export function createAdminRouter(db = prisma, authenticate = getAuth, storage: 
   async function saveProduct(request: Request, response: Response, create: boolean) {
     const id = create ? undefined : parse(z.uuid(), request.params.id);
     const input = create ? { product: parse(productSchema, request.body), updatedAt: null } : parse(productUpdateSchema, request.body);
-    const { nutrition, ingredients, allergens, alternatives, ...fields } = input.product;
+    const { nutrition, nutritionRating, ingredients, allergens, alternatives, ...fields } = input.product;
     const product = await db.$transaction(async tx => {
       const duplicate = await tx.product.findFirst({ where: { ...(id ? { id: { not: id } } : {}), OR: [{ slug: fields.slug }, { barcode: { in: [fields.barcode, equivalentBarcode(fields.barcode)] } }] } });
       if (duplicate) throw new AdminError(409, "A product already uses this barcode (or its UPC/EAN equivalent) or slug.");
@@ -167,12 +169,27 @@ export function createAdminRouter(db = prisma, authenticate = getAuth, storage: 
         allergens: { create: allergens.map((name, position) => ({ name, position })) },
         alternatives: { create: alternatives.map((name, position) => ({ name, position })) },
       };
-      const after = id ? await tx.product.update({ where: { id }, data: {
+      const saved = id ? await tx.product.update({ where: { id }, data: {
         nutrition: { upsert: { create: nutrition, update: nutrition } },
         ingredients: { deleteMany: {}, ...childData.ingredients },
         allergens: { deleteMany: {}, ...childData.allergens },
         alternatives: { deleteMany: {}, ...childData.alternatives },
       }, include: includeProduct }) : await tx.product.create({ data: { ...fields, nutrition: { create: nutrition }, ...childData }, include: includeProduct });
+
+      // The backend always (re)computes the HSR rating from the verified
+      // inputs via nutrition-score.ts — an administrator can never submit a
+      // star rating or point total directly.
+      if (nutritionRating) {
+        await tx.nutritionRating.upsert({
+          where: { productId: saved.id },
+          create: { productId: saved.id, ...buildNutritionRatingData(nutritionRating) },
+          update: buildNutritionRatingData(nutritionRating),
+        });
+      } else {
+        await tx.nutritionRating.deleteMany({ where: { productId: saved.id } });
+      }
+      const after = await tx.product.findUniqueOrThrow({ where: { id: saved.id }, include: includeProduct });
+
       await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "PRODUCT", entityId: after.id, action: create ? "CREATE" : "UPDATE", ...(before ? { before: json(before) } : {}), after: json(after) } });
       return after;
     }, { isolationLevel: "Serializable", timeout: 20000 });

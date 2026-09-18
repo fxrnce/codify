@@ -13,7 +13,6 @@ import {
   StyleSheet,
   Text,
   View,
-  type DimensionValue,
 } from "react-native";
 
 import { DemoProduct, ProductStatus } from "@/constants/MockData";
@@ -21,6 +20,11 @@ import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { useScanHistory } from "@/contexts/ScanHistoryContext";
 import { loadProduct as loadProductWithCache } from "@/services/products";
+import {
+  HSR_COMPARISON_REMINDER,
+  HSR_CONSERVATIVE_NOTICE,
+  HSR_INSUFFICIENT_DATA_NOTICE,
+} from "@/types/nutrition-rating";
 
 type ProductLoadState = "loading" | "success" | "not-found" | "error";
 
@@ -164,50 +168,6 @@ function getAdvisoryImageSource(product: DemoProduct) {
   }
 
   return null;
-}
-
-function getScoreWidth(score: number): DimensionValue {
-  if (score <= 0) {
-    return "0%";
-  }
-
-  if (score >= 100) {
-    return "100%";
-  }
-
-  return `${score}%` as DimensionValue;
-}
-
-function getNutritionScorePresentation(score: number) {
-  if (score <= 39) {
-    return {
-      label: "Poor",
-      color: "#E7000B",
-      gradient: ["#FF6467", "#E7000B"] as const,
-    };
-  }
-
-  if (score <= 59) {
-    return {
-      label: "Moderate",
-      color: "#F59E0B",
-      gradient: ["#FFB900", "#FF6900"] as const,
-    };
-  }
-
-  if (score <= 79) {
-    return {
-      label: "Good",
-      color: "#009966",
-      gradient: ["#00BC7D", "#00A63E"] as const,
-    };
-  }
-
-  return {
-    label: "Excellent",
-    color: "#008236",
-    gradient: ["#00C951", "#008236"] as const,
-  };
 }
 
 function normalizeAllergen(value: string) {
@@ -686,74 +646,197 @@ export default function ProductResultScreen() {
   );
 }
 
+const COMPONENT_LABELS: Record<string, string> = {
+  protein: "Protein",
+  fibre: "Dietary fibre",
+  fvnl: "Fruit / vegetable / nut / legume content",
+};
+
+function starIconName(rating: number, position: number) {
+  if (rating >= position) return "star" as const;
+  if (rating >= position - 0.5) return "star-half" as const;
+  return "star-outline" as const;
+}
+
+function formatNumber(value: number | null, unit: string, digits = 1) {
+  if (value === null) return "Not verified";
+  return `${value.toFixed(digits)}${unit}`;
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.whyRow}>
+      <Text style={styles.whyRowLabel}>{label}</Text>
+      <Text style={styles.whyRowValue}>{value}</Text>
+    </View>
+  );
+}
+
 function NutritionScoreCard({ product }: { product: DemoProduct }) {
-  const healthScore = product.healthScore;
-  const scorePresentation =
-    healthScore === null ? null : getNutritionScorePresentation(healthScore);
+  const [showDetails, setShowDetails] = useState(false);
+  const rating = product.nutritionRating;
+
+  if (!rating) {
+    return null;
+  }
+
+  const isInsufficient = rating.confidence === "INSUFFICIENT_DATA";
+  const isConservative = rating.confidence === "CONSERVATIVE";
 
   return (
     <View style={styles.card}>
-      <View style={styles.healthTopRow}>
-        <View style={styles.cardTitleRow}>
-          <Ionicons name="shield-outline" size={22} color="#45556C" />
-          <Text style={styles.cardTitle}>Nutrition Score</Text>
-        </View>
-
-        <View style={styles.healthScoreValueRow}>
-          <Text
-            style={[
-              styles.healthScore,
-              { color: scorePresentation?.color ?? "#64748B" },
-            ]}
-          >
-            {healthScore ?? "N/A"}
-          </Text>
-
-          {healthScore !== null && (
-            <Text style={styles.healthScoreMaximum}>/100</Text>
-          )}
-        </View>
+      <View style={styles.cardTitleRow}>
+        <Ionicons name="shield-outline" size={22} color="#45556C" />
+        <Text style={styles.cardTitle}>Estimated Nutrition Rating</Text>
       </View>
 
-      {healthScore === null ? (
+      {isInsufficient ? (
         <Text style={styles.servingText}>
-          Not enough verified nutrition data to calculate a score.
+          {rating.reason ?? HSR_INSUFFICIENT_DATA_NOTICE}
         </Text>
       ) : (
         <>
-          <Text
-            style={[
-              styles.scoreRating,
-              { color: scorePresentation?.color ?? "#64748B" },
-            ]}
-          >
-            {scorePresentation?.label}
-          </Text>
+          <View style={styles.starRow}>
+            {[1, 2, 3, 4, 5].map((position) => (
+              <Ionicons
+                key={position}
+                name={starIconName(rating.starRating ?? 0, position)}
+                size={22}
+                color="#F59E0B"
+              />
+            ))}
+            <Text style={styles.starValue}>{rating.starRating}/5 stars</Text>
+          </View>
+
+          <Text style={styles.methodLabel}>HSR-based estimate</Text>
 
           <Text style={styles.scoreExplanation}>
-            Estimated from verified label data using values standardized per
-            100g. Unknown beneficial nutrients receive no bonus. This is not an
-            FDA rating.
+            Calculated from verified nutrition-label values standardized per
+            100 g or 100 mL using the Health Star Rating nutrient profiling
+            method. This is an independent estimate, not a Philippine FDA
+            rating.
           </Text>
 
-          <View style={styles.scoreTrack}>
-            <LinearGradient
-              colors={scorePresentation?.gradient ?? ["#94A3B8", "#64748B"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[
-                styles.scoreFill,
-                { width: getScoreWidth(healthScore) },
-              ]}
-            />
-          </View>
-
-          <View style={styles.scoreLabelRow}>
-            <Text style={styles.scoreLabel}>Poor</Text>
-            <Text style={styles.scoreLabel}>🟡 Moderate</Text>
-            <Text style={styles.scoreLabel}>Excellent</Text>
-          </View>
+          {isConservative && (
+            <View style={styles.conservativeNotice}>
+              <Ionicons
+                name="information-circle-outline"
+                size={16}
+                color="#B45309"
+              />
+              <Text style={styles.conservativeText}>
+                {HSR_CONSERVATIVE_NOTICE}
+              </Text>
+            </View>
+          )}
         </>
+      )}
+
+      <Pressable
+        style={styles.whyButton}
+        onPress={() => setShowDetails((current) => !current)}
+      >
+        <Text style={styles.whyButtonText}>
+          {showDetails ? "Hide calculation details" : "Why this rating?"}
+        </Text>
+        <Ionicons
+          name={showDetails ? "chevron-up" : "chevron-down"}
+          size={16}
+          color="#4F46E5"
+        />
+      </Pressable>
+
+      {showDetails && (
+        <View style={styles.whyDetails}>
+          <DetailRow label="Calculation category" value={rating.categoryLabel} />
+          <DetailRow label="Original serving size" value={product.servingSize} />
+
+          <Text style={styles.whySubheading}>Original label values</Text>
+          <DetailRow
+            label="Calories"
+            value={
+              rating.input.caloriesPerServing !== null
+                ? `${rating.input.caloriesPerServing} kcal per serving`
+                : "Not verified"
+            }
+          />
+          <DetailRow
+            label="Saturated fat"
+            value={
+              rating.input.saturatedFatGramsPerServing !== null
+                ? `${rating.input.saturatedFatGramsPerServing} g per serving`
+                : "Not applicable or not verified"
+            }
+          />
+          <DetailRow
+            label="Total sugars"
+            value={
+              rating.input.totalSugarsGramsPerServing !== null
+                ? `${rating.input.totalSugarsGramsPerServing} g per serving`
+                : "Not verified"
+            }
+          />
+          <DetailRow
+            label="Sodium"
+            value={
+              rating.input.sodiumMilligramsPerServing !== null
+                ? `${rating.input.sodiumMilligramsPerServing} mg per serving`
+                : "Not applicable or not verified"
+            }
+          />
+
+          {rating.standardized && (
+            <>
+              <Text style={styles.whySubheading}>
+                Standardized per {rating.standardized.perUnitLabel}
+              </Text>
+              <DetailRow
+                label="Energy"
+                value={formatNumber(rating.standardized.energyKilojoules, " kJ")}
+              />
+              <DetailRow
+                label="Saturated fat"
+                value={formatNumber(rating.standardized.saturatedFatGrams, " g")}
+              />
+              <DetailRow
+                label="Total sugars"
+                value={formatNumber(rating.standardized.totalSugarsGrams, " g")}
+              />
+              <DetailRow
+                label="Sodium"
+                value={formatNumber(rating.standardized.sodiumMilligrams, " mg")}
+              />
+            </>
+          )}
+
+          {rating.points && (
+            <>
+              <Text style={styles.whySubheading}>Calculation points</Text>
+              <DetailRow label="Baseline points" value={String(rating.points.baselinePoints)} />
+              <DetailRow label="Protein modifying points" value={String(rating.points.proteinPoints)} />
+              <DetailRow label="Fibre modifying points" value={String(rating.points.fibrePoints)} />
+              <DetailRow
+                label="Fruit/vegetable/nut/legume points"
+                value={String(rating.points.fvnlPoints)}
+              />
+              <DetailRow label="Final points" value={String(rating.points.finalPoints)} />
+            </>
+          )}
+
+          {rating.unavailableComponents.length > 0 && (
+            <DetailRow
+              label="Beneficial values not verified"
+              value={rating.unavailableComponents
+                .map((component) => COMPONENT_LABELS[component] ?? component)
+                .join(", ")}
+            />
+          )}
+
+          <DetailRow label="Resulting star rating" value={`${rating.starRating ?? "N/A"}/5 stars`} />
+          <DetailRow label="Method version" value={rating.methodVersion} />
+
+          <Text style={styles.whyReminder}>{HSR_COMPARISON_REMINDER}</Text>
+        </View>
       )}
     </View>
   );
@@ -1522,68 +1605,124 @@ const styles = StyleSheet.create({
     color: "#1D293D",
   },
 
-  healthTopRow: {
+  starRow: {
+    marginTop: 12,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    gap: 4,
   },
 
-  healthScore: {
-    fontSize: 36,
-    lineHeight: 40,
+  starValue: {
+    marginLeft: 6,
+    fontSize: 16,
+    lineHeight: 22,
     fontWeight: "900",
+    color: "#1D293D",
     fontVariant: ["tabular-nums"],
   },
 
-  healthScoreValueRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-
-  healthScoreMaximum: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "700",
-    color: "#90A1B9",
-    fontVariant: ["tabular-nums"],
-  },
-
-  scoreRating: {
+  methodLabel: {
     marginTop: 6,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 16,
     fontWeight: "800",
+    color: "#4F46E5",
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
   },
 
   scoreExplanation: {
-    marginTop: 2,
+    marginTop: 6,
     fontSize: 12,
     lineHeight: 17,
     color: "#64748B",
   },
 
-  scoreTrack: {
-    marginTop: 16,
-    height: 12,
-    borderRadius: 999,
-    backgroundColor: "#F1F5F9",
-    overflow: "hidden",
-  },
-
-  scoreFill: {
-    height: 12,
-    borderRadius: 999,
-  },
-
-  scoreLabelRow: {
-    marginTop: 8,
+  conservativeNotice: {
+    marginTop: 10,
+    borderRadius: 12,
+    backgroundColor: "#FFFBEB",
+    borderWidth: 1,
+    borderColor: "#FEF3C6",
+    padding: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 8,
   },
 
-  scoreLabel: {
+  conservativeText: {
+    flex: 1,
+    fontSize: 11,
+    lineHeight: 16,
+    color: "#92400E",
+  },
+
+  whyButton: {
+    marginTop: 14,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#EEF2FF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+
+  whyButtonText: {
     fontSize: 12,
     lineHeight: 16,
+    fontWeight: "800",
+    color: "#4F46E5",
+  },
+
+  whyDetails: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#F1F5F9",
+  },
+
+  whySubheading: {
+    marginTop: 10,
+    marginBottom: 2,
+    fontSize: 11,
+    lineHeight: 16,
+    fontWeight: "800",
+    color: "#334155",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+
+  whyRow: {
+    minHeight: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F8FAFC",
+  },
+
+  whyRowLabel: {
+    flexShrink: 1,
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#62748E",
+  },
+
+  whyRowValue: {
+    flexShrink: 1,
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "700",
+    color: "#1D293D",
+    textAlign: "right",
+  },
+
+  whyReminder: {
+    marginTop: 10,
+    fontSize: 11,
+    lineHeight: 16,
+    fontStyle: "italic",
     color: "#90A1B9",
   },
 

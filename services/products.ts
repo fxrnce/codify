@@ -44,6 +44,7 @@ function isProduct(value: unknown): value is DemoProduct {
     typeof product.servingSize === "string" &&
     typeof product.warningMessage === "string" &&
     typeof product.createdAt === "string" &&
+    "nutritionRating" in product &&
     Boolean(product.nutrition) &&
     Array.isArray(product.ingredients) &&
     Array.isArray(product.allergens) &&
