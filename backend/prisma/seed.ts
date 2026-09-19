@@ -5654,6 +5654,414 @@ const products: SeedProduct[] = [
       "Philippine-market Nescafé Classic with a matching FDA registration and local label",
     ],
   },
+
+  // Package data: user-supplied front/back photos, reviewed September 18, 2026.
+  // FDA portal checked September 18, 2026 via https://verification.fda.gov.ph/.
+  {
+    slug: "casino-ethyl-alcohol-femme-dual-moisturizer-500ml",
+    barcode: "4800112122236",
+    name: "Casino Ethyl Alcohol Femme with Dual Moisturizer 500mL",
+    brand: "Casino",
+    category: "Rubbing Alcohol",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered (Household Remedy)",
+    registrationNumber: "DRHR-2024",
+    servingSize: "500mL bottle",
+    warningMessage:
+      "Philippine FDA household-remedy registration DRHR-2024, printed on the package, lists Casino Femme with Dual Moisturizer by International Pharmaceuticals, Inc. — the same brand and manufacturer shown on this bottle. The portal record does not list a concentration, package size, or barcode, so the 500mL bottle and its 70% v/v strength are not independently confirmed beyond the brand and manufacturer match; a separate FDA cosmetic notification for a 40% solution under the same brand and company also exists but is a different, unrelated variant. Each 100mL contains 70mL ethyl alcohol, dexpanthenol (pro-vitamin B5), and aloe vera leaf extract. Flammable; for external use only.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Ethyl Alcohol (70% v/v)", isAllergen: false },
+      { name: "Dexpanthenol (Pro-Vitamin B5)", isAllergen: false },
+      { name: "Aloe Vera Leaf Extract", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Wash hands with soap and water when available",
+      "Another FDA-registered rubbing alcohol suitable for the user",
+    ],
+  },
+
+  {
+    slug: "colgate-total-active-prevention-charcoal-clean-toothpaste-2x150g",
+    barcode: "6920354814792",
+    name: "Colgate Total Active Prevention+ Charcoal Clean Toothpaste 2x150g",
+    brand: "Colgate",
+    category: "Fluoride Toothpaste",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "NN-1000015184897",
+    servingSize: "2 x 150g tubes (300g total; pea-sized amount per brushing)",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000015184897 lists Colgate Total Charcoal Clean Toothpaste by Colgate-Palmolive Philippines, Inc., valid through 19 August 2028. This is a product-name and variant match (\"Charcoal Clean\"); the FDA record does not include the \"Active Prevention+\" marketing name shown on this box, and the portal does not specify the x2 value-pack configuration or barcode. A second, earlier registration for the same \"Charcoal Clean\" variant (NN-1000013636602) also exists; the more recent record was selected. Contains stannous fluoride and sodium fluoride. Do not swallow; children 2-6 years old should be supervised, and children under 2 should use only as directed by a dentist or doctor.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sorbitol", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Hydrated Silica", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Flavor", isAllergen: false },
+      { name: "Sodium Lauryl Sulfate", isAllergen: false },
+      { name: "Cellulose Gum", isAllergen: false },
+      { name: "Tetrasodium Pyrophosphate", isAllergen: false },
+      { name: "Potassium Nitrate", isAllergen: false },
+      { name: "Xanthan Gum", isAllergen: false },
+      { name: "Stannous Fluoride", isAllergen: false },
+      { name: "Sodium Saccharin", isAllergen: false },
+      { name: "Cocamidopropyl Betaine", isAllergen: false },
+      { name: "Charcoal Powder", isAllergen: false },
+      { name: "Sodium Fluoride", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A Philippine FDA-notified fluoride toothpaste with matching local packaging",
+      "A dentist-recommended toothpaste suitable for the user's age and oral-health needs",
+    ],
+  },
+
+  {
+    slug: "mountain-dew-zero-sugar-1-5l",
+    barcode: "4803925153648",
+    name: "Mountain Dew Zero Sugar Citrus Flavour Drink 1.5L",
+    brand: "Mountain Dew",
+    category: "Zero-Sugar Carbonated Drink",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000013418036",
+    nutritionRating: {
+      category: "NON_DAIRY_BEVERAGE",
+      servingQuantity: 200,
+      servingUnit: "mL",
+      caloriesPerServing: 2,
+      totalSugarsGramsPerServing: 0,
+      proteinGramsPerServing: 0,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "200mL (7.5 servings per 1.5L bottle)",
+    warningMessage:
+      "Philippine FDA registration FR-4000013418036 lists a carbonated citrus-flavour drink with zero sugar under the Mountain Dew Zero Sugar brand, manufactured for Pepsi-Cola Products Philippines, Inc., valid through 30 September 2029. This is a product-name match; the portal does not specify individual package sizes, and several similarly worded registrations exist for the same brand and company — this one was selected for its exact product-name wording and most recent validity date. Contains phenylalanine (from aspartame); people with phenylketonuria should follow the package warning. Contains caffeine.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "2",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "6mg",
+    },
+
+    ingredients: [
+      { name: "Carbonated Water", isAllergen: false },
+      { name: "Acidity Regulators (Citric Acid, Potassium Citrate)", isAllergen: false },
+      { name: "Natural Flavor", isAllergen: false },
+      { name: "Artificial Sweeteners (Aspartame, Acesulfame Potassium, Sucralose)", isAllergen: false },
+      { name: "Emulsifiers (Citrus Pectin, Gum Arabic, Glycerol Ester of Wood Rosin)", isAllergen: false },
+      { name: "Preservative (Sodium Benzoate)", isAllergen: false },
+      { name: "Caffeine", isAllergen: false },
+      { name: "Artificial Color (Tartrazine)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Plain drinking water",
+      "Unsweetened sparkling water",
+    ],
+  },
+
+  {
+    slug: "the-originote-low-ph-cicamide-facial-cleanser-150ml",
+    barcode: "6976789131690",
+    name: "The Originote Low pH Cicamide Facial Cleanser 150mL",
+    brand: "The Originote",
+    category: "Facial Cleanser",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000013514731",
+    servingSize: "150mL tube (dime-sized amount per use)",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000013514731 lists The Originote Cicamide Facial Cleanser by GoodSale Tech Co., Inc., valid through 19 October 2027. The product name, brand, and importer/distributor match the submitted 150mL tube; the portal record omits the \"Low pH\" wording shown on the package and does not list barcodes or pack sizes. Made in the People's Republic of China. For external use only; avoid contact with eyes and discontinue use if irritation occurs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Aqua", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Cocamidopropyl Betaine", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "Disodium Laureth Sulfosuccinate", isAllergen: false },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Laureth-2", isAllergen: false },
+      { name: "Michelia Alba Flower Oil", isAllergen: false },
+      { name: "Chlorphenesin", isAllergen: false },
+      { name: "Niacinamide", isAllergen: false },
+      { name: "Butylene Glycol", isAllergen: false },
+      { name: "Ethylhexylglycerin", isAllergen: false },
+      { name: "Paeonia Suffruticosa Root Extract", isAllergen: false },
+      { name: "Dianthus Chinensis Extract", isAllergen: false },
+      { name: "1,2-Hexanediol", isAllergen: false },
+      { name: "Hydroxyacetophenone", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Centella Asiatica Extract", isAllergen: false },
+      { name: "Hydrogenated Lecithin", isAllergen: false },
+      { name: "Cholesterol", isAllergen: false },
+      { name: "Ceramide NP", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free facial cleanser for sensitive skin",
+      "Another FDA-notified facial cleanser suited to the user's skin type",
+    ],
+  },
+
+  {
+    slug: "avon-feelin-fresh-quelch-crystal-tawas-antiperspirant-50g",
+    barcode: "15551801",
+    name: "Avon Feelin Fresh Quelch Natural Brightening Crystal Tawas Antiperspirant Deodorant Cream 50g",
+    brand: "Avon",
+    category: "Antiperspirant Cream",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Notified",
+    registrationNumber: "NN-1000013626089",
+    servingSize: "50g tube (pea-sized amount per underarm)",
+    warningMessage:
+      "Philippine FDA cosmetic notification NN-1000013626089 lists Avon Feelin Fresh Quelch Natural Brightening Crystal Tawas Antiperspirant Deodorant Cream by Avon Products Mfg., Inc., valid through 15 October 2027. The product name, brand, and manufacturer match the submitted 50g tube; the portal does not list barcodes or pack sizes. One ingredient on the package photo (an acid following \"Fragrance\") was partially obscured and is recorded here as unconfirmed. Contains aluminum chlorohydrate. For external use only; do not use on broken or irritated skin.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Aluminum Chlorohydrate", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Stearate SE", isAllergen: false },
+      { name: "Steareth-2", isAllergen: false },
+      { name: "Isopropyl Palmitate", isAllergen: false },
+      { name: "PPG-15 Stearyl Ether", isAllergen: false },
+      { name: "Steareth-20", isAllergen: false },
+      { name: "Thiodipropionic Acid", isAllergen: false },
+      { name: "Fragrance", isAllergen: false },
+      { name: "Acid (partially obscured in package photo, unconfirmed)", isAllergen: false },
+      { name: "Aluminum Potassium Sulfate", isAllergen: false },
+      { name: "Glutathione", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free antiperspirant if perfume must be avoided",
+      "Another FDA-notified underarm product suitable for the user's skin",
+    ],
+  },
+
+  // Package data: user-supplied front/back photos, reviewed September 18, 2026.
+  // FDA portal checked September 18, 2026 via https://verification.fda.gov.ph/.
+  {
+    slug: "nescafe-ice-roast-instant-coffee-10-sticks-19g",
+    barcode: "4800361432054",
+    name: "Nescafé Ice Roast Instant Coffee 10 Sticks 19g",
+    brand: "Nescafé",
+    category: "Instant Coffee",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No matching Philippine FDA record",
+    servingSize: "1 stick (1.9g); 10 sticks per 19g box",
+    warningMessage:
+      "No exact Philippine FDA food registration was found for \"Nescafé Ice Roast\" by product name; the portal lists several active \"Nescafé Classic\" instant coffee registrations under Nestlé Philippines, Inc., but none matching the \"Ice Roast\" variant name. The ingredient panel was not visible in the supplied photos, so it is not transcribed here. Manufactured for Nestlé Philippines, Inc., Km. 46 Brgy. Niugan, Cabuyao, Laguna, Philippines, under license of Société des Produits Nestlé S.A., Vevey, Switzerland.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [],
+
+    allergens: [],
+
+    alternatives: [
+      "Philippine-market Nescafé instant coffee with a matching FDA registration",
+    ],
+  },
+
+  // Caution reflects the supplement's adult-use precautions; the Philippine
+  // FDA registration, printed on the package, remains approved and active.
+  {
+    slug: "pure-form-creatine-monohydrate-300g",
+    barcode: "4809016479000",
+    name: "Pure Form 100% Ultra-Micronized Creatine Monohydrate Unflavored Powder 300g",
+    brand: "Pure Form",
+    category: "Food Supplement",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000012097911",
+    nutritionRating: {
+      category: "FOOD",
+    },
+    servingSize: "5g (1 scoop); 60 servings per 300g pack",
+    warningMessage:
+      "Philippine FDA registration FR-4000012097911, printed on the package, lists Creatine Monohydrate Food Supplement Powder by Pure Form Ventures Inc. as approved and active through December 9, 2030. This food supplement has no approved therapeutic claims. For healthy adults 18 years and older only. Consult a physician before use if pregnant, breastfeeding, managing a medical condition, or taking medication.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      { name: "100% Ultra-Micronized Creatine Monohydrate", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Creatine-rich foods such as meat or fish",
+      "Professional nutrition guidance before another supplement",
+    ],
+  },
+
+  {
+    slug: "st-ives-renewing-moisturizer-collagen-elastin-283g",
+    barcode: "077043104736",
+    name: "St. Ives Renewing Moisturizer Collagen & Elastin 10oz (283g)",
+    brand: "St. Ives",
+    category: "Facial Moisturizer",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Exact Variant Not Verified",
+    registrationNumber: "No confirmed matching Philippine FDA notification",
+    servingSize: "283g (10 oz) jar; apply to face and neck as needed",
+    warningMessage:
+      "No exact Philippine FDA cosmetic notification was found for this jar. The portal lists a similarly named \"St Ives Renewing Body Lotion Collagen & Elastin\" (NN-1000012286460) registered by Grand Dragon Enterprises Inc., but that record describes a body lotion, not the face-and-neck moisturizer printed on this 283g jar, and its registrant differs from Unilever, the manufacturer address printed on this package (Trumbull, CT, USA). This is treated as an unconfirmed variant rather than a match. For external use only; avoid direct contact with eyes and rinse thoroughly with water if contact occurs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water (Aqua)", isAllergen: false },
+      { name: "Mineral Oil", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Glyceryl Stearate", isAllergen: false },
+      { name: "PEG-100 Stearate", isAllergen: false },
+      { name: "Stearic Acid", isAllergen: false },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Carthamus Tinctorius (Safflower) Seed Oil", isAllergen: false },
+      { name: "Triethanolamine", isAllergen: false },
+      { name: "Carbomer", isAllergen: false },
+      { name: "Cetyl Alcohol", isAllergen: false },
+      { name: "Dimethicone", isAllergen: false },
+      { name: "Disodium EDTA", isAllergen: false },
+      { name: "Fragrance (Parfum)", isAllergen: false },
+      { name: "Ethylhexylglycerin", isAllergen: false },
+      { name: "Hydrolyzed Collagen", isAllergen: false },
+      { name: "Hydrolyzed Elastin", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "A fragrance-free moisturizer for sensitive skin",
+      "Another FDA-notified facial moisturizer suited to the user's skin type",
+    ],
+  },
+
+  // Caution reflects the supplement's adult-use precautions; the Philippine
+  // FDA registration, printed on the package, remains approved and active.
+  {
+    slug: "pure-form-magnesium-ashwagandha-90-capsules",
+    barcode: "4809016479086",
+    name: "Pure Form Magnesium + Ashwagandha 90 Vegan Capsules",
+    brand: "Pure Form",
+    category: "Food Supplement",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
+    registrationNumber: "FR-4000013013055",
+    nutritionRating: {
+      category: "FOOD",
+    },
+    servingSize: "2 capsules; 45 servings per 90-capsule bottle",
+    warningMessage:
+      "Philippine FDA registration FR-4000013013055, printed on the package, lists Magnesium Glycinate + Ashwagandha Root Extract Capsule Food Supplement by Pure Form Ventures Inc. as approved and active through July 25, 2031. This food supplement has no approved therapeutic claims. For healthy adults 18 years and older only. Consult a physician before use if pregnant, breastfeeding, managing a medical condition, or taking medication.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "0",
+      protein: "0g",
+      carbohydrates: "0g",
+      totalFat: "0g",
+      saturatedFat: "0g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "0mg",
+    },
+
+    ingredients: [
+      { name: "Magnesium Glycinate (400mg)", isAllergen: false },
+      { name: "Ashwagandha Root Extract (1,000mg; 5% withanolides)", isAllergen: false },
+      { name: "100% Vegan HPMC Capsule Shell", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "Magnesium-rich foods such as leafy greens or nuts",
+      "A supplement and dose recommended by a physician or dietitian",
+    ],
+  },
 ];
 
 async function seedDatabase() {
