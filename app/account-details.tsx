@@ -174,18 +174,12 @@ export default function AccountDetailsScreen() {
   const accountUser = user as any;
 
   const googleAccount = getConnectedExternalAccount(accountUser, "google");
-  const facebookAccount = getConnectedExternalAccount(accountUser, "facebook");
 
   const googleAccountLabel = getExternalAccountLabel(googleAccount);
-  const facebookAccountLabel = getExternalAccountLabel(facebookAccount);
 
   const passwordStatus = accountUser?.passwordEnabled
     ? "Protected by Clerk"
     : "No password set";
-
-  const twoFactorStatus = accountUser?.twoFactorEnabled
-    ? "Enabled"
-    : "Not enabled";
 
   const navigateWithLock = (navigationAction: () => void) => {
     if (isNavigatingRef.current) {
@@ -690,10 +684,6 @@ export default function AccountDetailsScreen() {
     }
   };
 
-  const showComingSoon = (title: string) => {
-    Alert.alert(title, "This feature will be added next.");
-  };
-
   const connectGoogleAccount = async () => {
     if (!user) {
       Alert.alert("Account Error", "User account is not loaded yet.");
@@ -780,25 +770,6 @@ export default function AccountDetailsScreen() {
     } finally {
       setIsConnectingGoogle(false);
     }
-  };
-
-  const handleLinkedAccountPress = (
-    providerName: "Google" | "Facebook",
-    isConnected: boolean,
-    accountLabel: string,
-  ) => {
-    if (isConnected) {
-      Alert.alert(
-        `${providerName} Connected`,
-        `This account is connected as ${accountLabel}. Unlink account can be added later.`,
-      );
-      return;
-    }
-
-    Alert.alert(
-      `${providerName} Not Connected`,
-      `${providerName} linking needs OAuth setup in Clerk Dashboard first. We will add the real connect flow next.`,
-    );
   };
 
   if (!isLoaded) {
@@ -904,7 +875,7 @@ export default function AccountDetailsScreen() {
               size={22}
               color="#6F6EFF"
             />
-            <Text style={styles.sectionTitle}>Account Security</Text>
+            <Text style={styles.sectionTitle}>Security & Sign-in</Text>
           </View>
 
           <View style={styles.detailRow}>
@@ -937,29 +908,6 @@ export default function AccountDetailsScreen() {
 
           <View style={styles.detailRow}>
             <View style={styles.detailTextBox}>
-              <Text style={styles.rowTitle}>Two-Factor Authenticator</Text>
-              <Text style={styles.mutedValue}>{twoFactorStatus}</Text>
-            </View>
-
-            <Pressable
-              style={styles.pillButton}
-              onPress={() => showComingSoon("Two-Factor Authenticator")}
-            >
-              <Text style={styles.pillButtonText}>
-                {accountUser?.twoFactorEnabled ? "Manage" : "Enable"}
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionTitleRow}>
-            <Ionicons name="mail-outline" size={22} color="#6F6EFF" />
-            <Text style={styles.sectionTitle}>Linked Accounts</Text>
-          </View>
-
-          <View style={styles.detailRow}>
-            <View style={styles.detailTextBox}>
               <Text style={styles.rowTitle}>Google</Text>
               <Text style={styles.mutedValue}>{googleAccountLabel}</Text>
             </View>
@@ -975,30 +923,6 @@ export default function AccountDetailsScreen() {
                   : googleAccount
                     ? "View"
                     : "Connect"}
-              </Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.detailRow}>
-            <View style={styles.detailTextBox}>
-              <Text style={styles.rowTitle}>Facebook</Text>
-              <Text style={styles.mutedValue}>{facebookAccountLabel}</Text>
-            </View>
-
-            <Pressable
-              style={styles.pillButton}
-              onPress={() =>
-                handleLinkedAccountPress(
-                  "Facebook",
-                  Boolean(facebookAccount),
-                  facebookAccountLabel,
-                )
-              }
-            >
-              <Text style={styles.pillButtonText}>
-                {facebookAccount ? "View" : "Connect"}
               </Text>
             </Pressable>
           </View>
