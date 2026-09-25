@@ -6,12 +6,14 @@
     "orientation": "portrait",
     "scheme": "codify",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icons/icon.png",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fxrnce.codify"
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-icon-foreground.png",
         "backgroundColor": "#E6F4FE"
       },
       "predictiveBackGestureEnabled": false,
