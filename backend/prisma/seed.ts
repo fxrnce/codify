@@ -6062,6 +6062,110 @@ const products: SeedProduct[] = [
       "A supplement and dose recommended by a physician or dietitian",
     ],
   },
+
+  // Package data: user-supplied front/back photos, FDA portal checked September 27, 2026.
+  {
+    slug: "off-sakura-no-hana-insect-repellent-spray-100ml",
+    barcode: "955522614746",
+    name: "OFF! Sakura-no-Hana Insect Repellent Spray 100mL",
+    brand: "OFF!",
+    category: "Insect Repellent",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA HUHS Registered",
+    registrationNumber: "HSR-8202",
+    servingSize: "100mL (94g) bottle",
+    warningMessage:
+      "Philippine FDA Household/Urban Hazardous Substance registration HSR-8202 lists OFF! Sakura-no-Hana Insect Repellent Spray, manufactured by Telstar Manufacturing Corporation for S.C. Johnson & Son, Inc., issued 10 February 2025 and valid through 29 March 2028. Contains 15% w/w N,N-diethyl-meta-toluamide (DEET). Flammable liquid aerosol; may be harmful if swallowed and causes eye irritation. Avoid spraying near heat, sparks, or open flame; do not apply to broken or irritated skin; keep out of reach of children.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "N,N-Diethyl-meta-toluamide (DEET) 15% w/w", isAllergen: true },
+      { name: "Inert Ingredients 85% w/w", isAllergen: false },
+    ],
+
+    allergens: ["Insect Repellents"],
+
+    alternatives: [
+      "A DEET-free, plant-based insect repellent for sensitive skin",
+      "Physical barriers such as mosquito nets or long sleeves",
+    ],
+  },
+
+  {
+    slug: "baygon-shield-defense-multi-insect-killer-500ml",
+    barcode: "4801234107727",
+    name: "Baygon Shield Defense Multi Insect Killer 500mL",
+    brand: "Baygon",
+    category: "Insecticide Spray",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA HUHS Registered",
+    registrationNumber: "HSR-8214",
+    servingSize: "500mL (306g) aerosol can",
+    warningMessage:
+      "Philippine FDA Household/Urban Hazardous Substance registration HSR-8214 lists Baygon Shield Defense Multi Insect Killer, manufactured by Cyberpax Co., Ltd. (Thailand) for S.C. Johnson & Son, Inc., issued 24 August 2023 and valid through 24 August 2028. For use against mosquitoes, cockroaches, and houseflies. Contains Imiprothrin and Transfluthrin. Extremely flammable aerosol; pressurized container may burst if heated. Ventilate room thoroughly before re-entry; avoid inhalation and contact with skin and eyes; keep out of reach of children and pets.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Imiprothrin 0.03% w/w", isAllergen: true },
+      { name: "Transfluthrin 0.10% w/w", isAllergen: true },
+      { name: "Petroleum Distillates", isAllergen: false },
+    ],
+
+    allergens: ["Insect Repellents"],
+
+    alternatives: [
+      "A DEET-based personal repellent instead of a room insecticide spray",
+      "Physical pest control (traps, screens) for users sensitive to aerosol insecticides",
+    ],
+  },
+
+  {
+    slug: "sure-guard-latex-surgical-gloves-powder-free",
+    barcode: "4806524149180",
+    name: "Sure-Guard Latex Surgical Gloves Powder Free (Size 7.5, 1 Pair)",
+    brand: "Sure-Guard",
+    category: "Latex Surgical Gloves",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Medical Device",
+    registrationNumber: "MDR-09766",
+    servingSize: "1 pair (2 gloves), size 7 1/2",
+    warningMessage:
+      "Philippine FDA medical device registration MDR-09766 lists Sure-Guard Latex Surgical Gloves Powder Free, manufactured by Tianchang Hengsheng Medical Devices Co., Ltd. (Anhui, China), issued 13 April 2026 and valid through 16 June 2031. The FDA portal's listed distributor (PhilRx Pharma Inc.) differs from the importer/distributor printed on this package (AMB HK Enterprises Inc.), which is common where a local sub-distributor differs from the primary FDA-listed distributor. Manufactured with natural rubber latex and may cause allergic reactions in sensitive persons. Sterilized by gamma-ray process; validity and sterility are assured for 5 years if the package is not damaged, opened, or wet.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Natural Rubber Latex", isAllergen: true }],
+
+    allergens: ["Latex Products"],
+
+    alternatives: [
+      "Nitrile or vinyl examination gloves for users with a latex allergy",
+      "Another FDA-registered latex-free glove suitable for the intended use",
+    ],
+  },
 ];
 
 async function seedDatabase() {
