@@ -790,11 +790,11 @@ const products: SeedProduct[] = [
       },
       {
         name: "Fragrance",
-        isAllergen: false,
+        isAllergen: true,
       },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "Wash hands with soap and water when available",
@@ -847,7 +847,7 @@ const products: SeedProduct[] = [
       },
       {
         name: "Fragrance",
-        isAllergen: false,
+        isAllergen: true,
       },
       {
         name: "Talc",
@@ -891,7 +891,7 @@ const products: SeedProduct[] = [
       },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free cleansing bar for sensitive skin",
@@ -987,11 +987,11 @@ const products: SeedProduct[] = [
       },
       {
         name: "Fragrance",
-        isAllergen: false,
+        isAllergen: true,
       },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free cornstarch body powder used as directed",
@@ -1031,7 +1031,7 @@ const products: SeedProduct[] = [
       { name: "PPG-14 Butyl Ether", isAllergen: false },
       { name: "Hydrogenated Castor Oil", isAllergen: false },
       { name: "PEG-8", isAllergen: false },
-      { name: "Perfume", isAllergen: false },
+      { name: "Perfume", isAllergen: true },
       { name: "Dimethicone", isAllergen: false },
       { name: "Silica", isAllergen: false },
       { name: "Polyethylene", isAllergen: false },
@@ -1040,7 +1040,7 @@ const products: SeedProduct[] = [
       { name: "BHT", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free antiperspirant if perfume must be avoided",
@@ -1081,7 +1081,7 @@ const products: SeedProduct[] = [
       { name: "Sodium Isethionate", isAllergen: false },
       { name: "Sodium Stearate", isAllergen: false },
       { name: "Cocamidopropyl Betaine", isAllergen: false },
-      { name: "Perfume", isAllergen: false },
+      { name: "Perfume", isAllergen: true },
       { name: "Sodium Palm Kernelate", isAllergen: false },
       { name: "Sodium Chloride", isAllergen: false },
       { name: "Zinc Oxide", isAllergen: false },
@@ -1104,7 +1104,7 @@ const products: SeedProduct[] = [
       { name: "CI 61570", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free cleansing bar if perfume must be avoided",
@@ -1141,7 +1141,7 @@ const products: SeedProduct[] = [
       { name: "Dimethicone", isAllergen: false },
       { name: "Behentrimonium Chloride", isAllergen: false },
       { name: "Glycerin", isAllergen: false },
-      { name: "Perfume", isAllergen: false },
+      { name: "Perfume", isAllergen: true },
       { name: "Dipropylene Glycol", isAllergen: false },
       {
         name: "Bis-(Isostearoyl/Oleoyl Isopropyl) Dimonium Methosulfate",
@@ -1159,7 +1159,7 @@ const products: SeedProduct[] = [
       { name: "Hydrolyzed Keratin", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free conditioner if perfume must be avoided",
@@ -1197,7 +1197,7 @@ const products: SeedProduct[] = [
       { name: "Sodium Xylenesulfonate", isAllergen: false },
       { name: "Cocamidopropyl Betaine", isAllergen: false },
       { name: "Glycol Distearate", isAllergen: false },
-      { name: "Fragrance", isAllergen: false },
+      { name: "Fragrance", isAllergen: true },
       { name: "Dimethiconol", isAllergen: false },
       { name: "Sodium Citrate", isAllergen: false },
       { name: "Sodium Chloride", isAllergen: false },
@@ -1217,7 +1217,7 @@ const products: SeedProduct[] = [
       { name: "CI 42090", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "An anti-dandruff shampoo with a matching Philippine FDA cosmetic notification",
@@ -4321,14 +4321,14 @@ const products: SeedProduct[] = [
       { name: "Amylase", isAllergen: false },
       { name: "Lipase", isAllergen: false },
       { name: "Protease", isAllergen: false },
-      { name: "Fragrance", isAllergen: false },
+      { name: "Fragrance", isAllergen: true },
       {
         name: "Disodium Distyrylbiphenyl Disulfonate",
         isAllergen: false,
       },
     ],
 
-    allergens: [],
+    allergens: ["Laundry Detergents"],
 
     alternatives: [
       "A fragrance-free laundry detergent for fragrance-sensitive users",
@@ -4360,16 +4360,16 @@ const products: SeedProduct[] = [
 
     ingredients: [
       { name: "Water", isAllergen: false },
-      { name: "Sodium Hypochlorite", isAllergen: false },
+      { name: "Sodium Hypochlorite", isAllergen: true },
       { name: "Sodium Laureth Sulfate", isAllergen: false },
       { name: "Sodium Hydroxide", isAllergen: false },
       { name: "Cocamine Oxide", isAllergen: false },
-      { name: "Fragrance", isAllergen: false },
+      { name: "Fragrance", isAllergen: true },
       { name: "Sodium Silicate", isAllergen: false },
       { name: "Sodium Polyacrylate", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Cleaning Products"],
 
     alternatives: [
       "A non-chlorine cleaner suitable for the intended surface",
@@ -4401,11 +4401,11 @@ const products: SeedProduct[] = [
 
     ingredients: [
       { name: "Water", isAllergen: false },
-      { name: "Sodium Hypochlorite", isAllergen: false },
-      { name: "Lemon Fragrance", isAllergen: false },
+      { name: "Sodium Hypochlorite", isAllergen: true },
+      { name: "Lemon Fragrance", isAllergen: true },
     ],
 
-    allergens: [],
+    allergens: ["Cleaning Products"],
 
     alternatives: [
       "An oxygen-based color-safe bleach for compatible colored fabrics",
@@ -4887,7 +4887,7 @@ const products: SeedProduct[] = [
       },
     ],
 
-    allergens: ["Milk", "Wheat / Gluten", "Soy", "Sulphites"],
+    allergens: ["Milk", "Wheat / Gluten", "Soy", "Sulfites"],
 
     alternatives: [
       "Black coffee without creamer when limiting saturated fat",
@@ -5349,7 +5349,7 @@ const products: SeedProduct[] = [
       { name: "Sodium Metabisulfite (Preservative)", isAllergen: true },
     ],
 
-    allergens: ["Sulphites"],
+    allergens: ["Sulfites"],
 
     alternatives: [
       "A lower-sodium chili sauce after comparing nutrition labels",
@@ -5550,8 +5550,8 @@ const products: SeedProduct[] = [
       sodium: "N/A",
     },
 
-    ingredients: [{ name: "Paracetamol 500mg", isAllergen: false }],
-    allergens: [],
+    ingredients: [{ name: "Paracetamol 500mg", isAllergen: true }],
+    allergens: ["Paracetamol"],
     alternatives: [],
   },
 
@@ -5579,11 +5579,11 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: false },
-      { name: "Chlorphenamine Maleate 2mg", isAllergen: false },
-      { name: "Paracetamol 500mg", isAllergen: false },
+      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: true },
+      { name: "Chlorphenamine Maleate 2mg", isAllergen: true },
+      { name: "Paracetamol 500mg", isAllergen: true },
     ],
-    allergens: [],
+    allergens: ["Paracetamol", "Antihistamines", "Decongestants"],
     alternatives: [],
   },
 
@@ -5612,11 +5612,11 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: false },
-      { name: "Chlorphenamine Maleate 2mg", isAllergen: false },
-      { name: "Paracetamol 500mg", isAllergen: false },
+      { name: "Phenylephrine Hydrochloride 10mg", isAllergen: true },
+      { name: "Chlorphenamine Maleate 2mg", isAllergen: true },
+      { name: "Paracetamol 500mg", isAllergen: true },
     ],
-    allergens: [],
+    allergens: ["Paracetamol", "Antihistamines", "Decongestants"],
     alternatives: [],
   },
 
@@ -5840,7 +5840,7 @@ const products: SeedProduct[] = [
       { name: "Ceramide NP", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Skincare Products"],
 
     alternatives: [
       "A fragrance-free facial cleanser for sensitive skin",
@@ -5880,13 +5880,13 @@ const products: SeedProduct[] = [
       { name: "PPG-15 Stearyl Ether", isAllergen: false },
       { name: "Steareth-20", isAllergen: false },
       { name: "Thiodipropionic Acid", isAllergen: false },
-      { name: "Fragrance", isAllergen: false },
+      { name: "Fragrance", isAllergen: true },
       { name: "Acid (partially obscured in package photo, unconfirmed)", isAllergen: false },
       { name: "Aluminum Potassium Sulfate", isAllergen: false },
       { name: "Glutathione", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Perfumes", "Cosmetics"],
 
     alternatives: [
       "A fragrance-free antiperspirant if perfume must be avoided",
@@ -6011,7 +6011,7 @@ const products: SeedProduct[] = [
       { name: "Hydrolyzed Elastin", isAllergen: false },
     ],
 
-    allergens: [],
+    allergens: ["Skincare Products"],
 
     alternatives: [
       "A fragrance-free moisturizer for sensitive skin",
