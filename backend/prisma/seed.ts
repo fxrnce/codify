@@ -6549,6 +6549,78 @@ const products: SeedProduct[] = [
 
     alternatives: [],
   },
+
+  // Package data: user-supplied front/back photos, FDA portal checked September 28, 2026.
+  {
+    slug: "kathrex-cotrimoxazole-240mg-5ml-suspension-60ml",
+    barcode: "4806523020291",
+    name: "Kathrex Cotrimoxazole 240mg/5mL Suspension 60mL",
+    brand: "Kathrex",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DRP-083",
+    servingSize: "240mg per 5mL; 60mL Boston round amber glass bottle",
+    warningMessage:
+      "Philippine FDA registration DRP-083 lists Kathrex Cotrimoxazole 240mg per 5mL Suspension, manufactured by New Myrex Laboratories, Inc. (Philippines), issued 14 March 2024 and valid through 8 April 2029. Antibacterial (Sulfonamide), Prescription Drug (Rx). Contraindicated in patients with impaired hepatic function; use with extreme caution in renal impairment or a history of allergic conditions or bronchial asthma; must be avoided during pregnancy.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sulfamethoxazole 200mg (per 5mL)", isAllergen: true },
+      { name: "Trimethoprim 40mg (per 5mL)", isAllergen: false },
+    ],
+
+    allergens: ["Sulfa Drugs"],
+
+    alternatives: [
+      "A non-sulfa antibacterial for users with a sulfonamide allergy",
+      "Another FDA-registered cotrimoxazole product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "bactrex-cotrimoxazole-200mg-40mg-banana-suspension-60ml",
+    barcode: "DRP-3267",
+    name: "Bactrex Cotrimoxazole 200mg/40mg per 5mL Suspension Banana Flavor 60mL",
+    brand: "Bactrex",
+    category: "Prescription Medicine",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registration Not Independently Verified",
+    registrationNumber: "DRP-3267",
+    servingSize: "200mg/40mg per 5mL; 60mL bottle, Banana flavor",
+    warningMessage:
+      "The package prints registration number DRP-3267 for Bactrex Cotrimoxazole 200mg/40mg per 5mL Suspension, manufactured by Azarias Pharmaceutical Laboratories, Inc. (Philippines), but this exact registration number could not be found in the current Philippine FDA portal search. The Bactrex brand itself and its manufacturer are genuinely FDA-registered (a separate 960mg tablet formulation, DRP-4549, was confirmed), so this may be a real but not-yet-indexed registration rather than a fraudulent product. Contains sulfamethoxazole and trimethoprim; should not be given to patients with a history of hypersensitivity to sulfonamides or trimethoprim. Contains FD&C Yellow No. 5 (Tartrazine), which may cause allergic reactions including bronchial asthma in susceptible persons.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sulfamethoxazole 200mg (per 5mL)", isAllergen: true },
+      { name: "Trimethoprim 40mg (per 5mL)", isAllergen: false },
+      { name: "FD&C Yellow No. 5 (Tartrazine)", isAllergen: true },
+    ],
+
+    allergens: ["Sulfa Drugs"],
+
+    alternatives: [
+      "A non-sulfa antibacterial for users with a sulfonamide allergy",
+      "Kathrex Cotrimoxazole, a fully FDA-verified alternative with the same active ingredients",
+    ],
+  },
 ];
 
 async function seedDatabase() {
