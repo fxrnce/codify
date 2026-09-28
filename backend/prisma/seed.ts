@@ -5528,7 +5528,7 @@ const products: SeedProduct[] = [
 
   {
     slug: "biogesic-paracetamol-500mg-tablet",
-    barcode: "DR-XY39670",
+    barcode: "4807788561688",
     name: "Biogesic Paracetamol 500mg Tablet",
     brand: "Biogesic",
     category: "OTC Medicine",
@@ -5538,9 +5538,63 @@ const products: SeedProduct[] = [
     servingSize:
       "500mg tablet; blister x10 (box of 10) or blister x20 (box of 500)",
     warningMessage:
-      "Philippine FDA registration DR-XY39670 is valid through June 22, 2031. The exact retail-package barcode is not yet cataloged. This medicine contains paracetamol. Do not take it with another medicine containing paracetamol or acetaminophen, do not exceed the label dose, and ask a doctor or pharmacist if you have liver or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+      "Philippine FDA registration DR-XY39670 is valid through June 22, 2031. This medicine contains paracetamol. Do not take it with another medicine containing paracetamol or acetaminophen, do not exceed the label dose, and ask a doctor or pharmacist if you have liver or kidney problems, take other medicines, or are pregnant or breastfeeding.",
     verificationUrl:
       "https://verification.fda.gov.ph/ALL_DrugProductslist.php/api/api/ALL_DrugProductsview.php?registration_number=DR-XY39670&showdetail=",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Paracetamol 500mg", isAllergen: true }],
+    allergens: ["Paracetamol"],
+    alternatives: [],
+  },
+
+  {
+    slug: "biogesic-paracetamol-500mg-8plus2-sulit-pack",
+    barcode: "4807788581983",
+    name: "Biogesic Paracetamol 500mg Tablet 8+2 Sulit Pack (10 Tablets)",
+    brand: "Biogesic",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY39670",
+    servingSize: "500mg tablet; 8+2 Sulit Pack box, 10 tablets total",
+    warningMessage:
+      "Philippine FDA registration DR-XY39670 is valid through June 22, 2031. This is the 8+2 Sulit Pack retail variant of Biogesic Paracetamol 500mg Tablet, same formulation and registration as the standard box. Do not take it with another medicine containing paracetamol or acetaminophen, do not exceed the label dose, and ask a doctor or pharmacist if you have liver or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Paracetamol 500mg", isAllergen: true }],
+    allergens: ["Paracetamol"],
+    alternatives: [],
+  },
+
+  {
+    slug: "biogesic-paracetamol-500mg-8plus2-alaga-pack",
+    barcode: "4807788331083",
+    name: "Biogesic Paracetamol 500mg Tablet 8+2 Alaga Pack (10 Tablets)",
+    brand: "Biogesic",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY39670",
+    servingSize: "500mg tablet; 8+2 Alaga Pack blister strip, 10 tablets total",
+    warningMessage:
+      "Philippine FDA registration DR-XY39670 is valid through June 22, 2031. This is the 8+2 Alaga Pack blister-strip retail variant of Biogesic Paracetamol 500mg Tablet, same formulation and registration as the standard box. Do not take it with another medicine containing paracetamol or acetaminophen, do not exceed the label dose, and ask a doctor or pharmacist if you have liver or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+    verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
       calories: "N/A",
