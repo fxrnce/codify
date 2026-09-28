@@ -15,17 +15,7 @@ import {
   type ProductReport,
   useProductReports,
 } from "@/contexts/ProductReportsContext";
-
-function formatReportTime(dateValue: string) {
-  const date = new Date(dateValue);
-
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
+import { formatDateTime as formatReportTime } from "@/utils/formatDate";
 
 export default function ReportedProductsScreen() {
   const router = useRouter();

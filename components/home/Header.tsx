@@ -66,7 +66,7 @@ export default function Header() {
           <Text style={styles.welcome}>Welcome to Codify,</Text>
 
           <Text style={styles.name} numberOfLines={1}>
-            {displayName} 👋
+            {displayName}
           </Text>
         </View>
 

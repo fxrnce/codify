@@ -16,6 +16,7 @@ import {
   type ScanHistoryItem,
   useScanHistory,
 } from "@/contexts/ScanHistoryContext";
+import { formatDateTime } from "@/utils/formatDate";
 import { matchesCatalogSearch } from "@/utils/search";
 
 type HistoryFilter =
@@ -67,17 +68,6 @@ function getStatusStyle(status: ScanHistoryItem["status"]) {
     icon: "close-circle" as const,
     label: "Not Approved",
   };
-}
-
-function formatScanTime(dateValue: string) {
-  const date = new Date(dateValue);
-
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 }
 
 export default function HistoryScreen() {
@@ -418,7 +408,7 @@ export default function HistoryScreen() {
                     </View>
 
                     <Text style={styles.timeText}>
-                      {formatScanTime(item.scannedAt)}
+                      {formatDateTime(item.scannedAt)}
                     </Text>
                   </View>
                 </Pressable>

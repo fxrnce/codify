@@ -2,19 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useNetworkStatus } from "@/contexts/NetworkContext";
+import { formatDateTime } from "@/utils/formatDate";
 
 function formatSyncTime(value: string | null) {
   if (!value) return "Bundled catalog available";
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Saved catalog available";
+  const formatted = formatDateTime(value);
+  if (!formatted) return "Saved catalog available";
 
-  return `Catalog last updated ${date.toLocaleString([], {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  })}`;
+  return `Catalog last updated ${formatted}`;
 }
 
 export default function SyncStatusCard() {

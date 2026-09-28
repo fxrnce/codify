@@ -18,6 +18,7 @@ import {
 } from "@/constants/MockData";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { loadCachedProductCatalog } from "@/services/products";
+import { formatDateTime } from "@/utils/formatDate";
 import { matchesCatalogSearch } from "@/utils/search";
 
 function getStatusStyle(status: ProductStatus) {
@@ -104,14 +105,9 @@ export default function SearchProductScreen() {
 
   const lastSyncLabel = useMemo(() => {
     if (!lastCatalogSyncAt) return "";
-    const date = new Date(lastCatalogSyncAt);
-    if (Number.isNaN(date.getTime())) return "";
-    return ` Last updated ${date.toLocaleString([], {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    })}.`;
+    const formatted = formatDateTime(lastCatalogSyncAt);
+    if (!formatted) return "";
+    return ` Last updated ${formatted}.`;
   }, [lastCatalogSyncAt]);
 
   const filteredProducts = useMemo(() => {

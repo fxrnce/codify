@@ -19,6 +19,8 @@ import {
   View,
 } from "react-native";
 
+import { formatMonthYear } from "@/utils/formatDate";
+
 WebBrowser.maybeCompleteAuthSession();
 
 function getInitials(name: string) {
@@ -40,16 +42,13 @@ function formatMemberSince(date?: Date | string | number | null) {
     return "Member since recently";
   }
 
-  const memberDate = new Date(date);
+  const formatted = formatMonthYear(date);
 
-  if (Number.isNaN(memberDate.getTime())) {
+  if (!formatted) {
     return "Member since recently";
   }
 
-  return `Member since ${memberDate.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  })}`;
+  return `Member since ${formatted}`;
 }
 
 function getErrorMessage(error: any) {

@@ -13,6 +13,7 @@ import {
 
 import { useAdminAccess } from "@/contexts/AdminAccessContext";
 import type { AdminFieldError } from "@/services/admin-api";
+import { formatDateTime } from "@/utils/formatDate";
 
 export const adminColors = {
   primary: "#B4233A",
@@ -216,13 +217,7 @@ export function fieldErrorMap(errors?: AdminFieldError[]): Record<string, string
 }
 
 export function formatAdminDate(value: string) {
-  return new Date(value).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return formatDateTime(value, { includeYear: true });
 }
 
 export const adminStyles = StyleSheet.create({

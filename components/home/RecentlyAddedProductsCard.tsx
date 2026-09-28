@@ -13,6 +13,7 @@ import Card from "@/components/common/Card";
 import type { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { loadCachedProductCatalog } from "@/services/products";
+import { formatDateOnly } from "@/utils/formatDate";
 
 const MAX_ITEMS = 5;
 
@@ -49,17 +50,7 @@ function getStatusAppearance(status: ProductStatus) {
 }
 
 function formatAddedDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  return formatDateOnly(value);
 }
 
 // Products without a valid createdAt (e.g. older cached entries synced

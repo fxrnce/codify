@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Card from "@/components/common/Card";
 import { ScanHistoryItem, useScanHistory } from "@/contexts/ScanHistoryContext";
+import { formatDateTime } from "@/utils/formatDate";
 
 function getStatusStyle(status: ScanHistoryItem["status"]) {
   if (status === "Approved") {
@@ -39,17 +40,6 @@ function getStatusStyle(status: ScanHistoryItem["status"]) {
     icon: "close-circle" as const,
     label: "Not Approved",
   };
-}
-
-function formatScanTime(dateValue: string) {
-  const date = new Date(dateValue);
-
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 }
 
 export default function RecentScans() {
@@ -128,7 +118,7 @@ export default function RecentScans() {
                   </Text>
 
                   <Text numberOfLines={1} style={styles.scanMeta}>
-                    {scan.brand} • {formatScanTime(scan.scannedAt)}
+                    {scan.brand} • {formatDateTime(scan.scannedAt)}
                   </Text>
                 </View>
 
