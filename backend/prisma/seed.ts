@@ -6419,6 +6419,136 @@ const products: SeedProduct[] = [
       "Another FDA-registered cough syrup suitable for the user",
     ],
   },
+
+  // Package data: user-supplied front/back photos, FDA portal checked September 28, 2026.
+  {
+    slug: "mefenamic-acid-dolfenal-250mg-tablet-100s",
+    barcode: "4807788552471",
+    name: "Mefenamic Acid Dolfenal 250mg Film-Coated Tablet (100 Tablets)",
+    brand: "Dolfenal",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DRP-8716",
+    servingSize: "250mg film-coated tablet; flex foil x4 (box of 100)",
+    warningMessage:
+      "Philippine FDA registration DRP-8716 lists Mefenamic Acid Dolfenal 250mg Film-Coated Tablet, manufactured by Amherst Laboratories, Inc. for Unilab, Inc., issued 29 March 2022 and valid through 25 May 2027. Anti-Inflammatory and Anti-Rheumatic Product (Fenamate), Over-the-Counter (OTC) Drug. Do not take if allergic to mefenamic acid, aspirin, or other NSAIDs; do not take with aspirin or other NSAIDs; avoid if you have bronchospasm, angioedema, nasal polyps, or a history of allergic-type reactions to NSAIDs; avoid with stomach ulcers or bleeding, severe heart, liver, or kidney disease.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Mefenamic Acid 250mg", isAllergen: true }],
+
+    allergens: ["Mefenamic Acid"],
+
+    alternatives: [
+      "Paracetamol-based pain relief for users with an NSAID sensitivity",
+      "Another FDA-registered mefenamic acid product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "cefalexin-exel-500mg-capsule-100s",
+    barcode: "4806523301893",
+    name: "Cefalexin Exel 500mg Capsule (100 Capsules)",
+    brand: "Exel",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DRP-231",
+    servingSize: "500mg capsule; Alu/Clear PVC blister pack x10 (box of 100)",
+    warningMessage:
+      "Philippine FDA registration DRP-231 lists Cefalexin (as monohydrate) Exel 500mg Capsule, manufactured by New Myrex Laboratories, Inc. (Philippines), issued 13 January 2025 and valid through 29 October 2030. Antibacterial (First Generation Cephalosporin), Prescription Drug (Rx). Use with caution in patients with allergic reactions to cephalosporins or penicillin, and in those with severe renal impairment. For the treatment of respiratory tract, urinary tract, and skin infections, otitis media, and other infections due to sensitive organisms.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Cefalexin (as Monohydrate) 500mg", isAllergen: true },
+    ],
+
+    allergens: ["Cephalosporins"],
+
+    alternatives: [
+      "A non-cephalosporin antibacterial for users with a cephalosporin allergy",
+      "Another FDA-registered cephalosporin product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "sultamicillin-silgram-750mg-tablet-30s",
+    barcode: "4800308765108",
+    name: "Sultamicillin Silgram 750mg Film-Coated Tablet (30 Tablets)",
+    brand: "Silgram",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DR-XY38438",
+    servingSize: "750mg film-coated tablet; aluminum strip foil x6 (box of 30)",
+    warningMessage:
+      "Philippine FDA registration DR-XY38438 lists Sultamicillin (as tosylate) Silgram 750mg Film-Coated Tablet, manufactured by Lloyd Laboratories, Inc. for The Cathay Drug Company, Inc., issued 12 March 2025 and valid through 12 March 2031. Antibacterial (Penicillin), Prescription Drug (Rx). Sultamicillin is a penicillin-class antibiotic (an ampicillin/sulbactam combination) and is not a sulfonamide (\"sulfa\") drug, despite the similar-sounding name. Used for gonococcal infections, otitis media, pyelonephritis, respiratory and urinary tract infections, and skin/soft tissue infections.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Sultamicillin (as Tosylate) 750mg", isAllergen: true }],
+
+    allergens: [],
+
+    alternatives: [
+      "A non-penicillin antibacterial for users with a penicillin allergy",
+      "Another FDA-registered antibacterial suitable for the user",
+    ],
+  },
+
+  {
+    slug: "inosiplex-immunosin-500mg-tablet-24s",
+    barcode: "4807788654014",
+    name: "Inosiplex Immunosin 500mg Tablet (24 Tablets)",
+    brand: "Immunosin",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DR-XY4759",
+    servingSize: "500mg tablet; aluminum foil strip x4 (box of 24)",
+    warningMessage:
+      "Philippine FDA registration DR-XY4759 lists Inosine Dimepranol Acedoben (Inosiplex) Immunosin 500mg Tablet, manufactured by Amherst Laboratories, Inc. for Unilab, Inc., issued 22 October 2022 and valid through 5 November 2027. Direct Acting Antiviral / Immunostimulant, Prescription Drug (Rx). May cause a transient increase in serum and urine uric acid; if administered continuously for 3 months or longer, uric acid, blood count, liver, and renal function should be monitored regularly.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Inosine Dimepranol Acedoben (Inosiplex) 500mg", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [],
+  },
 ];
 
 async function seedDatabase() {
