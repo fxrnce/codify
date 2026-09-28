@@ -5643,7 +5643,7 @@ const products: SeedProduct[] = [
 
   {
     slug: "bioflu-tablet",
-    barcode: "DR-XY34482",
+    barcode: "4807788526762",
     name: "Bioflu Tablet",
     brand: "Bioflu",
     category: "OTC Medicine",
@@ -5653,7 +5653,7 @@ const products: SeedProduct[] = [
     servingSize:
       "film-coated tablet; blister x10 (box of 100) or blister x5 (envelope of 5)",
     warningMessage:
-      "Philippine FDA registration DR-XY34482 is valid through April 30, 2030. The exact retail-package barcode is not yet cataloged. Contains paracetamol; do not combine it with Biogesic, Neozep Forte, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
+      "Philippine FDA registration DR-XY34482 is valid through April 30, 2030. Contains paracetamol; do not combine it with Biogesic, Neozep Forte, or another medicine containing paracetamol or acetaminophen unless instructed by a healthcare professional. Chlorphenamine may cause drowsiness. Follow the label and ask a doctor or pharmacist before use if you have high blood pressure, heart, liver, or kidney problems, take other medicines, or are pregnant or breastfeeding.",
     verificationUrl:
       "https://verification.fda.gov.ph/ALL_DrugProductsview.php?registration_number=DR-XY34482&showdetail=",
 
