@@ -6166,6 +6166,205 @@ const products: SeedProduct[] = [
       "Another FDA-registered latex-free glove suitable for the intended use",
     ],
   },
+
+  // Package data: user-supplied front/back photos, FDA portal checked September 28, 2026.
+  {
+    slug: "ibuprofen-ibufen-400mg-tablet-100s",
+    barcode: "4806505140229",
+    name: "Ibuprofen Ibufen 400mg Film-Coated Tablet (100 Tablets)",
+    brand: "Ibufen",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DRP-10724",
+    servingSize: "400mg film-coated tablet; Alu/PVC blister pack x10 (box of 100)",
+    warningMessage:
+      "Philippine FDA registration DRP-10724 lists Ibuprofen Ibufen 400mg Film-Coated Tablet, manufactured by Centurion Laboratories Pvt. Ltd. (India) and imported/distributed by Philgen Pharmaceuticals Inc., issued 10 August 2026 and valid through 15 November 2031. Analgesic/Non-Steroidal Anti-Inflammatory Drug (NSAID). For suspected adverse drug reactions, report to the FDA at www.fda.gov.ph/pharmacovigilance. Follow the package insert for dosage and administration; store at temperatures not exceeding 30°C.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Ibuprofen 400mg", isAllergen: true }],
+
+    allergens: ["Ibuprofen"],
+
+    alternatives: [
+      "Paracetamol-based pain relief for users with an NSAID sensitivity",
+      "Another FDA-registered ibuprofen product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "ibuprofen-new-fevral-200mg-tablet-100s",
+    barcode: "4800338586384",
+    name: "Ibuprofen New FevrAL 200mg Tablet (100 Tablets)",
+    brand: "FevrAL",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Drug",
+    registrationNumber: "DRP-9549",
+    servingSize: "200mg tablet; box of 100 tablets",
+    warningMessage:
+      "Philippine FDA registration DRP-9549 lists New Fevral 200mg Tablet, manufactured by Scheele Laboratories Phils., Inc., issued 6 August 2025 and valid through 18 February 2031. Analgesic/Antipyretic/Non-Steroidal Anti-Inflammatory Drug (NSAID). Do not accept if seal is broken. Follow the package insert for dosage and administration.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Ibuprofen 200mg", isAllergen: true }],
+
+    allergens: ["Ibuprofen"],
+
+    alternatives: [
+      "Paracetamol-based pain relief for users with an NSAID sensitivity",
+      "Another FDA-registered ibuprofen product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "amoxicillin-axmel-250mg-capsule-100s",
+    barcode: "4806523301329",
+    name: "Amoxicillin Axmel 250mg Capsule (100 Capsules)",
+    brand: "Axmel",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DRP-237",
+    servingSize: "250mg capsule; box of 100 capsules",
+    warningMessage:
+      "Philippine FDA registration DRP-237 lists Amoxicillin (as trihydrate) Axmel 250mg Capsule, manufactured by New Myrex Laboratories, Inc. (Philippines), issued 24 January 2025 and valid through 29 October 2030. Antibacterial (Penicillin), Prescription Drug (Rx). Should be discontinued if a skin rash occurs; not recommended for patients with infectious mononucleosis. Patients with lymphatic leukemia or possibly HIV infection may be at increased risk of skin rashes.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Amoxicillin (as Trihydrate) 250mg", isAllergen: true },
+    ],
+
+    allergens: ["Amoxicillin"],
+
+    alternatives: [
+      "A non-penicillin antibacterial for users with a penicillin allergy",
+      "Another FDA-registered amoxicillin product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "amoxicillin-ambimox-500mg-capsule-100s",
+    barcode: "4806524140118",
+    name: "Amoxicillin Ambimox 500mg Capsule (100 Capsules)",
+    brand: "Ambimox",
+    category: "Prescription Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "DRP-9966",
+    servingSize: "500mg capsule; box of 100 capsules",
+    warningMessage:
+      "Philippine FDA registration DRP-9966 lists Amoxicillin (as Trihydrate) Ambimox 500mg Capsule, manufactured by CSPC Zhongnuo Pharmaceutical (Shijiazhuang) Co., Ltd. (China) and imported/distributed by AMB HK Enterprises Inc., issued 28 November 2023 and valid through 8 February 2029. Antibacterial (Penicillin), Prescription Drug (Rx). Used for infections including bronchitis, pneumonia, urinary tract infections, and other susceptible bacterial infections.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Amoxicillin (as Trihydrate) 500mg", isAllergen: true },
+    ],
+
+    allergens: ["Amoxicillin"],
+
+    alternatives: [
+      "A non-penicillin antibacterial for users with a penicillin allergy",
+      "Another FDA-registered amoxicillin product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "aspirin-aspec-ec-100mg-tablet-100s",
+    barcode: "4800363204239",
+    name: "Aspirin Aspec-EC 100mg Tablet (100 Tablets)",
+    brand: "Aspec-EC",
+    category: "OTC Medicine",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered OTC Medicine",
+    registrationNumber: "DR-XY27217",
+    servingSize: "100mg tablet; box of 100 tablets",
+    warningMessage:
+      "Philippine FDA registration DR-XY27217 lists Aspirin Aspec-EC 100mg Tablet, manufactured by Hizon Laboratories, Inc. (Philippines) for Pharmaspec N.A., Inc., issued 8 October 2023 and valid through 13 January 2029. Antithrombotic, Over-the-Counter (OTC) Drug. Do not accept if seal is broken.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [{ name: "Aspirin 100mg", isAllergen: true }],
+
+    allergens: ["Aspirin"],
+
+    alternatives: [
+      "Paracetamol-based pain relief for users with a salicylate sensitivity",
+      "Another FDA-registered aspirin product suitable for the user",
+    ],
+  },
+
+  {
+    slug: "clircaf-lagundi-leaf-syrup-strawberry-120ml",
+    barcode: "4806503127703",
+    name: "Clircaf Vitex negundo L. (Lagundi Leaf) 300mg/5mL Syrup Strawberry 120mL",
+    brand: "Clircaf",
+    category: "Herbal Medicine (Cough Syrup)",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Registered Prescription Drug (Rx)",
+    registrationNumber: "HMRP-24",
+    servingSize: "300mg/5mL; 120mL Boston round amber bottle",
+    warningMessage:
+      "Philippine FDA registration HMRP-24 lists Clircaf Vitex negundo L. (Lagundi Leaf) 300mg/5mL Syrup, manufactured by LifeSquare Laboratories, Inc. (Philippines), issued 14 May 2026 and valid through 29 June 2031. Herbal Medicine (Anticough/Anti-asthma), Prescription Drug (Rx). A separate household-remedy registration (HMRP-39) exists for the same product in Mint with Honey flavor.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Vitex negundo L. (Lagundi Leaf) Extract 300mg/5mL", isAllergen: true },
+    ],
+
+    allergens: ["Cough Syrups"],
+
+    alternatives: [
+      "A non-herbal antitussive for users sensitive to Lagundi",
+      "Another FDA-registered cough syrup suitable for the user",
+    ],
+  },
 ];
 
 async function seedDatabase() {
