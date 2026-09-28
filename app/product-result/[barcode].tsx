@@ -1136,7 +1136,7 @@ function ProductInfoCard({ product }: { product: DemoProduct }) {
                 : "Barcode"}
           </Text>
           <Text style={styles.infoValue}>
-            {hasMedicineRegistrationNumber
+            {isMedicineRegistrationNumber(product.barcode)
               ? "Not yet cataloged"
               : product.barcode}
           </Text>
