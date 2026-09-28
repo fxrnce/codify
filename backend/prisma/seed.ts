@@ -2804,15 +2804,15 @@ const products: SeedProduct[] = [
     name: "Argentina Corned Beef 260g",
     brand: "Argentina",
     category: "Canned Corned Beef",
-    status: "UNVERIFIED",
-    fdaStatusLabel: "Not Verified",
-    registrationNumber: "No current matching Philippine FDA record",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000009853027",
     nutritionRating: {
       category: "FOOD",
     },
     servingSize: "56g; about 5 servings per can",
     warningMessage:
-      "No currently active Philippine FDA registration was found for this exact regular 260g retail variant and barcode as of September 2026. FDA registration FR-4000008091671 covers a different Argentina Century Pacific Food Service product and expired on July 15, 2026; other active Argentina records found are for Hot and Spicy or export variants. A HACCP certification (LTO-3000001065148) also lists 'Argentina Corned Beef,' 'Argentina Corned Beef Chunky,' and 'Argentina Corned Beef Hot and Spicy,' but its validity date of 21 June 2025 has already expired, so it does not currently verify this product either. This does not prove the product is unsafe, but this exact variant could not be verified against a currently active FDA registration.",
+      "Philippine FDA product registration FR-4000009853027 lists CORNED BEEF - FORTIFIED WITH ZINC AND IRON, brand Argentina Brand, Century Pacific Food, Inc., active through 12 February 2029. This is a product-name match; the portal does not specify individual package sizes. This matches the product's own ingredient list, which includes added zinc and iron. Contains soy protein.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -2876,7 +2876,6 @@ const products: SeedProduct[] = [
     allergens: ["Soy"],
 
     alternatives: [
-      "An FDA-registered corned beef with a current matching product record",
       "Fresh lean beef prepared with less added sodium",
     ],
   },
