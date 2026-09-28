@@ -134,7 +134,7 @@ const products: SeedProduct[] = [
       { name: "Extractives of Paprika", isAllergen: false },
     ],
 
-    allergens: ["Milk", "Soybean", "Wheat"],
+    allergens: ["Milk", "Soy", "Wheat / Gluten"],
     alternatives: [],
   },
   {
@@ -180,7 +180,7 @@ const products: SeedProduct[] = [
       { name: "Citric Acid (Acidulant)", isAllergen: false },
     ],
 
-    allergens: ["Soybean", "Wheat", "Corn", "Oyster"],
+    allergens: ["Soy", "Wheat / Gluten", "Corn", "Oyster"],
     alternatives: [],
   },
   {
@@ -228,7 +228,7 @@ const products: SeedProduct[] = [
       { name: "Disodium Inosinate and Disodium Guanylate (Flavor Enhancers)", isAllergen: false },
     ],
 
-    allergens: ["Soybean", "Wheat", "Corn", "Sesame"],
+    allergens: ["Soy", "Wheat / Gluten", "Corn", "Sesame"],
     alternatives: [],
   },
   // Package data: Products 2 (8).pdf. Reviewed September 9, 2026.
@@ -2812,7 +2812,7 @@ const products: SeedProduct[] = [
     },
     servingSize: "56g; about 5 servings per can",
     warningMessage:
-      "No currently active Philippine FDA registration was found for this exact regular 260g retail variant and barcode as of August 11, 2026. FDA registration FR-4000008091671 covers a different Argentina Century Pacific Food Service product and expired on July 15, 2026; other active Argentina records found are for Hot and Spicy or export variants. This does not prove the product is unsafe, but this exact variant could not be verified in the current FDA registry.",
+      "No currently active Philippine FDA registration was found for this exact regular 260g retail variant and barcode as of September 2026. FDA registration FR-4000008091671 covers a different Argentina Century Pacific Food Service product and expired on July 15, 2026; other active Argentina records found are for Hot and Spicy or export variants. A HACCP certification (LTO-3000001065148) also lists 'Argentina Corned Beef,' 'Argentina Corned Beef Chunky,' and 'Argentina Corned Beef Hot and Spicy,' but its validity date of 21 June 2025 has already expired, so it does not currently verify this product either. This does not prove the product is unsafe, but this exact variant could not be verified against a currently active FDA registration.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -4954,7 +4954,7 @@ const products: SeedProduct[] = [
       },
     ],
 
-    allergens: ["Milk", "Malt / Gluten"],
+    allergens: ["Milk", "Wheat / Gluten"],
 
     alternatives: [
       "Black coffee or coffee with less sugar and saturated fat",
@@ -6619,6 +6619,180 @@ const products: SeedProduct[] = [
     alternatives: [
       "A non-sulfa antibacterial for users with a sulfonamide allergy",
       "Kathrex Cotrimoxazole, a fully FDA-verified alternative with the same active ingredients",
+    ],
+  },
+  {
+    slug: "joy-dishwashing-liquid-kalamansi-475ml",
+    barcode: "4987176296788",
+    name: "Joy Dishwashing Liquid Kalamansi 475mL",
+    brand: "Joy",
+    category: "Dishwashing Liquid",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Verified",
+    registrationNumber: "HUHSR-20230425-00064",
+    servingSize: "475mL bottle; a few drops per wash as needed",
+    warningMessage:
+      "Confirmed FDA registration for JOY DISHWASHING LIQUID KALAMANSI, HUHSR-20230425-00064, Procter & Gamble Philippines, Inc., active through 25 April 2026. Causes serious eye irritation; harmful to aquatic life with long lasting effects. Contains preservatives (Methylisothiazolinone) and fragrance that can trigger contact dermatitis in sensitive users. Keep out of reach of children; rinse thoroughly with water on eye contact.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water", isAllergen: false },
+      { name: "Sodium Laureth Sulfate", isAllergen: false },
+      { name: "Alcohol Ethoxylate", isAllergen: false },
+      { name: "Amine Oxide", isAllergen: false },
+      { name: "Magnesium Sulfate", isAllergen: false },
+      { name: "Sodium Hydroxide", isAllergen: false },
+      { name: "Sodium Chloride", isAllergen: false },
+      { name: "PPG-26", isAllergen: false },
+      { name: "Methylisothiazolinone", isAllergen: true },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Perfume", isAllergen: true },
+      { name: "Dye", isAllergen: false },
+    ],
+
+    allergens: ["Dishwashing Liquids"],
+
+    alternatives: [
+      "A fragrance-free dishwashing liquid for users with a preservative or fragrance sensitivity",
+    ],
+  },
+  {
+    slug: "bremod-performance-spa-hair-care-9pct-30vol-collage-hydrox-100g",
+    barcode: "9411811054331",
+    name: "Bremod Performance Spa Hair Care 9% (30 Vol) Collage Hydrox 100g",
+    brand: "Bremod Performance",
+    category: "Hair Color Developer",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Verified",
+    registrationNumber: "NN-1000013392001",
+    servingSize: "100g (3.53oz); mixed 1:1 with hair color creme",
+    warningMessage:
+      "Confirmed FDA cosmetic notification for BREMOD PERFORMANCE SPA HAIR CARE 9% (30 VOL) COLLAGE HYDROX, NN-1000013392001, Shawill Corporation. Contains hydrogen peroxide, a hair-color developer/oxidant used alongside a color creme during permanent hair coloring. Can irritate skin and scalp and dry out hair if not applied correctly; for professional/salon use, perform a skin allergy test before use and avoid contact with eyes.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Aqua (Water)", isAllergen: false },
+      { name: "Hydrogen Peroxide", isAllergen: true },
+      { name: "Cetearyl Alcohol", isAllergen: false },
+      { name: "Laureth-25", isAllergen: false },
+      { name: "Sodium Lauryl Sulfate", isAllergen: false },
+      { name: "Etidronic Acid", isAllergen: false },
+      { name: "Disodium Phosphate", isAllergen: false },
+      { name: "Sodium Stannate", isAllergen: false },
+      { name: "Parfum", isAllergen: true },
+    ],
+
+    allergens: ["Hair Dye"],
+
+    alternatives: [
+      "A lower-volume developer or PPD-free hair color system for users with a hydrogen peroxide or fragrance sensitivity",
+    ],
+  },
+  {
+    slug: "zim-cleaning-pads-all-purpose-sponge-sakto-size",
+    barcode: "4800147210753",
+    name: "Zim Cleaning Pads All-Purpose Sponge (Sakto Size, Singles)",
+    brand: "Zim",
+    category: "Cleaning Sponge",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Not Subject to FDA Registration",
+    registrationNumber: "Not applicable — inert houseware item, not a regulated cosmetic/drug/chemical product",
+    servingSize: "1 all-purpose sponge, approx. 100mm x 75mm x 40mm",
+    warningMessage:
+      "This is a plain cleaning sponge (no chemical formulation disclosed on packaging) imported by Cymar International Incorporated and distributed by Comark International Corporation, made in Taiwan. As an inert scrubbing tool rather than a cosmetic, drug, or chemical product, it does not fall under any Philippine FDA product registration category and carries no known allergen risk. Replace every 3-4 weeks to avoid bacterial buildup.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sponge Material (composition not disclosed on packaging)", isAllergen: false },
+    ],
+
+    allergens: [],
+
+    alternatives: [],
+  },
+  {
+    slug: "st-ives-soothing-oatmeal-shea-butter-body-lotion-621ml",
+    barcode: "050809370477",
+    name: "St. Ives Soothing Body Lotion Oatmeal & Shea Butter 21 FL OZ (621mL)",
+    brand: "St. Ives",
+    category: "Body Lotion",
+    status: "APPROVED",
+    fdaStatusLabel: "FDA Verified",
+    registrationNumber: "NN-1000016625685",
+    servingSize: "621mL bottle; apply daily all over body",
+    warningMessage:
+      "Confirmed FDA cosmetic notification for SOOTHING OATMEAL & SHEA BUTTER BODY LOTION, NN-1000016625685, brand St. Ives, Go Global Distribution Corporation. Contains Glycine Soja (Soybean) Oil and several recognized fragrance allergens (benzyl alcohol, benzyl salicylate, coumarin, hexyl cinnamal, limonene, linalool). Avoid contact with eyes; discontinue use if rash or irritation occurs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Water (Aqua)", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Stearic Acid", isAllergen: false },
+      { name: "Glycol Stearate", isAllergen: false },
+      { name: "Isopropyl Palmitate", isAllergen: false },
+      { name: "Glycine Soja (Soybean) Oil", isAllergen: true },
+      { name: "Glyceryl Stearate", isAllergen: false },
+      { name: "Triethanolamine", isAllergen: false },
+      { name: "Cocos Nucifera (Coconut) Oil", isAllergen: false },
+      { name: "Cetyl Alcohol", isAllergen: false },
+      { name: "Caprylyl Glycol", isAllergen: false },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Fragrance (Parfum)", isAllergen: false },
+      { name: "Carbomer", isAllergen: false },
+      { name: "Hydroxyethylcellulose", isAllergen: false },
+      { name: "Stearamide AMP", isAllergen: false },
+      { name: "BHT", isAllergen: false },
+      { name: "Disodium EDTA", isAllergen: false },
+      { name: "Caramel", isAllergen: false },
+      { name: "Butyrospermum Parkii (Shea) Butter", isAllergen: false },
+      { name: "Avena Sativa (Oat) Meal Extract", isAllergen: false },
+      { name: "Benzyl Alcohol", isAllergen: true },
+      { name: "Benzyl Salicylate", isAllergen: true },
+      { name: "Coumarin", isAllergen: true },
+      { name: "Hexyl Cinnamal", isAllergen: true },
+      { name: "Limonene", isAllergen: true },
+      { name: "Linalool", isAllergen: true },
+      { name: "Red 33 (CI 17200)", isAllergen: false },
+      { name: "Yellow 5 (CI 19140)", isAllergen: false },
+      { name: "Yellow 6 (CI 15985)", isAllergen: false },
+    ],
+
+    allergens: ["Skincare Products", "Soy"],
+
+    alternatives: [
+      "A fragrance-free body lotion for users with a fragrance-compound sensitivity",
     ],
   },
 ];
