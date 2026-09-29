@@ -2481,7 +2481,7 @@ const products: SeedProduct[] = [
     },
     servingSize: "56g (about 3 servings per 155g can)",
     warningMessage:
-      "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. Contains fish and soy. One 56g serving contains 380mg sodium.",
+      "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. The can's allergen information declares fish, soy, and milk; it is also manufactured in a facility that processes wheat, shrimp, eggs, and peanuts. One 56g serving contains 380mg sodium.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -2528,9 +2528,13 @@ const products: SeedProduct[] = [
         name: "Iodized Salt",
         isAllergen: false,
       },
+      {
+        name: "Milk (declared allergen on can; not separately listed as a discrete ingredient)",
+        isAllergen: true,
+      },
     ],
 
-    allergens: ["Fish", "Soy"],
+    allergens: ["Fish", "Soy", "Milk"],
 
     alternatives: [
       "Lower-sodium tuna in water after comparing labels",
@@ -7196,6 +7200,128 @@ const products: SeedProduct[] = [
 
     alternatives: [
       "An FDA-notified skin-whitening soap with a valid Philippine Cosmetic Product Notification",
+    ],
+  },
+  {
+    slug: "hunts-pork-and-beans-175g",
+    barcode: "4800022100070",
+    name: "Hunt's Pork & Beans (Superfood) 175g",
+    brand: "Hunt's",
+    category: "Canned Beans",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000014591314",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 100,
+      servingUnit: "g",
+      caloriesPerServing: 104,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 10,
+      sodiumMilligramsPerServing: 357,
+      proteinGramsPerServing: 4,
+      fibreGramsPerServing: 5,
+    },
+    servingSize: "100g (about 2 servings per 175g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000014591314 lists PORK & BEANS, brand Hunt's Superfood, Century Pacific Food, Inc., active through 12 June 2028. This is a product-name match; the portal does not specify individual package sizes. The front label's '9g of Fiber' and '7g of Protein' callouts appear to use a different reference amount than the Nutrition Facts panel's own 100g-serving figures (5g fiber, 4g protein); this catalog uses the standardized Nutrition Facts panel values. The full ingredient list was partially cut off in the supplied photo and could not be completely transcribed.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "104",
+      protein: "4g",
+      carbohydrates: "18g",
+      totalFat: "2g",
+      saturatedFat: "0g",
+      totalSugars: "10g",
+      dietaryFiber: "5g",
+      sodium: "357mg",
+    },
+
+    ingredients: [
+      { name: "Beans", isAllergen: false },
+      { name: "Tomato (Paste/Puree)", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      {
+        name: "Remainder of ingredient list cut off in supplied photo; not fully transcribed",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: [],
+
+    alternatives: [
+      "An FDA-registered canned beans product with a complete ingredient label",
+    ],
+  },
+  {
+    slug: "purefoods-sizzling-delights-sisig-150g",
+    barcode: "4808887119480",
+    name: "Purefoods Sizzling Delights Sisig 150g",
+    brand: "Purefoods",
+    category: "Canned Meat",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Not Verified",
+    registrationNumber: "No current matching Philippine FDA record",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 50,
+      servingUnit: "g",
+      caloriesPerServing: 92,
+      saturatedFatGramsPerServing: 2,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 399,
+      proteinGramsPerServing: 10,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "50g (3 servings per 150g can)",
+    warningMessage:
+      "A HACCP certification (LTO-3000008477665) matching 'Purefoods Sizzling Delights Sisig (PPS) 150g' was found in the Philippine FDA portal, but its validity date of 21 June 2025 has already expired, so it does not currently verify this product. No other active Philippine FDA food registration was found. Manufactured by The Purefoods-Hormel Company, Inc., a subsidiary of San Miguel Food and Beverage, Inc. The ingredient and allergen panels were partially cut off in the supplied photos; the visible portion lists soy protein and wheat, plus a broader allergen statement mentioning mustard, celery, crustaceans, eggs, and fish that could not be clearly distinguished as directly contained versus a facility cross-contact warning, so all are treated as potential allergens out of caution.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "92",
+      protein: "10g",
+      carbohydrates: "1g",
+      totalFat: "5g",
+      saturatedFat: "2g",
+      totalSugars: "1g",
+      dietaryFiber: "0g",
+      sodium: "399mg",
+    },
+
+    ingredients: [
+      { name: "Soy Protein", isAllergen: true },
+      { name: "Flavors", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Wheat", isAllergen: true },
+      {
+        name: "Mustard (label allergen statement; contains vs. may-contain unclear from photo)",
+        isAllergen: true,
+      },
+      {
+        name: "Celery (label allergen statement; contains vs. may-contain unclear from photo)",
+        isAllergen: true,
+      },
+      {
+        name: "Crustaceans (label allergen statement; contains vs. may-contain unclear from photo)",
+        isAllergen: true,
+      },
+      {
+        name: "Eggs (label allergen statement; contains vs. may-contain unclear from photo)",
+        isAllergen: true,
+      },
+      {
+        name: "Fish (label allergen statement; contains vs. may-contain unclear from photo)",
+        isAllergen: true,
+      },
+    ],
+
+    allergens: ["Soy", "Wheat / Gluten", "Mustard", "Celery", "Shellfish", "Eggs", "Fish"],
+
+    alternatives: [
+      "An FDA-registered sisig or canned meat product with a currently active registration",
     ],
   },
 ];
