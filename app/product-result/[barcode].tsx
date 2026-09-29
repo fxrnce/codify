@@ -1861,6 +1861,9 @@ const styles = StyleSheet.create({
   ingredientPill: {
     minHeight: 24,
     maxWidth: "100%",
+    // Without this, a chip at the end of a nearly full row gets squeezed
+    // narrower than its text, which then wraps and is clipped.
+    flexShrink: 0,
     borderRadius: 999,
     backgroundColor: "#F1F5F9",
     paddingHorizontal: 10,
@@ -1879,6 +1882,7 @@ const styles = StyleSheet.create({
   },
 
   ingredientText: {
+    flexShrink: 0,
     fontSize: 12,
     lineHeight: 16,
     color: "#45556C",
