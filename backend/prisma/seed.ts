@@ -5954,7 +5954,7 @@ const products: SeedProduct[] = [
   // FDA portal checked September 18, 2026 via https://verification.fda.gov.ph/.
   {
     slug: "casino-ethyl-alcohol-femme-dual-moisturizer-500ml",
-    barcode: "4800112122236",
+    barcode: "4800011122236",
     name: "Casino Ethyl Alcohol Femme with Dual Moisturizer 500mL",
     brand: "Casino",
     category: "Rubbing Alcohol",
@@ -6369,7 +6369,7 @@ const products: SeedProduct[] = [
   // Package data: user-supplied front/back photos, FDA portal checked September 27, 2026.
   {
     slug: "off-sakura-no-hana-insect-repellent-spray-100ml",
-    barcode: "955522614746",
+    barcode: "9555222614746",
     name: "OFF! Sakura-no-Hana Insect Repellent Spray 100mL",
     brand: "OFF!",
     category: "Insect Repellent",
@@ -6802,7 +6802,7 @@ const products: SeedProduct[] = [
   // Package data: user-supplied front/back photos, FDA portal checked September 28, 2026.
   {
     slug: "kathrex-cotrimoxazole-240mg-5ml-suspension-60ml",
-    barcode: "4806523020291",
+    barcode: "4806523302029",
     name: "Kathrex Cotrimoxazole 240mg/5mL Suspension 60mL",
     brand: "Kathrex",
     category: "Prescription Medicine",
@@ -6915,7 +6915,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "bremod-performance-spa-hair-care-9pct-30vol-collage-hydrox-100g",
-    barcode: "9411811054331",
+    barcode: "6941181105433",
     name: "Bremod Performance Spa Hair Care 9% (30 Vol) Collage Hydrox 100g",
     brand: "Bremod Performance",
     category: "Hair Color Developer",
@@ -7224,7 +7224,7 @@ const products: SeedProduct[] = [
     },
     servingSize: "100g (about 2 servings per 175g can)",
     warningMessage:
-      "Philippine FDA product registration FR-4000014591314 lists PORK & BEANS, brand Hunt's Superfood, Century Pacific Food, Inc., active through 12 June 2028. This is a product-name match; the portal does not specify individual package sizes. The front label's '9g of Fiber' and '7g of Protein' callouts appear to use a different reference amount than the Nutrition Facts panel's own 100g-serving figures (5g fiber, 4g protein); this catalog uses the standardized Nutrition Facts panel values. The full ingredient list was partially cut off in the supplied photo and could not be completely transcribed.",
+      "Philippine FDA product registration FR-4000014591314 lists PORK & BEANS, brand Hunt's Superfood, Century Pacific Food, Inc., active through 12 June 2028. This is a product-name match; the portal does not specify individual package sizes. The front label's '9g of Fiber' and '7g of Protein' callouts appear to use a different reference amount than the Nutrition Facts panel's own 100g-serving figures (5g fiber, 4g protein); this catalog uses the standardized Nutrition Facts panel values. Contains pork meat. No allergen statement appears on the label; none of the listed ingredients are common allergens.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -7239,19 +7239,21 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      { name: "Beans", isAllergen: false },
-      { name: "Tomato (Paste/Puree)", isAllergen: false },
+      { name: "White Beans", isAllergen: false },
+      { name: "Tomato Sauce (Water, Tomato Paste)", isAllergen: false },
       { name: "Sugar", isAllergen: false },
-      {
-        name: "Remainder of ingredient list cut off in supplied photo; not fully transcribed",
-        isAllergen: false,
-      },
+      { name: "Pork Meat", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Modified Starch (Thickener)", isAllergen: false },
+      { name: "Vinegar", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Colors (Paprika Oil, Carotenoids)", isAllergen: false },
     ],
 
     allergens: [],
 
     alternatives: [
-      "An FDA-registered canned beans product with a complete ingredient label",
+      "Plain boiled white beans with a homemade tomato sauce and less added sugar and salt",
     ],
   },
   {
@@ -7276,7 +7278,7 @@ const products: SeedProduct[] = [
     },
     servingSize: "50g (3 servings per 150g can)",
     warningMessage:
-      "A HACCP certification (LTO-3000008477665) matching 'Purefoods Sizzling Delights Sisig (PPS) 150g' was found in the Philippine FDA portal, but its validity date of 21 June 2025 has already expired, so it does not currently verify this product. No other active Philippine FDA food registration was found. Manufactured by The Purefoods-Hormel Company, Inc., a subsidiary of San Miguel Food and Beverage, Inc. The ingredient and allergen panels were partially cut off in the supplied photos; the visible portion lists soy protein and wheat, plus a broader allergen statement mentioning mustard, celery, crustaceans, eggs, and fish that could not be clearly distinguished as directly contained versus a facility cross-contact warning, so all are treated as potential allergens out of caution.",
+      "A HACCP certification (LTO-3000008477665) matching 'Purefoods Sizzling Delights Sisig (PPS) 150g' was found in the Philippine FDA portal, but its validity date of 21 June 2025 has already expired, so it does not currently verify this product. No other active Philippine FDA food registration was found. Manufactured by The Purefoods-Hormel Company, Inc., a subsidiary of San Miguel Food and Beverage, Inc. Contains milk, soy, wheat (gluten), and sulphites. The 150g can's allergen statement also lists mustard, celery, crustaceans, eggs, and fish; these are treated as potential allergens out of caution. The ingredient list comes from another printing of this product's label, which uses a 56g serving size; nutrition values here are from the 150g can's own 50g-serving panel.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
@@ -7291,34 +7293,36 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
+      { name: "Pork, Beef, and Poultry Meat", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Vinegar", isAllergen: false },
       { name: "Soy Protein", isAllergen: true },
-      { name: "Flavors", isAllergen: false },
-      { name: "Spices", isAllergen: false },
+      { name: "Soy Sauce", isAllergen: true },
       { name: "Iodized Salt", isAllergen: false },
-      { name: "Wheat", isAllergen: true },
+      { name: "Spices", isAllergen: false },
+      { name: "Flavors", isAllergen: false },
+      { name: "Monosodium Glutamate (Flavor Enhancer)", isAllergen: false },
       {
-        name: "Mustard (label allergen statement; contains vs. may-contain unclear from photo)",
+        name: "Milk, Wheat (Gluten), and Sulphites (declared allergens; not listed as discrete ingredients)",
         isAllergen: true,
       },
       {
-        name: "Celery (label allergen statement; contains vs. may-contain unclear from photo)",
-        isAllergen: true,
-      },
-      {
-        name: "Crustaceans (label allergen statement; contains vs. may-contain unclear from photo)",
-        isAllergen: true,
-      },
-      {
-        name: "Eggs (label allergen statement; contains vs. may-contain unclear from photo)",
-        isAllergen: true,
-      },
-      {
-        name: "Fish (label allergen statement; contains vs. may-contain unclear from photo)",
+        name: "Mustard, Celery, Crustaceans, Eggs, and Fish (listed in the 150g can's allergen statement)",
         isAllergen: true,
       },
     ],
 
-    allergens: ["Soy", "Wheat / Gluten", "Mustard", "Celery", "Shellfish", "Eggs", "Fish"],
+    allergens: [
+      "Milk",
+      "Soy",
+      "Wheat / Gluten",
+      "Sulfites",
+      "Mustard",
+      "Celery",
+      "Shellfish",
+      "Eggs",
+      "Fish",
+    ],
 
     alternatives: [
       "An FDA-registered sisig or canned meat product with a currently active registration",
