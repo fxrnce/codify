@@ -6794,6 +6794,164 @@ const products: SeedProduct[] = [
       "A fragrance-free body lotion for users with a fragrance-compound sensitivity",
     ],
   },
+  {
+    slug: "oxecure-daily-sunscreen-spf50-hybrid-uv-protection-6g",
+    barcode: "8859510401102",
+    name: "Oxecure Daily Sunscreen SPF50+ PA+++ Hybrid UV Protection 6g",
+    brand: "Oxecure",
+    category: "Sunscreen",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-0043",
+    registrationNumber: "No Philippine FDA Cosmetic Product Notification issued",
+    servingSize: "6g sachet",
+    warningMessage:
+      "FDA Advisory No. 2026-0043 (9 February 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. The back label's full ingredient panel is printed only in Thai and could not be independently transcribed. Chemical sunscreens can cause allergic contact or photoallergic skin reactions in sensitive users, a risk compounded here by the product being unregistered.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-0043-public-health-warning-against-the-purchase-and-use-of-the-unauthorized-cosmetic-product-oxecure-daily-sunscreen/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      {
+        name: "Full ingredient list printed only in Thai; not independently transcribed",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Sunscreen"],
+
+    alternatives: [
+      "An FDA-notified sunscreen with a valid Philippine Cosmetic Product Notification",
+    ],
+  },
+  {
+    slug: "kojie-san-skin-lightening-cleanser-toner-hydromoist-100ml",
+    barcode: "4809014128078",
+    name: "Kojie San Skin Lightening Cleanser + Toner with HydroMoist 100mL",
+    brand: "Kojie San",
+    category: "Skincare Products",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-0699",
+    registrationNumber: "Recalled — affected stocks found to contain undeclared Hydroquinone",
+    servingSize: "100mL bottle",
+    warningMessage:
+      "FDA Advisory No. 2026-0699 (2 July 2026) recalls affected stocks of this product due to the presence of Hydroquinone, a skin-lightening ingredient restricted in the Philippines to prescription-only use and not permitted in this over-the-counter cosmetic formulation. Hydroquinone can cause skin irritation and, with prolonged use, ochronosis (permanent skin darkening/discoloration) and allergic reactions. Consumers who purchased this product should stop use and check their batch number against the FDA advisory. The rest of the ingredient panel was cut off in the supplied photo and could not be fully transcribed.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-0699-product-recall-of-affected-stocks-of-kojiesan-skin-lightening-cleanser-toner-with-hydromoist-due-to-the-presence-of-hydroquinone/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Hydroquinone (undeclared; cause of the FDA recall)", isAllergen: true },
+      { name: "Iodopropynyl Butylcarbamate (Preservative)", isAllergen: true },
+      { name: "Creatine", isAllergen: false },
+      { name: "Allantoin", isAllergen: false },
+      {
+        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Skincare Products"],
+
+    alternatives: [
+      "A dermatologist-recommended skin-lightening product without restricted or undeclared actives",
+    ],
+  },
+  {
+    slug: "watsons-love-my-glow-smoothing-shot-serum-mask-25ml",
+    barcode: "4894819703339",
+    name: "Watsons Love My Glow Smoothing Shot Serum Mask (3% Bio-Cellulose Complex + Idebenone) 25mL",
+    brand: "Watsons",
+    category: "Skincare Products",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-1130",
+    registrationNumber: "No Philippine FDA Cosmetic Product Notification issued",
+    servingSize: "25mL sheet mask ampoule",
+    warningMessage:
+      "FDA Advisory No. 2026-1130 (16 September 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. The front label lists Bakuchiol and Idebenone (3% Bio-Cellulose Complex) as key actives; the full ingredient panel was cut off in the supplied photo. Unregistered serums and sheet masks carry added risk of undisclosed or mislabeled active-ingredient concentrations.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-1130-public-health-warning-against-the-purchase-and-use-of-the-unauthorized-cosmetic-product-watsons-love-my-glow-smoothing-shot-serum-mask/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Bakuchiol", isAllergen: false },
+      { name: "Idebenone", isAllergen: false },
+      { name: "PVM/MA Copolymer", isAllergen: false },
+      { name: "Hydrogenated Lecithin", isAllergen: false },
+      { name: "Argania Spinosa (Argan) Kernel Oil", isAllergen: false },
+      { name: "Yeast Extract", isAllergen: false },
+      {
+        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Skincare Products"],
+
+    alternatives: [
+      "An FDA-notified serum or sheet mask with a valid Philippine Cosmetic Product Notification",
+    ],
+  },
+  {
+    slug: "likas-papaya-skin-whitening-herbal-bath-soap-135g",
+    barcode: "4800188108385",
+    name: "Likas Papaya Skin Whitening Herbal Bath Soap for Face and Body 135g",
+    brand: "Likas",
+    category: "Bar Soap",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-1047",
+    registrationNumber: "No Philippine FDA Cosmetic Product Notification issued",
+    servingSize: "135g bar",
+    warningMessage:
+      "FDA Advisory No. 2026-1047 (8 September 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product, manufactured by Trinidad Cosmetics Laboratory, Inc.: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. Skin-whitening soaps with herbal papaya extract can still cause allergic contact dermatitis, and because this product is unregistered, undeclared lightening agents (such as hydroquinone, seen in other recalled whitening products) cannot be ruled out by the FDA.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-1047-public-health-warning-against-the-purchase-and-use-of-the-unauthorized-cosmetic-product-likas-papaya-skin-whitening-soap/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Sodium Palm Kernelate", isAllergen: false },
+      { name: "Papaya (Carica Papaya) Extract", isAllergen: false },
+      { name: "Vitamin C", isAllergen: false },
+      { name: "CI 11920 (Colorant)", isAllergen: false },
+      {
+        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
+        isAllergen: false,
+      },
+    ],
+
+    allergens: ["Cosmetics"],
+
+    alternatives: [
+      "An FDA-notified skin-whitening soap with a valid Philippine Cosmetic Product Notification",
+    ],
+  },
 ];
 
 async function seedDatabase() {
