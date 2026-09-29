@@ -7055,7 +7055,7 @@ const products: SeedProduct[] = [
     registrationNumber: "No Philippine FDA Cosmetic Product Notification issued",
     servingSize: "6g sachet",
     warningMessage:
-      "FDA Advisory No. 2026-0043 (9 February 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. The back label's full ingredient panel is printed only in Thai and could not be independently transcribed. Chemical sunscreens can cause allergic contact or photoallergic skin reactions in sensitive users, a risk compounded here by the product being unregistered.",
+      "FDA Advisory No. 2026-0043 (9 February 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. Its UV filters (Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine, Ethylhexyl Salicylate, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Ethylhexyl Triazone, and Titanium Dioxide) can cause allergic contact or photoallergic skin reactions in sensitive users, a risk compounded here by the product being unregistered.",
     verificationUrl:
       "https://www.fda.gov.ph/fda-advisory-no-2026-0043-public-health-warning-against-the-purchase-and-use-of-the-unauthorized-cosmetic-product-oxecure-daily-sunscreen/",
 
@@ -7068,10 +7068,47 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      {
-        name: "Full ingredient list printed only in Thai; not independently transcribed",
-        isAllergen: false,
-      },
+      { name: "Water", isAllergen: false },
+      { name: "C12-15 Alkyl Benzoate", isAllergen: false },
+      { name: "Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine (UV Filter)", isAllergen: true },
+      { name: "Ethylhexyl Salicylate (UV Filter)", isAllergen: true },
+      { name: "Diethylamino Hydroxybenzoyl Hexyl Benzoate (UV Filter)", isAllergen: true },
+      { name: "Ethylhexyl Triazone (UV Filter)", isAllergen: true },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Polyglyceryl-3 Methylglucose Distearate", isAllergen: false },
+      { name: "Ethylhexyl Palmitate", isAllergen: false },
+      { name: "Hydrogenated Polydecene", isAllergen: false },
+      { name: "Titanium Dioxide (UV Filter)", isAllergen: true },
+      { name: "C15-19 Alkane", isAllergen: false },
+      { name: "Glyceryl Stearate", isAllergen: false },
+      { name: "Diisopropyl Sebacate", isAllergen: false },
+      { name: "Propylene Glycol Dicaprylate/Dicaprate", isAllergen: false },
+      { name: "Silica", isAllergen: false },
+      { name: "Diisopropyl Adipate", isAllergen: false },
+      { name: "Polyacrylate Crosspolymer-6", isAllergen: false },
+      { name: "PEG-100 Stearate", isAllergen: false },
+      { name: "VP/Hexadecene Copolymer", isAllergen: false },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Propanediol", isAllergen: false },
+      { name: "Xanthan Gum", isAllergen: false },
+      { name: "Propylene Carbonate", isAllergen: false },
+      { name: "Bisabolol", isAllergen: false },
+      { name: "Disodium EDTA", isAllergen: false },
+      { name: "Caprylhydroxamic Acid", isAllergen: false },
+      { name: "o-Cymen-5-ol", isAllergen: false },
+      { name: "Aloe Barbadensis Leaf Juice Powder", isAllergen: false },
+      { name: "Tocopheryl Acetate", isAllergen: false },
+      { name: "Propylene Glycol", isAllergen: false },
+      { name: "Opuntia Ficus-Indica Stem Extract", isAllergen: false },
+      { name: "Terminalia Ferdinandiana Fruit Extract", isAllergen: false },
+      { name: "Buddleja Officinalis Flower Extract", isAllergen: false },
+      { name: "Glycyrrhiza Glabra (Licorice) Root Extract", isAllergen: false },
+      { name: "Niacinamide", isAllergen: false },
+      { name: "Panthenol", isAllergen: false },
+      { name: "Potassium Sorbate", isAllergen: false },
+      { name: "Sodium Benzoate", isAllergen: false },
+      { name: "Ethylhexylglycerin", isAllergen: false },
+      { name: "Taraxacum Officinale (Dandelion) Extract", isAllergen: false },
     ],
 
     allergens: ["Sunscreen"],
@@ -7091,7 +7128,7 @@ const products: SeedProduct[] = [
     registrationNumber: "Recalled — affected stocks found to contain undeclared Hydroquinone",
     servingSize: "100mL bottle",
     warningMessage:
-      "FDA Advisory No. 2026-0699 (2 July 2026) recalls affected stocks of this product due to the presence of Hydroquinone, a skin-lightening ingredient restricted in the Philippines to prescription-only use and not permitted in this over-the-counter cosmetic formulation. Hydroquinone can cause skin irritation and, with prolonged use, ochronosis (permanent skin darkening/discoloration) and allergic reactions. Consumers who purchased this product should stop use and check their batch number against the FDA advisory. The rest of the ingredient panel was cut off in the supplied photo and could not be fully transcribed.",
+      "FDA Advisory No. 2026-0699 (2 July 2026) recalls affected stocks of this product due to the presence of Hydroquinone, a skin-lightening ingredient restricted in the Philippines to prescription-only use and not permitted in this over-the-counter cosmetic formulation. Hydroquinone can cause skin irritation and, with prolonged use, ochronosis (permanent skin darkening/discoloration) and allergic reactions. Consumers who purchased this product should stop use and check their batch number against the FDA advisory. Hydroquinone does not appear on the declared ingredient list. Also contains fragrance and the preservative iodopropynyl butylcarbamate, both known skin sensitizers.",
     verificationUrl:
       "https://www.fda.gov.ph/fda-advisory-no-2026-0699-product-recall-of-affected-stocks-of-kojiesan-skin-lightening-cleanser-toner-with-hydromoist-due-to-the-presence-of-hydroquinone/",
 
@@ -7104,14 +7141,30 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      { name: "Hydroquinone (undeclared; cause of the FDA recall)", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Butylene Glycol", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Lactococcus Ferment", isAllergen: false },
+      { name: "Avena Sativa Kernel Extract", isAllergen: false },
+      { name: "Sodium Benzoate", isAllergen: false },
+      { name: "Potassium Sorbate", isAllergen: false },
+      { name: "Saccharide Isomerate", isAllergen: false },
+      { name: "Citric Acid", isAllergen: false },
+      { name: "Sodium Citrate", isAllergen: false },
+      { name: "Capryloyl/Caproyl Methyl Glucamide", isAllergen: false },
+      { name: "Fomes Officinalis (Mushroom) Extract", isAllergen: false },
+      { name: "Kojic Acid", isAllergen: false },
+      { name: "Panax Ginseng (Ginseng) Extract", isAllergen: false },
+      { name: "Sodium Lactate", isAllergen: false },
+      { name: "Rosa Canina (Rose Hip) Oil", isAllergen: false },
+      { name: "PEG-40 Hydrogenated Castor Oil", isAllergen: false },
       { name: "Iodopropynyl Butylcarbamate (Preservative)", isAllergen: true },
+      { name: "Phenoxyethanol", isAllergen: false },
+      { name: "Fragrance", isAllergen: true },
+      { name: "Ginkgo Biloba Extract", isAllergen: false },
       { name: "Creatine", isAllergen: false },
       { name: "Allantoin", isAllergen: false },
-      {
-        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
-        isAllergen: false,
-      },
+      { name: "Hydroquinone (undeclared; cause of the FDA recall)", isAllergen: true },
     ],
 
     allergens: ["Skincare Products"],
@@ -7123,7 +7176,7 @@ const products: SeedProduct[] = [
   {
     slug: "watsons-love-my-glow-smoothing-shot-serum-mask-25ml",
     barcode: "4894819703339",
-    name: "Watsons Love My Glow Smoothing Shot Serum Mask (3% Bio-Cellulose Complex + Idebenone) 25mL",
+    name: "Watsons Love My Glow Smoothing Shot Serum Mask 25mL",
     brand: "Watsons",
     category: "Skincare Products",
     status: "FDA_ADVISORY",
@@ -7131,7 +7184,7 @@ const products: SeedProduct[] = [
     registrationNumber: "No Philippine FDA Cosmetic Product Notification issued",
     servingSize: "25mL sheet mask ampoule",
     warningMessage:
-      "FDA Advisory No. 2026-1130 (16 September 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. The front label lists Bakuchiol and Idebenone (3% Bio-Cellulose Complex) as key actives; the full ingredient panel was cut off in the supplied photo. Unregistered serums and sheet masks carry added risk of undisclosed or mislabeled active-ingredient concentrations.",
+      "FDA Advisory No. 2026-1130 (16 September 2026) is a Public Health Warning against the purchase and use of this unauthorized cosmetic product: it has no Philippine FDA Cosmetic Product Notification, so the FDA cannot verify its ingredients or safety. The front label advertises a 3% \"Bifi-Adeno + Idebenone\" complex (Bifida Ferment Lysate, Adenosine, and Hydroxydecyl Ubiquinone). Unregistered serums and sheet masks carry added risk of undisclosed or mislabeled active-ingredient concentrations.",
     verificationUrl:
       "https://www.fda.gov.ph/fda-advisory-no-2026-1130-public-health-warning-against-the-purchase-and-use-of-the-unauthorized-cosmetic-product-watsons-love-my-glow-smoothing-shot-serum-mask/",
 
@@ -7144,16 +7197,30 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
-      { name: "Bakuchiol", isAllergen: false },
-      { name: "Idebenone", isAllergen: false },
+      { name: "Aqua (Water)", isAllergen: false },
+      { name: "Glycerin", isAllergen: false },
+      { name: "Dipropylene Glycol", isAllergen: false },
+      { name: "Betaine", isAllergen: false },
+      { name: "Hydroxyacetophenone", isAllergen: false },
+      { name: "Polyglyceryl-10 Laurate", isAllergen: false },
+      { name: "Arginine", isAllergen: false },
+      { name: "Acrylates/C10-30 Alkyl Acrylate Crosspolymer", isAllergen: false },
+      { name: "Bifida Ferment Lysate", isAllergen: false },
+      { name: "Caprylyl Glycol", isAllergen: false },
+      { name: "1,2-Hexanediol", isAllergen: false },
+      { name: "Ammonium Acryloyldimethyltaurate/VP Copolymer", isAllergen: false },
+      { name: "Adenosine", isAllergen: false },
+      { name: "Ethylhexylglycerin", isAllergen: false },
+      { name: "Disodium EDTA", isAllergen: false },
+      { name: "Glyceryl Acrylate/Acrylic Acid Copolymer", isAllergen: false },
+      { name: "Butylene Glycol", isAllergen: false },
       { name: "PVM/MA Copolymer", isAllergen: false },
       { name: "Hydrogenated Lecithin", isAllergen: false },
+      { name: "Diethylhexyl Sodium Sulfosuccinate", isAllergen: false },
+      { name: "Hydroxydecyl Ubiquinone (Idebenone)", isAllergen: false },
+      { name: "Dipotassium Glycyrrhizate", isAllergen: false },
       { name: "Argania Spinosa (Argan) Kernel Oil", isAllergen: false },
       { name: "Yeast Extract", isAllergen: false },
-      {
-        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
-        isAllergen: false,
-      },
     ],
 
     allergens: ["Skincare Products"],
@@ -7186,14 +7253,14 @@ const products: SeedProduct[] = [
     },
 
     ingredients: [
+      { name: "Sodium Palmate", isAllergen: false },
+      { name: "Sodium Palm Stearate", isAllergen: false },
       { name: "Sodium Palm Kernelate", isAllergen: false },
-      { name: "Papaya (Carica Papaya) Extract", isAllergen: false },
+      { name: "Purified Water", isAllergen: false },
+      { name: "RBD Coconut Oil", isAllergen: false },
+      { name: "Papaya Extract", isAllergen: false },
       { name: "Vitamin C", isAllergen: false },
       { name: "CI 11920 (Colorant)", isAllergen: false },
-      {
-        name: "Remainder of ingredient panel cut off in supplied photo; not fully transcribed",
-        isAllergen: false,
-      },
     ],
 
     allergens: ["Cosmetics"],
@@ -7326,6 +7393,158 @@ const products: SeedProduct[] = [
 
     alternatives: [
       "An FDA-registered sisig or canned meat product with a currently active registration",
+    ],
+  },
+  {
+    slug: "krystall-herbal-oil-15ml",
+    barcode: "00031431",
+    name: "Krystall Herbal Oil 15mL",
+    brand: "Krystall",
+    category: "Herbal Medicinal Oil",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2017-258",
+    registrationNumber: "No Certificate of Product Registration issued",
+    servingSize: "15mL bottle; for external use only",
+    warningMessage:
+      "FDA Advisory No. 2017-258 is a Public Health Warning against the purchase and use of Krystall Herbal Oil as an unregistered drug product: it has not gone through the FDA registration process and has not been issued proper authorization, so its quality and safety cannot be assured. The box claims to treat serious conditions including tuberculosis, asthma, paralysis, gastric ulcer, and eye and ear infections; these claims are not FDA-approved, and the product should not replace medical treatment. The label says it is for external use only yet lists eye and ear infections among its indications; do not put it in the eyes or ears. Contains an added herbal perfume. Distributed by FGO Herbal Foundation Inc., Parañaque City.",
+    verificationUrl: "https://www.fda.gov.ph/?p=48444",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Premna Odorata Blanco (0.25 g)", isAllergen: false },
+      { name: "Lagerstroemia Speciosa (0.25 g)", isAllergen: false },
+      { name: "Mangifera Indica (0.25 g)", isAllergen: false },
+      { name: "Psidium Guajava (0.25 g)", isAllergen: false },
+      { name: "Pimpinella Anisum (0.25 g)", isAllergen: false },
+      { name: "Mineral Oil (q.s. 10 mL)", isAllergen: false },
+      { name: "Pandanus Amaryllifolius (0.25 g)", isAllergen: false },
+      { name: "Deodoriza (q.s. 0.2 g)", isAllergen: false },
+      { name: "Perfume Herbal (q.s. 0.2 mL)", isAllergen: true },
+      { name: "Ginseng (0.5 g)", isAllergen: false },
+      { name: "Coconut Oil (q.s. 100 mL)", isAllergen: false },
+    ],
+
+    allergens: ["Perfumes"],
+
+    alternatives: [
+      "An FDA-registered herbal medicine or pain-relief oil, used as directed by a doctor or pharmacist",
+    ],
+  },
+  {
+    slug: "coco-duo-dip-chocolate-cookies-stick-cream-chocolate-dip",
+    barcode: "4806534227427",
+    name: "COCO Duo Dip Chocolate Cookies Stick & Cream Dip + Chocolate Dip",
+    brand: "Coco",
+    category: "Biscuit Snack with Dips",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-1200",
+    registrationNumber: "No Certificate of Product Registration issued",
+    servingSize: "N/A (label gives separate per-100g values for each component)",
+    warningMessage:
+      "FDA Advisory No. 2026-1200 (23 September 2026) is a Public Health Warning against the purchase and consumption of this unregistered food product: no Certificate of Product Registration has been issued, so the FDA cannot assure its quality and safety. Contains wheat, milk, soy, and hazelnut, plus sodium metabisulfite (a sulfite) in the caramel colouring. The chocolate dip is made with partially hydrogenated vegetable oil. The label lists separate per-100g nutrition for the cookie stick, cream dip, and chocolate dip but no whole-pack totals, so no single nutrition panel is shown.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-1200-public-health-warning-against-the-purchase-and-consumption-of-the-unregistered-food-product-coco-fall-in-love-with-duo-dip-chocolate-cookies-stick-cream-dip-chocolate-dip/",
+
+    nutrition: {
+      calories: "N/A",
+      protein: "N/A",
+      carbohydrates: "N/A",
+      totalFat: "N/A",
+      sodium: "N/A",
+    },
+
+    ingredients: [
+      { name: "Cookie stick: Wheat Flour", isAllergen: true },
+      { name: "Cookie stick: Sugar", isAllergen: false },
+      { name: "Cookie stick: Edible Vegetable Oil", isAllergen: false },
+      { name: "Cookie stick: Corn Flour", isAllergen: false },
+      { name: "Cookie stick: Cocoa Powder", isAllergen: false },
+      { name: "Cookie stick: Milk Powder", isAllergen: true },
+      { name: "Cookie stick: Salt", isAllergen: false },
+      { name: "Cookie stick: Ammonium Bicarbonate", isAllergen: false },
+      { name: "Cookie stick: Sodium Bicarbonate", isAllergen: false },
+      { name: "Cookie stick: Caramel Colour (Sodium Metabisulfite)", isAllergen: true },
+      { name: "Cookie stick: Food Flavoring", isAllergen: false },
+      { name: "Cream dip: Sugar", isAllergen: false },
+      { name: "Cream dip: Edible Vegetable Oil", isAllergen: false },
+      { name: "Cream dip: Milk Powder", isAllergen: true },
+      { name: "Cream dip: Lactose", isAllergen: true },
+      { name: "Cream dip: Whey Powder", isAllergen: true },
+      { name: "Cream dip: Phospholipid", isAllergen: false },
+      { name: "Cream dip: Food Flavoring", isAllergen: false },
+      { name: "Chocolate dip: White Sugar", isAllergen: false },
+      { name: "Chocolate dip: Edible Vegetable Oil (Partially Hydrogenated)", isAllergen: false },
+      { name: "Chocolate dip: Cocoa Powder", isAllergen: false },
+      { name: "Chocolate dip: Whole Milk", isAllergen: true },
+      { name: "Chocolate dip: Whey Powder", isAllergen: true },
+      { name: "Chocolate dip: Lactose", isAllergen: true },
+      { name: "Chocolate dip: Hazelnut Sauce", isAllergen: true },
+      { name: "Chocolate dip: Phospholipids", isAllergen: false },
+      { name: "Chocolate dip: Vanilla Powder", isAllergen: false },
+      {
+        name: "Soybean ingredients (declared in the label's allergy tip; not separately named)",
+        isAllergen: true,
+      },
+    ],
+
+    allergens: ["Wheat / Gluten", "Milk", "Soy", "Tree Nuts", "Sulfites"],
+
+    alternatives: [
+      "An FDA-registered biscuit or snack with a complete ingredient and allergen label",
+    ],
+  },
+  {
+    slug: "mr-squirrel-luncheon-meat-black-pepper-198g",
+    barcode: "4801334900820",
+    name: "Mr. Squirrel Luncheon Meat Black Pepper Flavor 198g",
+    brand: "Mr. Squirrel",
+    category: "Canned Meat",
+    status: "FDA_ADVISORY",
+    fdaStatusLabel: "FDA Advisory No. 2026-1088",
+    registrationNumber: "No Certificate of Product Registration issued",
+    servingSize: "33g (about 6 servings per 198g can)",
+    warningMessage:
+      "FDA Advisory No. 2026-1088 (23 September 2026) is a Public Health Warning against the purchase and consumption of this unregistered food product: no Certificate of Product Registration has been issued, so the FDA cannot assure its quality and safety. Contains soybean protein isolate and the curing agent sodium nitrite. The label warns not to consume it if the lid is damaged or swollen. Each 33g serving contains 72 calories, 5g fat, and 187.4mg sodium; the label does not list saturated fat or sugar. The barcode printed on the can fails the standard check-digit test, so some phone scanners may not read it; search for the product by name instead.",
+    verificationUrl:
+      "https://www.fda.gov.ph/fda-advisory-no-2026-1088-public-health-warning-against-the-purchase-and-consumption-of-the-unregistered-food-product-mr-squirrel-luncheon-meat-black-pepper-flavor/",
+
+    nutrition: {
+      calories: "72",
+      protein: "3.7g",
+      carbohydrates: "3.4g",
+      totalFat: "5g",
+      sodium: "187.4mg",
+    },
+
+    ingredients: [
+      { name: "Pork", isAllergen: false },
+      { name: "Chicken", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Corn Starch", isAllergen: false },
+      { name: "Soybean Protein Isolate", isAllergen: true },
+      { name: "Table Salt", isAllergen: false },
+      { name: "Monosodium Glutamate", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Sodium Tripolyphosphate", isAllergen: false },
+      { name: "Sodium Pyrophosphate", isAllergen: false },
+      { name: "Carrageenan", isAllergen: false },
+      { name: "Sodium D-Isoascorbate", isAllergen: false },
+      { name: "Monascus Red", isAllergen: false },
+      { name: "Food Flavor", isAllergen: false },
+      { name: "Sodium Nitrite", isAllergen: false },
+    ],
+
+    allergens: ["Soy"],
+
+    alternatives: [
+      "An FDA-registered luncheon meat, compared on its sodium content",
     ],
   },
 ];
