@@ -25,6 +25,7 @@ import {
   HSR_CONSERVATIVE_NOTICE,
   HSR_INSUFFICIENT_DATA_NOTICE,
 } from "@/types/nutrition-rating";
+import { splitWarningMessage } from "@/utils/splitWarningMessage";
 
 type ProductLoadState = "loading" | "success" | "not-found" | "error";
 
@@ -956,11 +957,41 @@ function ProductSafetyCard({ product }: { product: DemoProduct }) {
         <Text style={[styles.safetyTitle, { color: colors.title }]}>
           {title}
         </Text>
-        <Text style={[styles.safetyText, { color: colors.text }]}>
-          {product.warningMessage}
-        </Text>
+        <SafetyMessageBody
+          message={product.warningMessage}
+          color={colors.text}
+        />
       </View>
     </View>
+  );
+}
+
+function SafetyMessageBody({
+  message,
+  color,
+}: {
+  message: string;
+  color: string;
+}) {
+  const { headline, bullets } = splitWarningMessage(message);
+
+  return (
+    <>
+      <Text style={[styles.safetyHeadline, { color }]}>{headline}</Text>
+
+      {bullets.length > 0 && (
+        <View style={styles.safetyBulletList}>
+          {bullets.map((bullet, index) => (
+            <View key={index} style={styles.safetyBulletRow}>
+              <View
+                style={[styles.safetyBulletDot, { backgroundColor: color }]}
+              />
+              <Text style={[styles.safetyText, { color }]}>{bullet}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </>
   );
 }
 
@@ -1318,8 +1349,33 @@ const styles = StyleSheet.create({
     color: "#312E81",
   },
 
-  safetyText: {
+  safetyHeadline: {
     marginTop: 4,
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
+
+  safetyBulletList: {
+    marginTop: 10,
+    gap: 8,
+  },
+
+  safetyBulletRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+  },
+
+  safetyBulletDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    marginTop: 7,
+  },
+
+  safetyText: {
+    flex: 1,
     fontSize: 13,
     lineHeight: 20,
     color: "#4F39F6",
