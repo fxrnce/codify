@@ -24,6 +24,11 @@ import {
   HSR_CATEGORY_LABELS,
   type HsrCategory,
 } from "@/types/nutrition-rating";
+import {
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_LABELS,
+  type ProductType,
+} from "@/types/product-type";
 
 const WATER_CATEGORIES: HsrCategory[] = ["PLAIN_WATER", "UNSWEETENED_FLAVOURED_WATER"];
 
@@ -133,8 +138,15 @@ const nutritionKeys = [
 
 type ProductDraft = Omit<
   AdminProduct,
-  "id" | "updatedAt" | "allergens" | "alternatives" | "nutritionRating"
+  | "id"
+  | "updatedAt"
+  | "allergens"
+  | "alternatives"
+  | "nutritionRating"
+  | "productType"
 > & {
+  // null until the administrator picks one; the backend rejects a missing type.
+  productType: ProductType | null;
   allergens: string[];
   alternatives: string[];
   nutritionRating: NutritionRatingFormState;
@@ -146,6 +158,7 @@ const emptyProduct: ProductDraft = {
   name: "",
   brand: "",
   category: "",
+  productType: null,
   status: "UNVERIFIED",
   fdaStatusLabel: "FDA Verification Pending",
   registrationNumber: "Not verified",
@@ -221,6 +234,7 @@ export default function AdminProductEditorScreen() {
         name: product.name,
         brand: product.brand,
         category: product.category,
+        productType: product.productType,
         status: product.status,
         fdaStatusLabel: product.fdaStatusLabel,
         registrationNumber: product.registrationNumber,
@@ -397,6 +411,30 @@ export default function AdminProductEditorScreen() {
             <AdminTextField label="Product barcode" placeholder="Enter the UPC or EAN printed on the package" value={draft.barcode} onChangeText={(value) => set("barcode", value)} editable={!saving && isOnline} autoCapitalize="none" error={fieldErrors.barcode} />
             <AdminTextField label="Catalog ID (lowercase-with-hyphens)" placeholder="coca-cola-original-320ml" value={draft.slug} onChangeText={(value) => set("slug", value)} editable={isNew && !saving && isOnline} autoCapitalize="none" error={fieldErrors.slug} />
             <AdminTextField label="Category" placeholder="Carbonated Drink" value={draft.category} onChangeText={(value) => set("category", value)} editable={!saving && isOnline} error={fieldErrors.category} />
+            <Text style={{ color: adminColors.text, fontSize: 13, fontWeight: "700" }}>Product type (used by the Search filter)</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+              {PRODUCT_TYPES.map((item) => (
+                <Pressable
+                  key={item}
+                  disabled={saving || !isOnline}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: draft.productType === item }}
+                  style={[
+                    adminStyles.secondaryButton,
+                    draft.productType === item && {
+                      backgroundColor: adminColors.primarySoft,
+                      borderColor: "#F5B7C0",
+                    },
+                  ]}
+                  onPress={() => set("productType", item)}
+                >
+                  <Text style={{ color: draft.productType === item ? adminColors.primary : adminColors.text, fontWeight: "800", fontSize: 11 }}>
+                    {PRODUCT_TYPE_LABELS[item].toUpperCase()}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {fieldErrors.productType && <Text style={{ color: adminColors.danger, fontSize: 12 }}>{fieldErrors.productType}</Text>}
             <AdminTextField label="Serving size" placeholder="320 mL" value={draft.servingSize} onChangeText={(value) => set("servingSize", value)} editable={!saving && isOnline} error={fieldErrors.servingSize} />
 
             <Text style={adminStyles.sectionTitle}>FDA STATUS</Text>

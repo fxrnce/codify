@@ -238,7 +238,7 @@ test("a storage failure while deleting a report records a cleanup task instead o
   assert.equal(cleanupTasks[0].reason, "deleted-report");
 });
 const product = {
-  slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", nutritionRating: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
+  slug: "sample-product", barcode: "012345678905", name: "Sample", brand: "Sample", category: "Food", productType: "FOOD", status: "UNVERIFIED", fdaStatusLabel: "Pending", registrationNumber: "Not verified", nutritionRating: null, servingSize: "100g", warningMessage: "Awaiting verification", imageUrl: null, verificationUrl: "https://verification.fda.gov.ph/", isArchived: false,
   nutrition: { calories: "N/A", protein: "N/A", carbohydrates: "N/A", totalFat: "N/A", saturatedFat: "N/A", totalSugars: "N/A", dietaryFiber: "N/A", sodium: "N/A" }, ingredients: [], allergens: [], alternatives: [],
 };
 test("catalog validation returns structured nested field paths", async () => {
@@ -276,6 +276,10 @@ test("catalog rejects duplicate UPC/EAN forms and unsafe fields", async () => {
   assert.equal(productSchema.safeParse({ ...product, verificationUrl: "javascript:alert(1)" }).success, false);
   assert.equal(productSchema.safeParse({ ...product, nutritionRating: { category: "NOT_A_CATEGORY" } }).success, false);
   assert.equal(productSchema.safeParse({ ...product, nutritionRating: { category: "FOOD", servingQuantity: -1 } }).success, false);
+  const { productType: _omitted, ...withoutType } = product;
+  assert.equal(productSchema.safeParse(withoutType).success, false);
+  assert.equal(productSchema.safeParse({ ...product, productType: "SNACK" }).success, false);
+  assert.equal(productSchema.safeParse({ ...product, productType: "PERSONAL_CARE" }).success, true);
   let query: any;
   const result = await request("ADMIN", "/products", "POST", product, {
     $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({ product: { findFirst: async (input: unknown) => { query = input; return { id }; }, create: () => assert.fail("Duplicate must not be created") } }),

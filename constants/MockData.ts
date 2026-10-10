@@ -1,4 +1,5 @@
 import type { NutritionRating } from "@/types/nutrition-rating";
+import type { ProductType } from "@/types/product-type";
 
 export type ProductStatus =
   | "Approved"
@@ -12,6 +13,8 @@ export type DemoProduct = {
   name: string;
   brand: string;
   category: string;
+  // Optional: catalogs cached by older app versions don't have it yet.
+  productType?: ProductType;
   status: ProductStatus;
   fdaStatusLabel: string;
   registrationNumber: string;
@@ -71,6 +74,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Green Cross Total Defense Antibacterial Hand Spray 40mL",
     brand: "Green Cross",
     category: "Hand Sanitizer",
+    productType: "PERSONAL_CARE",
     status: "Approved",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011397349",
@@ -109,6 +113,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Safeguard Pure White Bar Soap 90g",
     brand: "Safeguard",
     category: "Bar Soap",
+    productType: "PERSONAL_CARE",
     status: "Approved",
     fdaStatusLabel: "FDA Notified",
     registrationNumber: "NN-1000011604555",
@@ -161,6 +166,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Super Delights Brownie Bites 14g",
     brand: "Super Delights",
     category: "Baked Snack",
+    productType: "FOOD",
     status: "Approved",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000010589283",
@@ -248,6 +254,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Coca-Cola Original Taste 320mL Can",
     brand: "Coca-Cola",
     category: "Carbonated Soft Drink",
+    productType: "DRINK",
     status: "Caution",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008139975",
@@ -330,6 +337,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Century Tuna Flakes in Oil 155g",
     brand: "Century",
     category: "Canned Tuna",
+    productType: "FOOD",
     status: "Approved",
     fdaStatusLabel: "FDA Registered",
     registrationNumber: "FR-4000008019521",
@@ -411,6 +419,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Athlene Active Creatine Monohydrate 300g",
     brand: "Athlene",
     category: "Food Supplement",
+    productType: "FOOD",
     status: "Caution",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009873654",
@@ -442,6 +451,7 @@ export const demoProducts: DemoProduct[] = [
     name: "ATC Fish Oil 1000mg 30 Softgel Capsules",
     brand: "ATC Healthcare",
     category: "Food Supplement",
+    productType: "FOOD",
     status: "Caution",
     fdaStatusLabel: "FDA Registered — No Approved Therapeutic Claims",
     registrationNumber: "FR-4000009275304",
@@ -480,6 +490,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Nescafé Tradição Forte 200g",
     brand: "Nescafé",
     category: "Instant Coffee",
+    productType: "DRINK",
     status: "FDA Advisory",
     fdaStatusLabel: "FDA Advisory No. 2026-0463",
     registrationNumber: "No Certificate of Product Registration issued",
@@ -511,6 +522,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Biogesic Paracetamol 500mg Tablet",
     brand: "Biogesic",
     category: "OTC Medicine",
+    productType: "MEDICINE",
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY39670",
@@ -539,6 +551,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Neozep Forte Tablet",
     brand: "Neozep Forte",
     category: "OTC Medicine",
+    productType: "MEDICINE",
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY29559",
@@ -570,6 +583,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Bioflu Tablet",
     brand: "Bioflu",
     category: "OTC Medicine",
+    productType: "MEDICINE",
     status: "Approved",
     fdaStatusLabel: "FDA Registered OTC Medicine",
     registrationNumber: "DR-XY34482",
@@ -602,6 +616,7 @@ export const demoProducts: DemoProduct[] = [
     name: "Nescafé Classic 190g",
     brand: "Nescafé",
     category: "Instant Coffee",
+    productType: "DRINK",
     status: "Unverified",
     fdaStatusLabel: "Exact Variant Not Verified",
     registrationNumber: "No matching Philippine FDA record",

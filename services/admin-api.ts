@@ -1,4 +1,5 @@
 import type { HsrCategory, HsrConfidence } from "@/types/nutrition-rating";
+import type { ProductType } from "@/types/product-type";
 
 export type AdminRole = "USER" | "ADMIN";
 export type AdminReportStatus =
@@ -81,6 +82,7 @@ export type AdminNutritionRatingInput = {
 
 export type AdminProduct = AdminProductSummary & {
   slug: string;
+  productType: ProductType;
   fdaStatusLabel: string;
   registrationNumber: string;
   nutritionRating: AdminNutritionRating | null;

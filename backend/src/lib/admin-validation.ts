@@ -56,6 +56,7 @@ export const productSchema = z.object({
   name: requiredText("the product name and package size"),
   brand: requiredText("the brand", 120),
   category: requiredText("the category", 120),
+  productType: z.enum(["FOOD", "DRINK", "MEDICINE", "PERSONAL_CARE", "HOUSEHOLD"], { error: "Choose a product type." }),
   status: z.enum(["APPROVED", "CAUTION", "FDA_ADVISORY", "UNVERIFIED"], { error: "Choose a valid FDA status." }),
   fdaStatusLabel: requiredText("the FDA status label"),
   registrationNumber: requiredText("the registration or notification number"),

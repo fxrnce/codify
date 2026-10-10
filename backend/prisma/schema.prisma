@@ -17,6 +17,16 @@ enum ProductStatus {
   @@map("product_status")
 }
 
+enum ProductType {
+  FOOD
+  DRINK
+  MEDICINE
+  PERSONAL_CARE
+  HOUSEHOLD
+
+  @@map("product_type")
+}
+
 enum AdvisoryCategory {
   FOOD
   DRUG
@@ -107,6 +117,7 @@ model Product {
   name               String
   brand              String
   category           String
+  productType        ProductType   @map("product_type")
   status             ProductStatus
   fdaStatusLabel     String        @map("fda_status_label")
   registrationNumber String        @map("registration_number")
@@ -128,6 +139,7 @@ model Product {
 
   @@index([status])
   @@index([category])
+  @@index([productType])
   @@map("products")
 }
 

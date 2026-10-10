@@ -18,8 +18,72 @@ import {
 } from "@/constants/MockData";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { loadCachedProductCatalog } from "@/services/products";
+import {
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_LABELS,
+  type ProductType,
+} from "@/types/product-type";
 import { formatDateTime } from "@/utils/formatDate";
 import { matchesCatalogSearch } from "@/utils/search";
+
+type TypeFilter = "All" | ProductType;
+type StatusFilter = "All" | "Approved" | "Caution" | "Not Approved" | "Unverified";
+
+const TYPE_FILTERS: TypeFilter[] = ["All", ...PRODUCT_TYPES];
+const STATUS_FILTERS: StatusFilter[] = [
+  "All",
+  "Approved",
+  "Caution",
+  "Not Approved",
+  "Unverified",
+];
+
+function matchesStatusFilter(status: ProductStatus, filter: StatusFilter) {
+  if (filter === "All") return true;
+  if (filter === "Not Approved") return status === "FDA Advisory";
+  return status === filter;
+}
+
+function FilterChipRow<T extends string>({
+  options,
+  selected,
+  onSelect,
+  getLabel,
+}: {
+  options: T[];
+  selected: T;
+  onSelect: (value: T) => void;
+  getLabel: (value: T) => string;
+}) {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.filterRow}
+      keyboardShouldPersistTaps="handled"
+    >
+      {options.map((option) => {
+        const isSelected = option === selected;
+
+        return (
+          <Pressable
+            key={option}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isSelected }}
+            style={[styles.filterChip, isSelected && styles.filterChipSelected]}
+            onPress={() => onSelect(option)}
+          >
+            <Text
+              style={[styles.filterText, isSelected && styles.filterTextSelected]}
+            >
+              {getLabel(option)}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
+  );
+}
 
 function getStatusStyle(status: ProductStatus) {
   if (status === "Approved") {
@@ -66,6 +130,8 @@ export default function SearchProductScreen() {
   const { isBackendReachable, lastCatalogSyncAt } = useNetworkStatus();
 
   const [searchText, setSearchText] = useState("");
+  const [selectedType, setSelectedType] = useState<TypeFilter>("All");
+  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("All");
   const [products, setProducts] = useState<DemoProduct[]>(demoProducts);
   const [isUsingOfflineCatalog, setIsUsingOfflineCatalog] = useState(true);
 
@@ -110,7 +176,7 @@ export default function SearchProductScreen() {
     return ` Last updated ${formatted}.`;
   }, [lastCatalogSyncAt]);
 
-  const filteredProducts = useMemo(() => {
+  const searchMatches = useMemo(() => {
     return products.filter((product) => {
       const ingredientsText = product.ingredients
         .map((ingredient) => ingredient.name)
@@ -131,8 +197,22 @@ export default function SearchProductScreen() {
     });
   }, [products, searchText]);
 
+  const filteredProducts = useMemo(
+    () =>
+      searchMatches.filter(
+        (product) =>
+          (selectedType === "All" || product.productType === selectedType) &&
+          matchesStatusFilter(product.status, selectedStatus),
+      ),
+    [searchMatches, selectedStatus, selectedType],
+  );
+
+  const hasActiveFilters = selectedType !== "All" || selectedStatus !== "All";
+
+  // Only offer "Verify as Unknown Product" when the barcode matches nothing at
+  // all, not when it is merely hidden by the selected filters.
   const canVerifyUnknownBarcode =
-    filteredProducts.length === 0 && /^\d{8,14}$/.test(searchText.trim());
+    searchMatches.length === 0 && /^\d{8,14}$/.test(searchText.trim());
 
   const goBack = () => {
     router.back();
@@ -220,6 +300,23 @@ export default function SearchProductScreen() {
           )}
         </View>
 
+        <View style={styles.filterGroup}>
+          <FilterChipRow
+            options={TYPE_FILTERS}
+            selected={selectedType}
+            onSelect={setSelectedType}
+            getLabel={(value) =>
+              value === "All" ? "All types" : PRODUCT_TYPE_LABELS[value]
+            }
+          />
+          <FilterChipRow
+            options={STATUS_FILTERS}
+            selected={selectedStatus}
+            onSelect={setSelectedStatus}
+            getLabel={(value) => (value === "All" ? "All statuses" : value)}
+          />
+        </View>
+
         <View style={styles.infoCard}>
           <Ionicons
             name="information-circle-outline"
@@ -251,8 +348,9 @@ export default function SearchProductScreen() {
             <Text style={styles.emptyTitle}>No product found</Text>
 
             <Text style={styles.emptyText}>
-              Try another keyword, brand name, barcode, category, ingredient, or
-              allergen.
+              {hasActiveFilters && searchMatches.length > 0
+                ? "No products match the selected filters. Try choosing All types or All statuses."
+                : "Try another keyword, brand name, barcode, category, ingredient, or allergen."}
             </Text>
 
             {canVerifyUnknownBarcode && (
@@ -464,6 +562,43 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: "#1D293D",
     paddingVertical: 0,
+  },
+
+  filterGroup: {
+    marginTop: 14,
+    gap: 8,
+  },
+
+  filterRow: {
+    gap: 8,
+    paddingRight: 4,
+  },
+
+  filterChip: {
+    height: 36,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 14,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  filterChipSelected: {
+    backgroundColor: "#EEF2FF",
+    borderColor: "#C7D2FE",
+  },
+
+  filterText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#62748E",
+  },
+
+  filterTextSelected: {
+    color: "#4F39F6",
   },
 
   infoCard: {
