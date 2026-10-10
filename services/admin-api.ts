@@ -30,6 +30,7 @@ export type AdminReport = {
   notes: string;
   status: AdminReportStatus;
   resolutionNote: string;
+  isPublic: boolean;
   submittedAt: string;
   reviewedAt: string | null;
   updatedAt: string;

@@ -47,6 +47,7 @@ export default function AdminReportDetailScreen() {
   >([]);
   const [status, setStatus] = useState<AdminReportStatus>("PENDING");
   const [note, setNote] = useState("");
+  const [isPublic, setIsPublic] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -72,6 +73,7 @@ export default function AdminReportDetailScreen() {
       setHistory(response.history);
       setStatus(response.report.status);
       setNote(response.report.resolutionNote);
+      setIsPublic(response.report.isPublic);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -98,16 +100,23 @@ export default function AdminReportDetailScreen() {
 
     setSaving(true);
     setError("");
+    const willBePublic = status === "RESOLVED" && isPublic;
     try {
       await adminRequest(getToken, `/reports/${report.id}`, {
         method: "PATCH",
         body: JSON.stringify({
           status,
           resolutionNote: note,
+          isPublic: willBePublic,
           updatedAt: report.updatedAt,
         }),
       });
-      Alert.alert("Review Saved", "The reporting user can now see this update.");
+      Alert.alert(
+        "Review Saved",
+        willBePublic
+          ? "The reporting user can now see this update. It is also shown anonymously in Community Reports."
+          : "The reporting user can now see this update.",
+      );
       await load();
     } catch (caughtError) {
       setError(
@@ -333,12 +342,56 @@ export default function AdminReportDetailScreen() {
               editable={!saving && isOnline}
               placeholder="Explain what you checked and what action was taken."
             />
+            {status === "RESOLVED" ? (
+              <Pressable
+                disabled={saving || !isOnline}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: isPublic }}
+                onPress={() => setIsPublic((current) => !current)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  padding: 14,
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  borderColor: isPublic ? "#C7D2FE" : adminColors.border,
+                  backgroundColor: isPublic ? "#EEF2FF" : "#FFFFFF",
+                }}
+              >
+                <Ionicons
+                  name={isPublic ? "checkbox" : "square-outline"}
+                  size={22}
+                  color={isPublic ? "#4F46E5" : adminColors.muted}
+                />
+                <View style={{ flex: 1, gap: 4 }}>
+                  <Text style={{ color: adminColors.text, fontWeight: "800" }}>
+                    Show in Community Reports
+                  </Text>
+                  <Text style={{ color: adminColors.muted, fontSize: 12, lineHeight: 18 }}>
+                    Everyone using the app will see the product details, the
+                    user&apos;s notes, and your response above. The reporter&apos;s
+                    name, email, and photos are never shown. Check the notes
+                    and response for personal details first.
+                  </Text>
+                </View>
+              </Pressable>
+            ) : (
+              report.isPublic && (
+                <Text style={{ color: adminColors.warning, fontSize: 12, lineHeight: 18 }}>
+                  Saving with this status removes the report from Community
+                  Reports. Only resolved reports can be shown publicly.
+                </Text>
+              )
+            )}
             {error && <Text style={{ color: adminColors.danger }}>{error}</Text>}
             <Pressable
               disabled={
                 saving ||
                 !isOnline ||
-                (status === report.status && note === report.resolutionNote)
+                (status === report.status &&
+                  note === report.resolutionNote &&
+                  (status === "RESOLVED" && isPublic) === report.isPublic)
               }
               style={[
                 adminStyles.primaryButton,

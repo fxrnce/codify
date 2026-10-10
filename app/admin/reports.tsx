@@ -263,7 +263,27 @@ export default function AdminReportsScreen() {
               </Pressable>
               <Ionicons name="chevron-forward" size={18} color="#98A2B3" />
             </View>
-            <StatusPill value={item.status} />
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <StatusPill value={item.status} />
+              {item.isPublic && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    borderRadius: 999,
+                    backgroundColor: "#EEF2FF",
+                  }}
+                >
+                  <Ionicons name="people-outline" size={12} color="#4F46E5" />
+                  <Text style={{ color: "#4F46E5", fontSize: 10, fontWeight: "800" }}>
+                    PUBLIC
+                  </Text>
+                </View>
+              )}
+            </View>
             <View
               style={{
                 borderTopWidth: 1,

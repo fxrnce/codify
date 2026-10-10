@@ -293,6 +293,8 @@ model ProductReport {
   reviewedAt DateTime? @map("reviewed_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   hiddenByReporter Boolean @default(false) @map("hidden_by_reporter")
+  // Set by an admin; only RESOLVED reports may be shown in Community Reports.
+  isPublic Boolean @default(false) @map("is_public")
   clientReportId String? @map("client_report_id")
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -303,6 +305,7 @@ model ProductReport {
   @@unique([userId, clientReportId])
   @@index([productId])
   @@index([barcode])
+  @@index([isPublic, status, reviewedAt])
   @@map("product_reports")
 }
 

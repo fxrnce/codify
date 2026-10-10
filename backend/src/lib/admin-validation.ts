@@ -22,8 +22,13 @@ export const reviewSchema = z.object({
   status: reportStatusSchema,
   resolutionNote: z.string().trim().max(2000, "The response must be 2,000 characters or fewer."),
   updatedAt: z.iso.datetime({ error: "Reload the report before saving." }),
+  // Omitted by clients that do not manage visibility (e.g. bulk review); the
+  // route then keeps the current value while the report stays RESOLVED.
+  isPublic: z.boolean({ error: "Choose whether to show this report publicly." }).optional(),
 }).strict().refine(value => !["RESOLVED", "REJECTED"].includes(value.status) || value.resolutionNote.length > 0, {
   message: "A response is required when resolving or rejecting a report.", path: ["resolutionNote"],
+}).refine(value => !value.isPublic || value.status === "RESOLVED", {
+  message: "Only resolved reports can be shown in Community Reports.", path: ["isPublic"],
 });
 const nonNegativeNumber = (label: string) =>
   z.number().finite(`Enter a valid number for ${label}.`).min(0, `${label} cannot be negative.`);

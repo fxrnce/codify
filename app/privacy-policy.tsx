@@ -27,7 +27,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     id: "data-sharing-disclosure",
     title: "Data Sharing & Disclosure",
     content:
-      "Codify does not sell your personal data. Information may only be shared when required by law or needed to provide app services.",
+      "Codify does not sell your personal data. Information may only be shared when required by law or needed to provide app services. If you report a product, our team may show it anonymously in Community Reports after review. Shown reports include the product details, your report notes, and our team's response, but never your name, email, or photos.",
   },
   {
     id: "data-retention",

@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 
+import CommunityReportsCard from "@/components/advisories/community-reports-card";
 import { DemoProduct, ProductStatus } from "@/constants/MockData";
 import { useAllergenAlerts } from "@/contexts/AllergenContext";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
@@ -514,6 +515,8 @@ export default function ProductResultScreen() {
             </Text>
           </Pressable>
 
+          <CommunityReportsCard barcode={barcode} />
+
           <Pressable style={styles.reportButton} onPress={handleReportProduct}>
             <Ionicons name="flag-outline" size={18} color="#E7000B" />
             <Text style={styles.reportButtonText}>Report Product</Text>
@@ -637,6 +640,8 @@ export default function ProductResultScreen() {
         {!isMedicineRegistrationNumber(product.registrationNumber) && (
           <AlternativesCard product={product} />
         )}
+
+        <CommunityReportsCard barcode={product.barcode} />
 
         <Pressable style={styles.reportButton} onPress={handleReportProduct}>
           <Ionicons name="flag-outline" size={18} color="#E7000B" />

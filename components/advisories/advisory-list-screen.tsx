@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,6 +17,7 @@ import {
   formatAdvisoryDate,
   getAdvisoryAppearance,
 } from "@/components/advisories/advisory-appearance";
+import CommunityReportList from "@/components/advisories/community-report-list";
 import { useNetworkStatus } from "@/contexts/NetworkContext";
 import { fetchFdaAdvisories } from "@/services/fda-advisories";
 import type {
@@ -27,6 +28,7 @@ import type {
 
 type CategoryFilter = FdaAdvisoryCategory | "ALL";
 type StatusFilter = FdaAdvisoryStatus | "ALL";
+type AdvisorySource = "OFFICIAL" | "COMMUNITY";
 
 const categoryFilters: { label: string; value: CategoryFilter }[] = [
   { label: "All", value: "ALL" },
@@ -44,6 +46,15 @@ const statusFilters: { label: string; value: StatusFilter }[] = [
 
 export default function AdvisoryListScreen() {
   const router = useRouter();
+  // A product page opens this screen on the Community Reports tab, filtered
+  // to that product's barcode.
+  const params = useLocalSearchParams<{ tab?: string; barcode?: string }>();
+  const [source, setSource] = useState<AdvisorySource>(
+    params.tab === "community" ? "COMMUNITY" : "OFFICIAL",
+  );
+  const [communityBarcode, setCommunityBarcode] = useState(
+    params.barcode || undefined,
+  );
   const { isBackendReachable } = useNetworkStatus();
   const [searchText, setSearchText] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -340,60 +351,112 @@ export default function AdvisoryListScreen() {
         <Text style={styles.headerLabel}>PHILIPPINE FDA DATABASE</Text>
         <Text style={styles.headerTitle}>FDA Advisories</Text>
         <Text style={styles.headerSubtitle}>
-          Product warnings, recalls, safety notices, and lifted advisories.
+          Official FDA notices, plus product reports reviewed by the Codify
+          team.
         </Text>
       </LinearGradient>
 
-      <FlatList
-        data={advisories}
-        keyExtractor={(item) => item.advisoryNumber}
-        renderItem={renderAdvisory}
-        ListHeaderComponent={listHeader}
-        ListEmptyComponent={
-          isLoading ? (
-            <View style={styles.stateContainer}>
-              <ActivityIndicator size="large" color="#4F46E5" />
-              <Text style={styles.stateText}>Loading FDA advisories...</Text>
-            </View>
-          ) : errorMessage ? (
-            <View style={styles.stateContainer}>
-              <Ionicons name="cloud-offline-outline" size={40} color="#CBD5E1" />
-              <Text style={styles.stateTitle}>Could not load advisories</Text>
-              <Text style={styles.stateText}>{errorMessage}</Text>
-              <Pressable
-                style={styles.retryButton}
-                onPress={() => void loadPage(1, true)}
+      <View style={styles.sourceTabs} accessibilityRole="tablist">
+        {(
+          [
+            {
+              value: "OFFICIAL",
+              label: "Official Advisories",
+              icon: "shield-outline",
+            },
+            {
+              value: "COMMUNITY",
+              label: "Community Reports",
+              icon: "people-outline",
+            },
+          ] as const
+        ).map((tab) => {
+          const selected = source === tab.value;
+
+          return (
+            <Pressable
+              key={tab.value}
+              accessibilityRole="tab"
+              accessibilityState={{ selected }}
+              style={[styles.sourceTab, selected && styles.sourceTabSelected]}
+              onPress={() => setSource(tab.value)}
+            >
+              <Ionicons
+                name={tab.icon}
+                size={16}
+                color={selected ? "#4F46E5" : "#64748B"}
+              />
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.sourceTabText,
+                  selected && styles.sourceTabTextSelected,
+                ]}
               >
-                <Text style={styles.retryButtonText}>Try Again</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View style={styles.stateContainer}>
-              <Ionicons name="search-outline" size={40} color="#CBD5E1" />
-              <Text style={styles.stateTitle}>No advisory found</Text>
-              <Text style={styles.stateText}>
-                Try another product name, advisory number, category, or status.
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {source === "COMMUNITY" ? (
+        <CommunityReportList
+          barcode={communityBarcode}
+          onClearBarcode={() => setCommunityBarcode(undefined)}
+        />
+      ) : (
+        <FlatList
+          data={advisories}
+          keyExtractor={(item) => item.advisoryNumber}
+          renderItem={renderAdvisory}
+          ListHeaderComponent={listHeader}
+          ListEmptyComponent={
+            isLoading ? (
+              <View style={styles.stateContainer}>
+                <ActivityIndicator size="large" color="#4F46E5" />
+                <Text style={styles.stateText}>Loading FDA advisories...</Text>
+              </View>
+            ) : errorMessage ? (
+              <View style={styles.stateContainer}>
+                <Ionicons name="cloud-offline-outline" size={40} color="#CBD5E1" />
+                <Text style={styles.stateTitle}>Could not load advisories</Text>
+                <Text style={styles.stateText}>{errorMessage}</Text>
+                <Pressable
+                  style={styles.retryButton}
+                  onPress={() => void loadPage(1, true)}
+                >
+                  <Text style={styles.retryButtonText}>Try Again</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.stateContainer}>
+                <Ionicons name="search-outline" size={40} color="#CBD5E1" />
+                <Text style={styles.stateTitle}>No advisory found</Text>
+                <Text style={styles.stateText}>
+                  Try another product name, advisory number, category, or status.
+                </Text>
+              </View>
+            )
+          }
+          ListFooterComponent={
+            <View style={styles.listFooter}>
+              {isLoadingMore && (
+                <ActivityIndicator size="small" color="#4F46E5" />
+              )}
+              <Text style={styles.updatedText}>
+                Source index updated through {formatAdvisoryDate(updatedThrough)}
               </Text>
             </View>
-          )
-        }
-        ListFooterComponent={
-          <View style={styles.listFooter}>
-            {isLoadingMore && (
-              <ActivityIndicator size="small" color="#4F46E5" />
-            )}
-            <Text style={styles.updatedText}>
-              Source index updated through {formatAdvisoryDate(updatedThrough)}
-            </Text>
-          </View>
-        }
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.35}
-        contentContainerStyle={styles.listContent}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      />
+          }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.35}
+          contentContainerStyle={styles.listContent}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 }
@@ -450,6 +513,40 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
+  sourceTabs: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 4,
+    borderRadius: 16,
+    backgroundColor: "#E2E8F0",
+    flexDirection: "row",
+    gap: 4,
+  },
+  sourceTab: {
+    flex: 1,
+    height: 44,
+    paddingHorizontal: 6,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  sourceTabSelected: {
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#4F46E5",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sourceTabText: {
+    flexShrink: 1,
+    color: "#64748B",
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  sourceTabTextSelected: { color: "#4F46E5" },
   listContent: { padding: 16, paddingBottom: 32 },
   offlineCard: {
     minHeight: 48,

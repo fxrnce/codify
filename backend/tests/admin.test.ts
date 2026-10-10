@@ -9,7 +9,7 @@ import { advisorySchema, equivalentBarcode, reviewSchema, productSchema } from "
 
 const id = "00000000-0000-4000-8000-000000000001";
 const timestamp = "2026-09-14T00:00:00.000Z";
-const original = { id, status: "PENDING", resolutionNote: "", updatedAt: new Date(timestamp) };
+const original = { id, status: "PENDING", resolutionNote: "", isPublic: false, updatedAt: new Date(timestamp) };
 
 async function request(role: "ADMIN" | "USER" | null, path: string, method = "GET", body?: unknown, overrides: Record<string, unknown> = {}, factory = createAdminRouter, storage?: unknown) {
   const db = {
@@ -126,6 +126,47 @@ test("stale review returns conflict without writing an audit entry", async () =>
     $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({ productReport: { findUnique: async () => original, updateMany: async () => ({ count: 0 }) }, adminAuditLog: { create: () => assert.fail("Must not audit a failed update") } }),
   });
   assert.equal(result.status, 409);
+});
+async function reviewMutation(body: Record<string, unknown>, before: Record<string, unknown> = original) {
+  let mutation: any; let audit: any;
+  const result = await request("ADMIN", `/reports/${id}`, "PATCH", { resolutionNote: "Checked.", updatedAt: timestamp, ...body }, {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      productReport: {
+        findUnique: async () => before,
+        updateMany: async (input: unknown) => { mutation = input; return { count: 1 }; },
+        findUniqueOrThrow: async () => ({ ...before, ...mutation.data }),
+      },
+      adminAuditLog: { create: async (input: unknown) => { audit = input; } },
+    }),
+  });
+  return { result, mutation, audit };
+}
+test("an admin can publish a resolved report to Community Reports", async () => {
+  const { result, mutation, audit } = await reviewMutation({ status: "RESOLVED", isPublic: true });
+  assert.equal(result.status, 200);
+  assert.equal(mutation.data.isPublic, true);
+  assert.equal(audit.data.before.isPublic, false);
+  assert.equal(audit.data.after.isPublic, true);
+});
+test("only resolved reports can be published", async () => {
+  for (const status of ["PENDING", "UNDER_REVIEW", "REJECTED"]) {
+    const { result, mutation } = await reviewMutation({ status, isPublic: true });
+    assert.equal(result.status, 400);
+    assert.equal(mutation, undefined);
+  }
+});
+test("moving a published report out of RESOLVED unpublishes it", async () => {
+  const published = { ...original, status: "RESOLVED", resolutionNote: "Checked.", isPublic: true };
+  const { result, mutation } = await reviewMutation({ status: "UNDER_REVIEW" }, published);
+  assert.equal(result.status, 200);
+  assert.equal(mutation.data.isPublic, false);
+});
+test("a review that omits isPublic keeps a resolved report's current visibility", async () => {
+  const published = { ...original, status: "RESOLVED", resolutionNote: "Checked.", isPublic: true };
+  const { mutation } = await reviewMutation({ status: "RESOLVED", resolutionNote: "Updated response." }, published);
+  assert.equal(mutation.data.isPublic, true);
+  const { mutation: newlyResolved } = await reviewMutation({ status: "RESOLVED" });
+  assert.equal(newlyResolved.data.isPublic, false);
 });
 test("deleting a report logs an audit entry before removing the expected version", async () => {
   let audit: any; let deletedId: string | undefined; let transactional = false;

@@ -582,6 +582,22 @@ export default function ReportProductScreen() {
           </View>
         </View>
 
+        <View style={styles.communityNotice}>
+          <View style={styles.communityNoticeIcon}>
+            <Ionicons name="people-outline" size={16} color="#FFFFFF" />
+          </View>
+          <View style={styles.communityNoticeBody}>
+            <Text style={styles.communityNoticeTitle}>
+              Your report can help others
+            </Text>
+            <Text style={styles.communityNoticeText}>
+              After our team reviews it, your report may be shown anonymously
+              in Community Reports. Your name, email, and photos are never
+              shown.
+            </Text>
+          </View>
+        </View>
+
         <Pressable
           style={[
             styles.submitButton,
@@ -972,6 +988,44 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     color: "#62748E",
+  },
+
+  communityNotice: {
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1,
+    borderColor: "#C7D2FE",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+
+  communityNoticeIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    backgroundColor: "#4F46E5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  communityNoticeBody: {
+    flex: 1,
+  },
+
+  communityNoticeTitle: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "800",
+    color: "#312E81",
+  },
+
+  communityNoticeText: {
+    marginTop: 3,
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#3730A3",
   },
 
   submitButton: {

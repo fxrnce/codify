@@ -9,6 +9,7 @@ import express, {
 import { env } from "./config/env.js";
 import { advisoryRouter } from "./routes/advisory.routes.js";
 import { allergenRouter } from "./routes/allergen.routes.js";
+import { communityReportRouter } from "./routes/community-report.routes.js";
 import { productRouter } from "./routes/product.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
 import { scanRouter } from "./routes/scan.routes.js";
@@ -57,6 +58,7 @@ app.get("/health", (_request: Request, response: Response) => {
  */
 app.use("/api", productRouter);
 app.use("/api", advisoryRouter);
+app.use("/api", communityReportRouter);
 
 /*
  * Protected Clerk-authenticated routes.

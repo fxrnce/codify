@@ -97,14 +97,16 @@ export function createAdminRouter(db = prisma, authenticate = getAuth, storage: 
   });
   router.patch("/reports/:id", async (request, response) => {
     const id = parse(z.uuid(), request.params.id);
-    const { updatedAt, ...review } = parse(reviewSchema, request.body);
+    const { updatedAt, isPublic: requestedIsPublic, ...review } = parse(reviewSchema, request.body);
     const report = await db.$transaction(async tx => {
       const before = await tx.productReport.findUnique({ where: { id } });
       if (!before) throw new AdminError(404, "Report not found.");
-      const result = await tx.productReport.updateMany({ where: { id, updatedAt: new Date(updatedAt) }, data: { ...review, reviewedAt: new Date() } });
+      // Moving a report out of RESOLVED always takes it out of Community Reports.
+      const isPublic = review.status === "RESOLVED" ? (requestedIsPublic ?? before.isPublic) : false;
+      const result = await tx.productReport.updateMany({ where: { id, updatedAt: new Date(updatedAt) }, data: { ...review, isPublic, reviewedAt: new Date() } });
       if (result.count !== 1) throw new AdminError(409, "This report changed. Reload it before saving your review.");
       const after = await tx.productReport.findUniqueOrThrow({ where: { id } });
-      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "REPORT", entityId: id, action: "REVIEW", before: json({ status: before.status, resolutionNote: before.resolutionNote }), after: json(review) } });
+      await tx.adminAuditLog.create({ data: { actorId: response.locals.adminId, entityType: "REPORT", entityId: id, action: "REVIEW", before: json({ status: before.status, resolutionNote: before.resolutionNote, isPublic: before.isPublic }), after: json({ ...review, isPublic }) } });
       return after;
     });
     response.json({ report });
