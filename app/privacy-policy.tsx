@@ -51,7 +51,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     id: "your-rights",
     title: "Your Rights",
     content:
-      "You may request access, correction, deletion, or restriction of your personal information by emailing the ScanSuri team at codifyfda@gmail.com.",
+      "You may request access, correction, deletion, or restriction of your personal information by emailing the ScanSuri team at scansuri2026@gmail.com.",
   },
   {
     id: "changes-to-this-policy",
@@ -156,7 +156,7 @@ export default function PrivacyPolicyScreen() {
           <View style={styles.contactRow}>
             <Text style={styles.contactLabel}>Email</Text>
             <Text style={styles.contactValue} selectable>
-              codifyfda@gmail.com
+              scansuri2026@gmail.com
             </Text>
           </View>
 
