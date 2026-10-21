@@ -299,7 +299,7 @@ export default function ProductResultScreen() {
         const message =
           error instanceof Error
             ? error.message
-            : "Unable to connect to the Codify backend.";
+            : "Unable to connect to the ScanSuri backend.";
 
         console.log("Failed to load product from backend:", error);
 
@@ -369,7 +369,7 @@ export default function ProductResultScreen() {
         <ActivityIndicator size="large" color="#4F39F6" />
         <Text style={styles.notFoundTitle}>Loading Product</Text>
         <Text style={styles.notFoundText}>
-          Checking the Codify product database...
+          Checking the ScanSuri product database...
         </Text>
       </View>
     );
@@ -447,7 +447,7 @@ export default function ProductResultScreen() {
               <Text style={styles.warningTitle}>Verification needed</Text>
 
               <Text style={styles.warningText}>
-                This barcode is not available in the Codify product database. The
+                This barcode is not available in the ScanSuri product database. The
                 product may need manual FDA verification before purchase or use.
               </Text>
             </View>

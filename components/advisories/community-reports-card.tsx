@@ -79,7 +79,7 @@ export default function CommunityReportsCard({ barcode }: { barcode: string }) {
         <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
       </View>
       <Text style={styles.footer}>
-        From Codify users, reviewed by our team. Not an FDA advisory.
+        From ScanSuri users, reviewed by our team. Not an FDA advisory.
       </Text>
     </Pressable>
   );

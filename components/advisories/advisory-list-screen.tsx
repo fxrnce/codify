@@ -351,7 +351,7 @@ export default function AdvisoryListScreen() {
         <Text style={styles.headerLabel}>PHILIPPINE FDA DATABASE</Text>
         <Text style={styles.headerTitle}>FDA Advisories</Text>
         <Text style={styles.headerSubtitle}>
-          Official FDA notices, plus product reports reviewed by the Codify
+          Official FDA notices, plus product reports reviewed by the ScanSuri
           team.
         </Text>
       </LinearGradient>

@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import CodifyLogo from "../assets/icons/images/codify-logo.svg";
+import ScanSuriLogo from "../assets/icons/images/scansuri-logo.svg";
 
 type StatItem = {
   id: string;
@@ -149,28 +149,10 @@ const TEAM_MEMBERS: TeamMember[] = [
 
 const RESOURCES: ResourceItem[] = [
   {
-    id: "website",
-    emoji: "🌐",
-    title: "Official Website",
-    subtitle: "www.codify.ph",
-  },
-  {
-    id: "support",
-    emoji: "💬",
-    title: "Support Center",
-    subtitle: "support.codify.ph",
-  },
-  {
     id: "fda",
     emoji: "🏛️",
     title: "FDA Philippines",
     subtitle: "www.fda.gov.ph",
-  },
-  {
-    id: "bugs",
-    emoji: "🐞",
-    title: "Report an Issue",
-    subtitle: "bugs.codify.ph",
   },
 ];
 
@@ -194,15 +176,15 @@ export default function AboutCodifyScreen() {
             <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
           </Pressable>
 
-          <Text style={styles.headerTitle}>About Codify</Text>
+          <Text style={styles.headerTitle}>About ScanSuri</Text>
         </View>
 
         <View style={styles.appInfoContainer}>
           <View style={styles.logoBox}>
-            <CodifyLogo width={46} height={40} />
+            <ScanSuriLogo width={46} height={40} />
           </View>
 
-          <Text style={styles.appName}>Codify</Text>
+          <Text style={styles.appName}>ScanSuri</Text>
 
           <Text style={styles.appSubtitle}>
             FDA Product Verification & Ingredient Analysis
@@ -232,7 +214,7 @@ export default function AboutCodifyScreen() {
           </View>
 
           <Text style={styles.missionText}>
-            Codify empowers Filipino consumers to make informed, safe, and
+            ScanSuri empowers Filipino consumers to make informed, safe, and
             healthy purchasing decisions by providing instant access to FDA
             product verification and comprehensive ingredient analysis — all
             through a simple barcode scan.
@@ -351,16 +333,16 @@ export default function AboutCodifyScreen() {
 
         <View style={styles.footerCard}>
           <View style={styles.footerLogoBox}>
-            <CodifyLogo width={46} height={40} />
+            <ScanSuriLogo width={46} height={40} />
           </View>
 
-          <Text style={styles.footerTitle}>Codify v1.0.0</Text>
+          <Text style={styles.footerTitle}>ScanSuri v1.0.0</Text>
           <Text style={styles.footerSubtitle}>
             Build with Confidence In the Philippines
           </Text>
 
           <Text style={styles.footerCopyright}>
-            © 2026 Codify Technologies, Inc.{"\n"}All rights reserved.
+            © 2026 ScanSuri{"\n"}All rights reserved.
           </Text>
         </View>
       </ScrollView>

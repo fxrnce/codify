@@ -109,7 +109,7 @@ const SETTINGS_ITEMS: SettingItem[] = [
   },
   {
     id: "about-codify",
-    label: "About Codify",
+    label: "About ScanSuri",
     icon: "information-circle-outline",
     route: "/about-codify",
   },
@@ -146,7 +146,7 @@ export default function ProfileScreen() {
   const displayName =
     user?.fullName ||
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
-    "Codify User";
+    "ScanSuri User";
 
   const emailAddress =
     user?.primaryEmailAddress?.emailAddress || "No email address";
@@ -251,7 +251,7 @@ export default function ProfileScreen() {
 
             <View style={styles.memberBadge}>
               <Ionicons name="star" size={13} color="#FFD230" />
-              <Text style={styles.memberText}>Codify Member</Text>
+              <Text style={styles.memberText}>ScanSuri Member</Text>
             </View>
           </View>
         </View>
@@ -413,18 +413,18 @@ export default function ProfileScreen() {
       >
         <View style={styles.aboutHeaderRow}>
           <Ionicons name="shield-outline" size={16} color="#4F46E5" />
-          <Text style={styles.aboutTitle}>About Codify</Text>
+          <Text style={styles.aboutTitle}>About ScanSuri</Text>
         </View>
 
         <Text style={styles.aboutDescription}>
-          Codify helps Filipino consumers make informed decisions by providing
+          ScanSuri helps Filipino consumers make informed decisions by providing
           instant FDA verification and ingredient analysis through barcode
           scanning. Data is based on the Philippine FDA database.
         </Text>
 
         <View style={styles.aboutFooter}>
           <Text style={styles.aboutFooterText}>Version 1.0.0</Text>
-          <Text style={styles.aboutFooterText}>© 2026 Codify</Text>
+          <Text style={styles.aboutFooterText}>© 2026 ScanSuri</Text>
         </View>
       </LinearGradient>
 

@@ -40,7 +40,7 @@ export default function Header() {
     user?.firstName ||
     user?.fullName ||
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
-    "Codify User";
+    "ScanSuri User";
 
   const avatarInitials = getInitials(displayName);
   const profileImageUrl = user?.hasImage ? user.imageUrl : "";
@@ -63,7 +63,7 @@ export default function Header() {
 
       <View style={styles.topRow}>
         <View style={styles.greetingBox}>
-          <Text style={styles.welcome}>Welcome to Codify,</Text>
+          <Text style={styles.welcome}>Welcome to ScanSuri,</Text>
 
           <Text style={styles.name} numberOfLines={1}>
             {displayName}

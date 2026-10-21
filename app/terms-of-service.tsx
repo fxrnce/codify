@@ -15,13 +15,13 @@ const TERMS_SECTIONS: TermsSection[] = [
     id: "acceptance-of-terms",
     title: "1. Acceptance of Terms",
     content:
-      "By using Codify, you agree to follow these Terms of Service. If you do not agree, please stop using the app.",
+      "By using ScanSuri, you agree to follow these Terms of Service. If you do not agree, please stop using the app.",
   },
   {
     id: "description-of-services",
     title: "2. Description of Services",
     content:
-      "Codify provides barcode scanning, FDA product verification, ingredient analysis, allergen alerts, and scan history features.",
+      "ScanSuri provides barcode scanning, FDA product verification, ingredient analysis, allergen alerts, and scan history features.",
   },
   {
     id: "user-accounts",
@@ -33,13 +33,13 @@ const TERMS_SECTIONS: TermsSection[] = [
     id: "acceptable-use",
     title: "4. Acceptable Use",
     content:
-      "You agree not to misuse Codify, attempt unauthorized access, interfere with app services, or use the app for illegal activity.",
+      "You agree not to misuse ScanSuri, attempt unauthorized access, interfere with app services, or use the app for illegal activity.",
   },
   {
     id: "data-accuracy-disclaimer",
     title: "5. Data Accuracy & Disclaimer",
     content:
-      "Codify provides product information for guidance only. Always verify health-critical information from labels, official sources, or professionals.",
+      "ScanSuri provides product information for guidance only. Always verify health-critical information from labels, official sources, or professionals.",
   },
   {
     id: "allergen-warnings",
@@ -51,13 +51,13 @@ const TERMS_SECTIONS: TermsSection[] = [
     id: "intellectual-property",
     title: "7. Intellectual Property",
     content:
-      "Codify’s design, branding, features, and app content belong to Codify unless otherwise stated.",
+      "ScanSuri’s design, branding, features, and app content belong to ScanSuri unless otherwise stated.",
   },
   {
     id: "limitation-of-liability",
     title: "8. Limitation of Liability",
     content:
-      "Codify is not responsible for losses, damages, or health issues caused by relying only on app results without checking official labels or sources.",
+      "ScanSuri is not responsible for losses, damages, or health issues caused by relying only on app results without checking official labels or sources.",
   },
   {
     id: "governing-law",
@@ -69,12 +69,12 @@ const TERMS_SECTIONS: TermsSection[] = [
     id: "contact",
     title: "10. Contact",
     content:
-      "For questions about these Terms of Service, you may contact Codify support through the contact details provided in the app.",
+      "For questions about these Terms of Service, you may contact ScanSuri support through the contact details provided in the app.",
   },
 ];
 
 const SUMMARY_ITEMS = [
-  "Codify provides FDA product data for informational use only.",
+  "ScanSuri provides FDA product data for informational use only.",
   "You are responsible for verifying health-critical information.",
   "Allergen alerts are a guide, not a substitute for label reading.",
   "Philippine law governs this agreement.",
@@ -137,7 +137,7 @@ export default function TermsOfServiceScreen() {
           <Ionicons name="warning-outline" size={22} color="#FE9A00" />
 
           <Text style={styles.warningText}>
-            Please read these terms carefully before using Codify. By using the
+            Please read these terms carefully before using ScanSuri. By using the
             app you agree to be legally bound by these terms.
           </Text>
         </View>
@@ -182,7 +182,7 @@ export default function TermsOfServiceScreen() {
         </View>
 
         <Text style={styles.footerText}>
-          © 2026 Codify Technologies, Inc. · Philippines
+          © 2026 ScanSuri · Philippines
         </Text>
       </ScrollView>
     </View>

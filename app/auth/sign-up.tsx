@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import CodifyLogoSvg from "@/assets/icons/images/codify-logo.svg";
+import ScanSuriLogoSvg from "@/assets/icons/images/scansuri-logo.svg";
 
 function getErrorMessage(error: any) {
   return (
@@ -202,7 +202,7 @@ export default function SignUpScreen() {
 
           <View style={styles.logoWrapper}>
             <View style={styles.logoCard}>
-              <CodifyLogoSvg width={46} height={40} />
+              <ScanSuriLogoSvg width={46} height={40} />
             </View>
           </View>
 
@@ -281,14 +281,14 @@ export default function SignUpScreen() {
 
         <View style={styles.logoWrapper}>
           <View style={styles.logoCard}>
-            <CodifyLogoSvg width={46} height={40} />
+            <ScanSuriLogoSvg width={46} height={40} />
           </View>
         </View>
 
         <Text style={styles.title}>Create Account</Text>
 
         <Text style={styles.subtitle}>
-          Create your Codify account to save scans, reports, and safety
+          Create your ScanSuri account to save scans, reports, and safety
           preferences.
         </Text>
 

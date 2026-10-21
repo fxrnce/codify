@@ -49,7 +49,7 @@ export function AdminGate({ children }: { children: ReactNode }) {
         </View>
         <Text style={styles.title}>Administrator access required</Text>
         <Text style={styles.centerText}>
-          {error || "This account does not have permission to manage Codify."}
+          {error || "This account does not have permission to manage ScanSuri."}
         </Text>
         <Pressable style={styles.primaryButton} onPress={() => void refresh()}>
           <Text style={styles.primaryButtonText}>Check access again</Text>

@@ -1,5 +1,5 @@
 // Mirrors backend/src/lib/nutrition-score.ts's ApiNutritionRating shape.
-// Codify's nutrition rating is an independent HSR-based (Australia/New
+// ScanSuri's nutrition rating is an independent HSR-based (Australia/New
 // Zealand Health Star Rating) estimate, not a Philippine FDA, WHO, or
 // DOST-FNRI score. See docs/nutrition-rating-methodology.md.
 

@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import CodifyLogoSvg from "@/assets/icons/images/codify-logo.svg";
+import ScanSuriLogoSvg from "@/assets/icons/images/scansuri-logo.svg";
 
 function getErrorMessage(error: any) {
   return (
@@ -165,7 +165,7 @@ export default function SignInScreen() {
         >
           <View style={styles.logoWrapper}>
             <View style={styles.logoCard}>
-              <CodifyLogoSvg width={46} height={40} />
+              <ScanSuriLogoSvg width={46} height={40} />
             </View>
           </View>
 
@@ -240,11 +240,11 @@ export default function SignInScreen() {
       >
         <View style={styles.logoWrapper}>
           <View style={styles.logoCard}>
-            <CodifyLogoSvg width={46} height={40} />
+            <ScanSuriLogoSvg width={46} height={40} />
           </View>
         </View>
 
-        <Text style={styles.title}>Start with Codify</Text>
+        <Text style={styles.title}>Start with ScanSuri</Text>
 
         <Text style={styles.subtitle}>
           Sign in or create an account to start verifying products safely.

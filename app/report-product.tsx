@@ -152,7 +152,7 @@ export default function ReportProductScreen() {
   const offerToOpenSettings = () => {
     Alert.alert(
       "Permission Needed",
-      "Codify needs permission to add a photo. You can allow it in your device settings.",
+      "ScanSuri needs permission to add a photo. You can allow it in your device settings.",
       [
         { text: "Not Now", style: "cancel" },
         { text: "Open Settings", onPress: () => void Linking.openSettings() },

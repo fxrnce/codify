@@ -189,7 +189,7 @@ export default function CommunityReportDetailScreen() {
               <View style={styles.userIcon}>
                 <Ionicons name="person-outline" size={16} color="#475569" />
               </View>
-              <Text style={styles.sectionTitle}>A Codify user reported</Text>
+              <Text style={styles.sectionTitle}>A ScanSuri user reported</Text>
             </View>
             <Text style={styles.sectionText} selectable>
               {report.notes
@@ -204,7 +204,7 @@ export default function CommunityReportDetailScreen() {
                 <Ionicons name="shield-checkmark" size={16} color="#FFFFFF" />
               </View>
               <View style={styles.responseHeaderText}>
-                <Text style={styles.responseTitle}>Codify team response</Text>
+                <Text style={styles.responseTitle}>ScanSuri team response</Text>
                 {report.reviewedAt && (
                   <Text style={styles.responseDate}>
                     Reviewed {formatCommunityReportDate(report.reviewedAt)}

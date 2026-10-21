@@ -167,7 +167,7 @@ export default function CommunityReportList({
 
         <View style={styles.cardFooter}>
           <Ionicons name="shield-checkmark" size={15} color="#047857" />
-          <Text style={styles.reviewedText}>Reviewed by Codify</Text>
+          <Text style={styles.reviewedText}>Reviewed by ScanSuri</Text>
           <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
         </View>
       </Pressable>
@@ -180,7 +180,7 @@ export default function CommunityReportList({
         <Ionicons name="alert-circle-outline" size={18} color="#C2410C" />
         <Text style={styles.disclaimerText}>
           <Text style={styles.disclaimerStrong}>Not FDA advisories. </Text>
-          These reports come from Codify users and were reviewed by our team.
+          These reports come from ScanSuri users and were reviewed by our team.
           Reporter names are never shown.
         </Text>
       </View>
@@ -240,7 +240,7 @@ export default function CommunityReportList({
             <Text style={styles.stateText}>
               {barcode
                 ? "No community reports for this product have been reviewed and published."
-                : "Reports appear here after the Codify team reviews and publishes them."}
+                : "Reports appear here after the ScanSuri team reviews and publishes them."}
             </Text>
           </View>
         )

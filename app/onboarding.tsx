@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState, type ComponentProps } from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 
-import CodifyLogoSvg from "@/assets/icons/images/codify-logo.svg";
+import ScanSuriLogoSvg from "@/assets/icons/images/scansuri-logo.svg";
 
 const { width, height } = Dimensions.get("window");
 
@@ -204,7 +204,7 @@ const ONBOARDING_SLIDES: OnboardingSlide[] = [
   },
   {
     id: "welcome",
-    title: "Welcome to Codify",
+    title: "Welcome to ScanSuri",
     description:
       "Your trusted companion for instant FDA product verification and ingredient analysis — right from your phone.",
     floatingCards: [],
@@ -232,7 +232,7 @@ function CenterLogo() {
 
       <View style={styles.logoBorder}>
         <View style={styles.logoCard}>
-          <CodifyLogoSvg width={ms(37)} height={ms(32)} />
+          <ScanSuriLogoSvg width={ms(37)} height={ms(32)} />
         </View>
       </View>
     </View>

@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import CodifyLogoSvg from "@/assets/icons/images/codify-logo.svg";
+import ScanSuriLogoSvg from "@/assets/icons/images/scansuri-logo.svg";
 
 function getErrorMessage(error: any) {
   return (
@@ -225,7 +225,7 @@ export default function ForgotPasswordScreen() {
 
         <View style={styles.logoWrapper}>
           <View style={styles.logoCard}>
-            <CodifyLogoSvg width={46} height={40} />
+            <ScanSuriLogoSvg width={46} height={40} />
           </View>
         </View>
 
@@ -239,7 +239,7 @@ export default function ForgotPasswordScreen() {
 
         <Text style={styles.subtitle}>
           {showPasswordStep
-            ? "Enter your new password to recover your Codify account."
+            ? "Enter your new password to recover your ScanSuri account."
             : codeSent
               ? "Enter the reset code sent to your email."
               : "Enter your email and we will send a password reset code."}

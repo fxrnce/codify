@@ -177,8 +177,8 @@ export default function ScannerScreen() {
       Alert.alert(
         "No product barcode found",
         isQrBarcode(result)
-          ? "A QR code was detected. Codify needs the product's striped UPC or EAN barcode instead."
-          : "Codify needs a retail UPC or EAN product barcode. Please scan the striped barcode on the package.",
+          ? "A QR code was detected. ScanSuri needs the product's striped UPC or EAN barcode instead."
+          : "ScanSuri needs a retail UPC or EAN product barcode. Please scan the striped barcode on the package.",
       );
       return;
     }
@@ -214,7 +214,7 @@ export default function ScannerScreen() {
       if (!image?.uri) {
         Alert.alert(
           "Photo unavailable",
-          "Codify could not read the selected photo. Please choose another image.",
+          "ScanSuri could not read the selected photo. Please choose another image.",
         );
         return;
       }
@@ -233,7 +233,7 @@ export default function ScannerScreen() {
           "No product barcode found",
           detectedQrCode
             ? Platform.OS === "ios"
-              ? "A QR code was detected. Codify needs the product's striped barcode. On iPhone, use the live camera to scan UPC or EAN barcodes."
+              ? "A QR code was detected. ScanSuri needs the product's striped barcode. On iPhone, use the live camera to scan UPC or EAN barcodes."
               : "A QR code was detected. Select a closer photo of the product's striped UPC or EAN barcode instead."
             : Platform.OS === "ios"
             ? "Photo scanning on iPhone currently supports QR codes only. For UPC or EAN product barcodes, use the live camera scanner."
@@ -248,7 +248,7 @@ export default function ScannerScreen() {
     } catch {
       Alert.alert(
         "Could not scan photo",
-        "Codify could not process that image. Please choose another clear barcode photo.",
+        "ScanSuri could not process that image. Please choose another clear barcode photo.",
       );
     } finally {
       setIsScanningPhoto(false);

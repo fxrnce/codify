@@ -25,7 +25,7 @@ export default function AdminHomeScreen() {
           <Text style={adminStyles.heading}>Catalog operations</Text>
           <Text style={adminStyles.body}>
             Review community reports and maintain the product information shown
-            to Codify users.
+            to ScanSuri users.
           </Text>
         </View>
         <ConnectionBanner />

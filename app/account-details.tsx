@@ -161,7 +161,7 @@ export default function AccountDetailsScreen() {
   const displayName =
     user?.fullName ||
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
-    "Codify User";
+    "ScanSuri User";
 
   const emailAddress =
     user?.primaryEmailAddress?.emailAddress || "No email address";
@@ -1316,7 +1316,7 @@ export default function AccountDetailsScreen() {
             </View>
 
             <Text style={styles.deleteModalDescription}>
-              This action is permanent. Your Codify account will be deleted and
+              This action is permanent. Your ScanSuri account will be deleted and
               you will be signed out.
             </Text>
 

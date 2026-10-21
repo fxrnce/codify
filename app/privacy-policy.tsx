@@ -15,7 +15,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     id: "information-we-collect",
     title: "Information We Collect",
     content:
-      "We may collect your name, email address, scan history, selected allergen alerts, and product verification activity inside the Codify app.",
+      "We may collect your name, email address, scan history, selected allergen alerts, and product verification activity inside the ScanSuri app.",
   },
   {
     id: "how-we-use-your-information",
@@ -27,7 +27,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     id: "data-sharing-disclosure",
     title: "Data Sharing & Disclosure",
     content:
-      "Codify does not sell your personal data. Information may only be shared when required by law or needed to provide app services. If you report a product, our team may show it anonymously in Community Reports after review. Shown reports include the product details, your report notes, and our team's response, but never your name, email, or photos.",
+      "ScanSuri does not sell your personal data. Information may only be shared when required by law or needed to provide app services. If you report a product, our team may show it anonymously in Community Reports after review. Shown reports include the product details, your report notes, and our team's response, but never your name, email, or photos.",
   },
   {
     id: "data-retention",
@@ -45,13 +45,13 @@ const POLICY_SECTIONS: PolicySection[] = [
     id: "childrens-privacy",
     title: "Children’s Privacy",
     content:
-      "Codify is not intended for children below the required age. We do not knowingly collect personal data from children without proper consent.",
+      "ScanSuri is not intended for children below the required age. We do not knowingly collect personal data from children without proper consent.",
   },
   {
     id: "your-rights",
     title: "Your Rights",
     content:
-      "You may request access, correction, deletion, or restriction of your personal information by contacting our Data Protection Officer.",
+      "You may request access, correction, deletion, or restriction of your personal information by emailing the ScanSuri team at codifyfda@gmail.com.",
   },
   {
     id: "changes-to-this-policy",
@@ -114,7 +114,7 @@ export default function PrivacyPolicyScreen() {
       >
         <View style={styles.introCard}>
           <Text style={styles.introText}>
-            This Privacy Policy explains how Codify (“we”, “us”, or “our”)
+            This Privacy Policy explains how ScanSuri (“we”, “us”, or “our”)
             collects, uses, and protects your personal information in compliance
             with the Philippine Data Privacy Act of 2012 (RA 10173).
           </Text>
@@ -149,29 +149,25 @@ export default function PrivacyPolicyScreen() {
           <Text style={styles.contactTitle}>Contact Us</Text>
 
           <Text style={styles.contactDescription}>
-            If you have question about this Privacy Policy or wish to exercise
-            your data privacy rights, please reach out to our Data Protection
-            Officer
+            If you have questions about this Privacy Policy or wish to exercise
+            your data privacy rights, please email the ScanSuri team.
           </Text>
 
           <View style={styles.contactRow}>
             <Text style={styles.contactLabel}>Email</Text>
-            <Text style={styles.contactValue}>privacy@codify.ph</Text>
+            <Text style={styles.contactValue} selectable>
+              codifyfda@gmail.com
+            </Text>
           </View>
 
           <View style={styles.contactRow}>
             <Text style={styles.contactLabel}>Address</Text>
             <Text style={styles.contactValue}>Bacolor, Pampanga</Text>
           </View>
-
-          <View style={styles.contactRow}>
-            <Text style={styles.contactLabel}>Phone</Text>
-            <Text style={styles.contactValue}>+63 9195-77486</Text>
-          </View>
         </View>
 
         <Text style={styles.footerText}>
-          © 2026 Codify · All rights reserved
+          © 2026 ScanSuri · All rights reserved
         </Text>
       </ScrollView>
     </View>
