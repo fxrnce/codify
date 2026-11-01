@@ -1,12 +1,23 @@
-# Codify
+# ScanSuri
 
-Codify is an Expo mobile application backed by an Express and PostgreSQL API.
-It provides a product catalog, barcode scan history, allergen preferences, and
-authenticated product reports.
+ScanSuri is an Android app that checks Philippine FDA product records by
+barcode. It is an Expo mobile application backed by an Express and PostgreSQL
+API.
+
+## Features
+
+- Barcode scanning with FDA registration status for each product
+- Ingredient list, allergen alerts based on the user's saved allergens, and a
+  nutrition rating based on the Health Star Rating method
+- FDA advisories with search and filters
+- Product reports with photo evidence, reviewed in an in-app admin panel
+- Community Reports: resolved reports that an admin chose to publish, shown
+  without the reporter's name, email, or photos
+- Scan history and an offline product catalog
 
 ## Stack
 
-- Expo SDK 54, Expo Router, React Native, TypeScript, and Expo SQLite
+- Expo SDK 57, Expo Router, React Native, TypeScript, and Expo SQLite
 - Clerk authentication
 - Express 5 and TypeScript
 - Prisma 7 with PostgreSQL
@@ -87,7 +98,7 @@ and synchronize after connectivity returns. Administrator writes always require
 an online connection so authorization, conflict checks, and audit logging remain
 server controlled.
 
-The app checks the Codify backend health endpoint before starting online work.
+The app checks the ScanSuri backend health endpoint before starting online work.
 Its home screen shows the current connection and last catalog update, while a
 compact banner appears throughout the app during offline use or synchronization.
 Tap the home status card to check the connection again after restarting the
