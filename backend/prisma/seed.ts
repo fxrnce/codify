@@ -198,7 +198,7 @@ const products: SeedProduct[] = [
       { name: "Citric Acid (Acidulant)", isAllergen: false },
     ],
 
-    allergens: ["Soy", "Wheat / Gluten", "Corn", "Oyster"],
+    allergens: ["Soy", "Wheat / Gluten", "Corn", "Shellfish"],
     alternatives: [],
   },
   {
@@ -4997,7 +4997,7 @@ const products: SeedProduct[] = [
       "Milk",
       "Soy",
       "Wheat / Gluten",
-      "Crustaceans",
+      "Shellfish",
       "Eggs",
       "Fish",
     ],
@@ -7674,6 +7674,142 @@ const products: SeedProduct[] = [
 
     alternatives: [
       "An FDA-registered luncheon meat, compared on its sodium content",
+    ],
+  },
+
+  // Package data: user-supplied front/back photos, FDA portal checked November 3, 2026.
+  // The portal lists two approved RFM records with the same product name; this uses the
+  // newest issuance. The portal does not list individual package sizes.
+  {
+    slug: "selecta-creamy-latte-caramel-200ml",
+    barcode: "4800110099415",
+    name: "Selecta Creamy Latte Caramel Flavor 200mL",
+    brand: "Selecta",
+    category: "Coffee-Flavored Milk Drink",
+    productType: "DRINK",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015318934",
+    nutritionRating: {
+      category: "DAIRY_BEVERAGE",
+      servingQuantity: 200,
+      servingUnit: "mL",
+      caloriesPerServing: 160,
+      saturatedFatGramsPerServing: 5,
+      totalSugarsGramsPerServing: 18,
+      sodiumMilligramsPerServing: 120,
+      proteinGramsPerServing: 4,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "200mL (1 carton)",
+    warningMessage:
+      "Philippine FDA registration FR-4000015318934 lists SELECTA CREAMY LATTE Coffee-Flavored Milk Drink - Caramel Flavor by RFM Corporation as approved, valid through 24 November 2028. This is a product-name match; the portal does not list individual package sizes. One 200mL carton contains 160 calories, 5g saturated fat, 18g total sugar, and 120mg sodium. Contains milk and coffee, and is manufactured in a facility that processes soy and cereal products.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "160",
+      protein: "4g",
+      carbohydrates: "21g",
+      totalFat: "7g",
+      saturatedFat: "5g",
+      totalSugars: "18g",
+      dietaryFiber: "0g",
+      sodium: "120mg",
+    },
+
+    ingredients: [
+      {
+        name: "Reconstituted Milk Powder (Skimmed Milk and Buttermilk)",
+        isAllergen: true,
+      },
+      { name: "Refined Sugar", isAllergen: false },
+      {
+        name: "Refined Vegetable Oil (Coconut and Corn Oil)",
+        isAllergen: false,
+      },
+      { name: "Milk Fat", isAllergen: true },
+      { name: "Coffee Powder", isAllergen: false },
+      { name: "Nature-Identical Flavors", isAllergen: false },
+      { name: "Carrageenan (E407, Food Stabilizer)", isAllergen: false },
+      { name: "Mono- and Diglycerides (E471, Emulsifier)", isAllergen: false },
+      { name: "Disodium Phosphate (E339, Acidity Regulator)", isAllergen: false },
+      { name: "Sodium Bicarbonate (E500, Acidity Regulator)", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Soy", "Wheat / Gluten"],
+
+    alternatives: [
+      "Plain unsweetened milk, which has no added sugar",
+      "A lower-sugar coffee drink after comparing nutrition labels",
+    ],
+  },
+
+  // Package data: user-supplied front/back photos. No matching Philippine FDA record was
+  // found on November 3, 2026 (searched matcha latte, Selecta, RFM Corporation, and
+  // flavored milk drink); the only Selecta matcha records are Unilever RFM ice creams.
+  {
+    slug: "selecta-matcha-latte-200ml",
+    barcode: "4800110099736",
+    name: "Selecta Matcha Latte 200mL",
+    brand: "Selecta",
+    category: "Matcha-Flavored Milk Drink",
+    productType: "DRINK",
+    status: "UNVERIFIED",
+    fdaStatusLabel: "Not Verified",
+    registrationNumber: "No matching Philippine FDA record",
+    nutritionRating: {
+      category: "DAIRY_BEVERAGE",
+      servingQuantity: 200,
+      servingUnit: "mL",
+      caloriesPerServing: 180,
+      saturatedFatGramsPerServing: 4.5,
+      totalSugarsGramsPerServing: 22,
+      sodiumMilligramsPerServing: 160,
+      proteinGramsPerServing: 5,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "200mL (1 carton)",
+    warningMessage:
+      "No Philippine FDA registration for Selecta Matcha Latte was found in the FDA verification portal. The carton is labeled as an RFM Corporation product, but the only Selecta matcha records in the portal are ice creams from a different company, Unilever RFM Ice Cream. The product may be newly registered and not yet listed; check the registration number printed on the carton before relying on it. One 200mL carton contains 180 calories, 4.5g saturated fat, 22g total sugar, and 160mg sodium. Contains milk and the artificial color FD&C Blue No. 1, and is manufactured in a facility that processes soy products.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "180",
+      protein: "5g",
+      carbohydrates: "23g",
+      totalFat: "7g",
+      saturatedFat: "4.5g",
+      totalSugars: "22g",
+      dietaryFiber: "2g",
+      sodium: "160mg",
+    },
+
+    ingredients: [
+      {
+        name: "Reconstituted Milk Powder (Skimmed Milk and Buttermilk)",
+        isAllergen: true,
+      },
+      { name: "Refined Sugar", isAllergen: false },
+      {
+        name: "Refined Vegetable Oil (Coconut and Corn Oil)",
+        isAllergen: false,
+      },
+      { name: "Milk Fat", isAllergen: true },
+      { name: "Matcha Powder", isAllergen: false },
+      { name: "Nature-Identical Flavors", isAllergen: false },
+      { name: "Carrageenan (E407, Food Stabilizer)", isAllergen: false },
+      { name: "Mono- and Diglycerides (E471, Emulsifier)", isAllergen: false },
+      { name: "Disodium Phosphate (E339, Acidity Regulator)", isAllergen: false },
+      { name: "Sodium Bicarbonate (E500, Acidity Regulator)", isAllergen: false },
+      { name: "Beta-Carotene", isAllergen: false },
+      { name: "Artificial Color (FD&C Blue No. 1)", isAllergen: false },
+    ],
+
+    allergens: ["Milk", "Soy"],
+
+    alternatives: [
+      "An FDA-registered milk drink with a matching active registration",
+      "Plain unsweetened milk, which has no added sugar",
     ],
   },
 ];
