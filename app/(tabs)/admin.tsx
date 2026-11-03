@@ -21,7 +21,7 @@ export default function AdminHomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={{ paddingTop: 34, gap: 8 }}>
-          <Text style={adminStyles.sectionTitle}>CODIFY ADMIN</Text>
+          <Text style={adminStyles.sectionTitle}>SCANSURI ADMIN</Text>
           <Text style={adminStyles.heading}>Catalog operations</Text>
           <Text style={adminStyles.body}>
             Review community reports and maintain the product information shown
