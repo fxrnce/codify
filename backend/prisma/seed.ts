@@ -8751,6 +8751,296 @@ const products: SeedProduct[] = [
       "A lower-saturated-fat canned fish after comparing nutrition labels",
     ],
   },
+
+  // Package data: user-supplied photos, FDA portal checked November 5, 2026. San Marino corned
+  // tuna by Foodsphere, Inc. The label's "Cereals" allergen is listed as Wheat / Gluten.
+  {
+    slug: "san-marino-corned-tuna-100g",
+    barcode: "4800249006599",
+    name: "San Marino Corned Tuna 100g",
+    brand: "San Marino",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010711653",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 93,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 396,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "56g (about 2 servings per 100g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000010711653 lists SAN MARINO CORNED TUNA by Foodsphere, Inc. as approved, valid through 07 August 2028. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 396mg sodium. Contains fish, soy, cereals (gluten), and egg.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "93",
+      protein: "7g",
+      carbohydrates: "5g",
+      totalFat: "5g",
+      saturatedFat: "0g",
+      totalSugars: "1g",
+      dietaryFiber: "2g",
+      sodium: "396mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavors and Spices", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-sodium canned fish after comparing nutrition labels",
+    ],
+  },
+  {
+    slug: "san-marino-corned-tuna-150g",
+    barcode: "4800249006612",
+    name: "San Marino Corned Tuna 150g",
+    brand: "San Marino",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010711653",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 76,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 383,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "56g (about 3 servings per 150g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000010711653 lists SAN MARINO CORNED TUNA by Foodsphere, Inc. as approved, valid through 07 August 2028. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 383mg sodium. Contains fish, soy, cereals (gluten), and egg. The 150g can prints its own nutrition panel; its ingredient list was not photographed, so the ingredients and allergens shown come from the 100g and 180g cans of the same product.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "76",
+      protein: "7g",
+      carbohydrates: "3g",
+      totalFat: "4g",
+      saturatedFat: "1g",
+      totalSugars: "0g",
+      dietaryFiber: "2g",
+      sodium: "383mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavors and Spices", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-sodium canned fish after comparing nutrition labels",
+    ],
+  },
+  {
+    slug: "san-marino-corned-tuna-180g",
+    barcode: "4800249006650",
+    name: "San Marino Corned Tuna 180g",
+    brand: "San Marino",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010711653",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 93,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 396,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "56g (about 3 servings per 180g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000010711653 lists SAN MARINO CORNED TUNA by Foodsphere, Inc. as approved, valid through 07 August 2028. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 396mg sodium. Contains fish, soy, cereals (gluten), and egg.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "93",
+      protein: "7g",
+      carbohydrates: "5g",
+      totalFat: "5g",
+      saturatedFat: "0g",
+      totalSugars: "1g",
+      dietaryFiber: "2g",
+      sodium: "396mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavors and Spices", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-sodium canned fish after comparing nutrition labels",
+    ],
+  },
+  {
+    slug: "san-marino-chili-corned-tuna-150g",
+    barcode: "4800249006636",
+    name: "San Marino Chili Corned Tuna 150g",
+    brand: "San Marino",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010712021",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 76,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 383,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "56g (about 3 servings per 150g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000010712021 lists SAN MARINO CHILI CORNED TUNA by Foodsphere, Inc. as approved, valid through 16 August 2028. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 383mg sodium. Contains fish, soy, cereals (gluten), and egg. The 150g can prints its own nutrition panel; its ingredient list was not fully readable, so the ingredients and allergens shown come from the 180g Chili and plain cans.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "76",
+      protein: "7g",
+      carbohydrates: "3g",
+      totalFat: "4g",
+      saturatedFat: "1g",
+      totalSugars: "0g",
+      dietaryFiber: "2g",
+      sodium: "383mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavors and Spices", isAllergen: false },
+      { name: "Chili", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-sodium canned fish after comparing nutrition labels",
+    ],
+  },
+  {
+    slug: "san-marino-chili-corned-tuna-180g",
+    barcode: "4800249006674",
+    name: "San Marino Chili Corned Tuna 180g",
+    brand: "San Marino",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000010712021",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 93,
+      saturatedFatGramsPerServing: 0,
+      totalSugarsGramsPerServing: 1,
+      sodiumMilligramsPerServing: 396,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 2,
+    },
+    servingSize: "56g (about 3 servings per 180g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000010712021 lists SAN MARINO CHILI CORNED TUNA by Foodsphere, Inc. as approved, valid through 16 August 2028. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 396mg sodium. Contains fish, soy, cereals (gluten), and egg. Part of the ingredient list was cut off in the photos; the readable text matches the plain corned tuna with added chili.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "93",
+      protein: "7g",
+      carbohydrates: "5g",
+      totalFat: "5g",
+      saturatedFat: "0g",
+      totalSugars: "1g",
+      dietaryFiber: "2g",
+      sodium: "396mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Soya Oil", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Nature-Identical Flavors and Spices", isAllergen: false },
+      { name: "Chili", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Eggs",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-sodium canned fish after comparing nutrition labels",
+    ],
+  },
 ];
 
 async function seedDatabase() {
