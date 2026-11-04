@@ -2513,67 +2513,52 @@ const products: SeedProduct[] = [
       category: "FOOD",
       servingQuantity: 56,
       servingUnit: "g",
-      caloriesPerServing: 100,
+      caloriesPerServing: 99,
       saturatedFatGramsPerServing: 3,
       totalSugarsGramsPerServing: 0,
-      sodiumMilligramsPerServing: 380,
+      sodiumMilligramsPerServing: 379,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 0,
     },
     servingSize: "56g (about 3 servings per 155g can)",
     warningMessage:
-      "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. The can's allergen information declares fish, soy, and milk; it is also manufactured in a facility that processes wheat, shrimp, eggs, and peanuts. One 56g serving contains 380mg sodium.",
+      "Philippine FDA registration FR-4000008019521 covers Century Tuna Flakes in Oil and is valid through November 8, 2027. The FDA record does not list net weight, while Century's official product catalog confirms that this variant is sold in 155g cans. Label data was refreshed from a newer can printing photographed November 2026. One 56g serving contains 379mg sodium and 3g saturated fat. Contains fish, soy, and milk; the label says it may also contain traces of wheat, gluten, sulphites, egg, peanut, sesame, crustaceans, and molluscs.",
     verificationUrl: "https://verification.fda.gov.ph/",
 
     nutrition: {
-      calories: "100",
+      calories: "99",
       protein: "7g",
       carbohydrates: "2g",
       totalFat: "7g",
       saturatedFat: "3g",
       totalSugars: "0g",
       dietaryFiber: "0g",
-      sodium: "380mg",
+      sodium: "379mg",
     },
 
     ingredients: [
-      {
-        name: "Tuna Flakes",
-        isAllergen: true,
-      },
-      {
-        name: "Water",
-        isAllergen: false,
-      },
-      {
-        name: "Soya Oil",
-        isAllergen: true,
-      },
-      {
-        name: "Soy Protein Concentrate",
-        isAllergen: true,
-      },
-      {
-        name: "Seasonings",
-        isAllergen: false,
-      },
-      {
-        name: "Spices",
-        isAllergen: false,
-      },
-      {
-        name: "Sugar",
-        isAllergen: false,
-      },
-      {
-        name: "Iodized Salt",
-        isAllergen: false,
-      },
-      {
-        name: "Milk (declared allergen on can; not separately listed as a discrete ingredient)",
-        isAllergen: true,
-      },
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Refined Vegetable Oil", isAllergen: false },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Seasonings (Natural and Nature-Identical Flavors, Flavor Enhancers (HVP, MSG))", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Milk (declared allergen on can; not separately listed as a discrete ingredient)", isAllergen: true },
     ],
 
-    allergens: ["Fish", "Soy", "Milk"],
+    allergens: [
+      "Fish",
+      "Soy",
+      "Milk",
+      "Wheat / Gluten",
+      "Sulfites",
+      "Eggs",
+      "Peanuts",
+      "Sesame",
+      "Shellfish",
+    ],
 
     alternatives: [
       "Lower-sodium tuna in water after comparing labels",
@@ -8163,6 +8148,204 @@ const products: SeedProduct[] = [
     alternatives: [
       "Plain tuna in water, compared on its sodium content",
       "A lower-sodium canned meal after comparing nutrition labels",
+    ],
+  },
+
+  // Package data: user-supplied front/back photos, FDA portal checked November 5, 2026.
+  // Century Tuna with Calamansi keeps the slug of the admin-created test entry so the
+  // seed replaces it in place. Trace allergens are listed out of caution, and crustaceans
+  // and molluscs are listed as Shellfish.
+  {
+    slug: "century-tuna-155g",
+    barcode: "748485102238",
+    name: "Century Tuna with Calamansi 155g",
+    brand: "Century",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000008020307",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 85,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 3,
+      sodiumMilligramsPerServing: 273,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "56g (about 3 servings per 155g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000008020307 lists CENTURY TUNA WITH CALAMANSI by Century Pacific Food, Inc. as approved, valid through 27 May 2031. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 273mg sodium and 3g sugar. Contains fish, soy, wheat, gluten, and sulphites; the label says it may also contain traces of milk, crustaceans, egg, peanut, sesame, and molluscs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "85",
+      protein: "7g",
+      carbohydrates: "3g",
+      totalFat: "5g",
+      saturatedFat: "1g",
+      totalSugars: "3g",
+      dietaryFiber: "0g",
+      sodium: "273mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Refined Vegetable Oil", isAllergen: false },
+      { name: "Soy Sauce", isAllergen: true },
+      { name: "Sugar", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Seasonings (Natural and Nature-Identical Flavors, Flavor Enhancers (HVP, MSG))", isAllergen: false },
+      { name: "Acidulant (Citric Acid)", isAllergen: false },
+      { name: "Calamansi Flavor", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Sulfites",
+      "Milk",
+      "Shellfish",
+      "Eggs",
+      "Peanuts",
+      "Sesame",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "Fresh fish seasoned with calamansi at home",
+    ],
+  },
+  {
+    slug: "century-tuna-hot-and-spicy-155g",
+    barcode: "748485100418",
+    name: "Century Tuna Hot and Spicy 155g",
+    brand: "Century",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000015206178",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 107,
+      saturatedFatGramsPerServing: 3,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 368,
+      proteinGramsPerServing: 7,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "56g (about 3 servings per 155g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000015206178 lists CENTURY TUNA HOT AND SPICY by Century Pacific Food, Inc. as approved, valid through 24 November 2030. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 368mg sodium and 3g saturated fat. Contains fish and soy; the label says it may also contain traces of wheat, gluten, sulphites, milk, egg, peanut, sesame, crustaceans, and molluscs.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "107",
+      protein: "7g",
+      carbohydrates: "4g",
+      totalFat: "7g",
+      saturatedFat: "3g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "368mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Flakes", isAllergen: true },
+      { name: "Water", isAllergen: false },
+      { name: "Refined Vegetable Oil", isAllergen: false },
+      { name: "Soy Protein Concentrate", isAllergen: true },
+      { name: "Iodized Salt", isAllergen: false },
+      { name: "Sugar", isAllergen: false },
+      { name: "Chili", isAllergen: false },
+      { name: "Spices", isAllergen: false },
+      { name: "Seasonings (Flavor Enhancer (MSG))", isAllergen: false },
+      { name: "Bay Leaf", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Soy",
+      "Wheat / Gluten",
+      "Sulfites",
+      "Milk",
+      "Eggs",
+      "Peanuts",
+      "Sesame",
+      "Shellfish",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "A lower-saturated-fat canned fish after comparing nutrition labels",
+    ],
+  },
+  {
+    slug: "century-tuna-premium-red-chunks-vegetable-oil-184g",
+    barcode: "748485100043",
+    name: "Century Tuna Premium Red Chunks in Vegetable Oil 184g",
+    brand: "Century",
+    category: "Canned Tuna",
+    productType: "FOOD",
+    status: "CAUTION",
+    fdaStatusLabel: "FDA Registered Product Name",
+    registrationNumber: "FR-4000011306135",
+    nutritionRating: {
+      category: "FOOD",
+      servingQuantity: 56,
+      servingUnit: "g",
+      caloriesPerServing: 117,
+      saturatedFatGramsPerServing: 1,
+      totalSugarsGramsPerServing: 0,
+      sodiumMilligramsPerServing: 318,
+      proteinGramsPerServing: 9,
+      fibreGramsPerServing: 0,
+    },
+    servingSize: "56g (about 3 servings per 184g can)",
+    warningMessage:
+      "Philippine FDA product registration FR-4000011306135 lists CENTURY TUNA PREMIUM RED CHUNKS IN VEGETABLE OIL by Century Pacific Food, Inc. as approved, valid through 04 September 2027; an older approved record, FR-4000001079373, has the same product name. This is a product-name match; the portal does not list individual package sizes. One 56g serving contains 318mg sodium and 9g protein. Part of the ingredient and allergen statement was cut off at the edge of the can in the submitted photos: the readable text declares fish and possible traces of wheat, gluten, crustaceans, egg, peanut, and sesame. Check the full can label if you have other allergies.",
+    verificationUrl: "https://verification.fda.gov.ph/",
+
+    nutrition: {
+      calories: "117",
+      protein: "9g",
+      carbohydrates: "9g",
+      totalFat: "5g",
+      saturatedFat: "1g",
+      totalSugars: "0g",
+      dietaryFiber: "0g",
+      sodium: "318mg",
+    },
+
+    ingredients: [
+      { name: "Tuna Chunks", isAllergen: true },
+      { name: "Refined Vegetable Oil", isAllergen: false },
+      { name: "Water", isAllergen: false },
+      { name: "Iodized Salt", isAllergen: false },
+    ],
+
+    allergens: [
+      "Fish",
+      "Wheat / Gluten",
+      "Shellfish",
+      "Eggs",
+      "Peanuts",
+      "Sesame",
+    ],
+
+    alternatives: [
+      "Tuna in water, compared on its sodium content",
+      "Century Tuna Premium Red Chunks in Water, if available, for less fat",
     ],
   },
 ];
